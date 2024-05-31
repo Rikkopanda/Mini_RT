@@ -2,15 +2,16 @@ NAME = minirt
 
 CFLAGS = -Wall -Wextra -Werror
 
-LINKS = -Llibft -lft
+DIR_LIB = lib
+LINKS = -L${DIR_LIB}/libft -lft -lXext -lX11 -lm -lz
 
-LINKS_MLX = -Lminilibx-linux -lmlx
+LINKS_MLX = -L${DIR_LIB}/minilibx-linux -lmlx_Linux
 
-INCLUDE = -I./include -I./minilibx-linux -I./libft
+INCLUDE = -I./include -I./${DIR_LIB}/minilibx-linux -I./${DIR_LIB}/libft
 
-MLX_LIB = minilibx-linux/libmlx.a
+MLX_LIB = ${DIR_LIB}/minilibx-linux/libmlx.a
 
-LIBFT = libft/libft.a
+LIBFT = ${DIR_LIB}/libft/libft.a
 
 DIR_SRC = src
 DIR_PARSER = parser
@@ -24,7 +25,7 @@ SRC := ${addprefix ${DIR_SRC}/, ${SRC} ${SRC_PARSER}}
 
 OBJ = ${subst ${DIR_SRC}/, ${DIR_OBJ}/, ${SRC:.c=.o}}
 
-${NAME}: ${OBJ} ${MLX_LIB}
+${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT}
 	cc ${CFLAGS} $< ${LINKS} ${LINKS_MLX} -o $@
 
 ${MLX_LIB}:
