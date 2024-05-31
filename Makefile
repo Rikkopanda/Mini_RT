@@ -6,7 +6,7 @@ LINKS = -Llibft -lft
 
 LINKS_MLX = -Lminilibx-linux -lmlx
 
-INCLUDE = -I./include -I./minilibx-linux
+INCLUDE = -I./include -I./minilibx-linux -I./libft
 
 MLX_LIB = minilibx-linux/libmlx.a
 
