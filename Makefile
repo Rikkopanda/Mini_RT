@@ -14,10 +14,11 @@ LIBFT = libft/libft.a
 
 DIR_SRC = src
 DIR_PARSER = parser
-DIR_OBJ = obj
+DIR_OBJ = obj`
 
 SRC = main.c
 SRC_PARSER = parser.c
+
 SRC_PARSER := ${addprefix ${DIR_PARSER}/, ${SRC_PARSER}}
 
 SRC := ${addprefix ${DIR_SRC}/, ${SRC} ${SRC_PARSER}}
