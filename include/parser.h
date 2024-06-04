@@ -67,4 +67,6 @@ typedef struct s_scene_data
 	t_cylinder	*cylinder;
 	t_plane		*plane;
 }	t_scene_data;
+
+int	parse_rt_file(t_scene_data *scene, int fd);
 #endif

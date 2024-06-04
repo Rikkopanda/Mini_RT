@@ -3,7 +3,7 @@ NAME = minirt
 CFLAGS = -Wall -Wextra -Werror
 
 DIR_LIB = lib
-LINKS = -L${DIR_LIB}/libft -lft
+LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/
 
 LINKS_MLX = -L${DIR_LIB}/minilibx-linux -lmlx
 
