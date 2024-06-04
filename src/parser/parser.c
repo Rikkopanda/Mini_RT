@@ -17,7 +17,7 @@ void	free_2d_array(char **array)
 	free(array);
 }
 
-t_rtobject	check_identifier(const char *id)
+t_objectid	check_identifier(const char *id)
 {
 	unsigned int	len;
 
@@ -37,10 +37,10 @@ t_rtobject	check_identifier(const char *id)
 	return (INVALID);
 }
 
-int	check_format_object(char *line, t_rtobject id_count[ID_COUNT])
+int	check_format_object(char *line, t_objectid id_count[OBJ_COUNT])
 {
 	char		**split;
-	t_rtobject	identifier;
+	t_objectid	identifier;
 
 	if (line[0] == '\n')
 		return (1);
@@ -50,10 +50,10 @@ int	check_format_object(char *line, t_rtobject id_count[ID_COUNT])
 	id_count[identifier]++;
 }
 
-void	objects_to_scene_data(t_scene_data *scene, t_parse_object *objects, \
-								t_rtobject id_count[ID_COUNT])
+void	objects_to_scene_data(t_scene_data *scene, t_object *objects, \
+								t_objectid id_count[OBJ_COUNT])
 {
-
+	scene->cameras = 
 }
 
 size_t	arg_count(const char **args)
@@ -68,53 +68,75 @@ size_t	arg_count(const char **args)
 	return (count);
 }
 
-int	parse_rgb(const char *rgb)
+int	rgb_to_hex(int r, int g, int b)
 {
-
+	if (r < 0 || r > 255 ||
+		g < 0 || g > 255 ||
+		b < 0 || b > 255)
+		return (0);
+	return ((r << 16) | (g << 8) | b);
 }
 
-int	parse_ambient(t_list **head, const char **format)
+int	ft_atorgb(const char *a_rgb)
+{
+	char	**split;
+	int		rgb[3];
+
+	split = ft_split(a_rgb, ',');
+	if (!split)
+		return (perror("malloc error"), 0);
+	if (arg_count(split) != 3)
+		return (free_2d_array(split), 0);
+	rgb[0] = ft_atoi(split[0]);
+	rgb[1] = ft_atoi(split[1]);
+	rgb[2] = ft_atoi(split[2]);
+	free_2d_array(split);
+	return (rgb_to_hex(rgb[0], rgb[1], rgb[2]));
+}
+
+int	parse_ambient(t_object **head, const char **format)
 {
 	t_ambient	*ambient;
-	t_list		*new;
+	t_object	*new;
 
 	if (arg_count(format) != 2)
 		return (0);
 	ambient = malloc(sizeof(*ambient));
 	if (!ambient)
-		return (0);
-	ambient->ratio = ft_atof();
-	new = ft_lstnew(ambient);
+		return (perror("malloc error"), 0);
+	ambient->ratio = ft_atof(format[0]);
+	ambient->hexcolor = ft_atorgb(format[1]);
+	new = new_object(AMBIENT, ambient);
 	if (!new)
-		return (free(ambient), 0);
-	ft_lstadd_back(head, new);
+		return (perror("malloc error"), free(ambient), 0);
+	append_object(head, new);
 	return (1);
 }
 
-int	parse_object(const char *line, t_rtobject id_count[ID_COUNT], t_list **head)
+int	parse_object(const char *line, t_objectid obj_count[OBJ_COUNT], t_object **head)
 {
 	char		**split;
 	int			ret;
-	t_rtobject	id;
+	t_objectid	type;
 
-	id = check_identifier(line);
-	if (id == INVALID)
+	type = check_identifier(line);
+	if (type == INVALID)
 		return (0);
-	id_count[id]++;
+	obj_count[type]++;
 	split = ft_split_charset(line, " \t\v\f\r\n");
 	if (!split)
 		return (perror("malloc error"), 0);
-	if (id == AMBIENT)
+	if (type == AMBIENT)
 		ret = parse_ambient(head, split + 1);
-	else if (id == CAMERA)
+	else if (type == CAMERA)
 		ret = parse_camera(head, split + 1);
-	else if (id == LIGHT)
+	else if (type == LIGHT)
 		ret = parse_light(head, split + 1);
-	else if (id == SPHERE)
+	else if (type == SPHERE)
 		ret = parse_sphere(head, split + 1);
-	else if (id == PLANE)
+	else if (type == PLANE)
 		ret = parse_plane(head, split + 1);
-	else if (id == CYLINDER)
+	else if (type == CYLINDER)
 		ret = parse_cylinder(head, split + 1);
 	free_2d_array(split);
 	return (ret);
@@ -123,10 +145,11 @@ int	parse_object(const char *line, t_rtobject id_count[ID_COUNT], t_list **head)
 int	parse_rt_file(t_scene_data *scene, int fd)
 {
 	char		*line;
-	t_rtobject	id_count[ID_COUNT];
-	t_list		*objects;
+	t_objectid	obj_count[OBJ_COUNT];
+	t_object	*objects;
 
-	ft_bzero(id_count, ID_COUNT);
+	ft_bzero(obj_count, OBJ_COUNT);
+	objects = NULL;
 	line = get_next_line(fd);
 	if (!line)
 		return (0);
@@ -134,14 +157,20 @@ int	parse_rt_file(t_scene_data *scene, int fd)
 	{
 		if (line[0] != '\n')
 		{
-			if (!parse_object(line, id_count, objects))
-				return (free(line), 0);
+			if (!parse_object(line, obj_count, objects))
+			{
+				fprintf(stderr, "Error: could not parse object.\n");
+				return (clear_objects(objects), free(line), 0);
+			}
 		}
+		if (obj_count[CAMERA] > 1 || obj_count[AMBIENT] > 1)
+			return (clear_objects(objects), free(line), 0);
 		free(line);
 		line = get_next_line(fd);
 	}
-	if (id_count[AMBIENT] == 0 || id_count[CAMERA] == 0)
+	if (obj_count[AMBIENT] == 0 || obj_count[CAMERA] == 0)
 		return (0);
-	objects_to_scene_data(scene, objects, id_count);
+	objects_to_scene_data(scene, objects, obj_count);
+	clear_objects(objects);
 	return (1);
 }

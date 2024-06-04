@@ -1,8 +1,8 @@
 #ifndef PARSER_H
 # define PARSER_H
-# define ID_COUNT 6
+# define OBJ_COUNT 6
 
-typedef enum e_rtobject
+typedef enum e_objectid
 {
 	AMBIENT,
 	CAMERA,
@@ -11,7 +11,7 @@ typedef enum e_rtobject
 	PLANE,
 	CYLINDER,
 	INVALID,
-}	t_rtobject;
+}	t_objectid;
 
 typedef float	t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
 
@@ -58,6 +58,13 @@ typedef struct s_cylinder
 	int		hexcolor;
 }	t_cylinder;
 
+typedef struct s_object
+{
+	t_objectid		type;
+	void			*object;
+	struct s_object	*next;
+}	t_object;
+
 typedef struct s_scene_data
 {
 	t_ambient	ambient;
@@ -68,5 +75,12 @@ typedef struct s_scene_data
 	t_plane		*plane;
 }	t_scene_data;
 
-int	parse_rt_file(t_scene_data *scene, int fd);
+t_object	*new_object(t_objectid id, void *object);
+t_object	*last_object(t_object *head);
+void		append_object(t_object **head, t_object *object);
+void		clear_objects(t_object *current);
+
+float		ft_atof(const char *s);
+size_t		ft_chcount(const char *s, const char c);
+int			parse_rt_file(t_scene_data *scene, int fd);
 #endif
