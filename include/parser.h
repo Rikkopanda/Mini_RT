@@ -69,11 +69,12 @@ typedef struct s_object
 typedef struct s_scene_data
 {
 	t_ambient	ambient;
-	t_camera	*cameras;
-	t_light		*lights;
+	t_camera	camera;
+	t_light		light;
 	t_sphere	*sphere;
 	t_cylinder	*cylinder;
 	t_plane		*plane;
+	int			obj_count[OBJ_COUNT];
 }	t_scene_data;
 
 t_object	*new_object(t_objectid id, void *object);

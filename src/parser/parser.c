@@ -39,11 +39,49 @@ t_objectid	check_identifier(const char *id)
 	return (free_2d_array(split), INVALID);
 }
 
-// void	objects_to_scene_data(t_scene_data *scene, t_object *objects, \
-// 								t_objectid id_count[OBJ_COUNT])
-// {
-	
-// }
+void	init_shapes(t_scene_data *scene, int id_count[OBJ_COUNT])
+{
+	if (id_count[SPHERE] == 0)
+		scene->sphere = NULL;
+	else
+		scene->sphere = malloc(id_count[SPHERE] * sizeof(*scene->sphere));
+	if (id_count[PLANE] == 0)
+		scene->plane = NULL;
+	else
+		scene->plane = malloc(id_count[PLANE] * sizeof(*scene->plane));
+	if (id_count[CYLINDER] == 0)
+		scene->cylinder = NULL;
+	else
+		scene->cylinder = malloc(id_count[CYLINDER] * sizeof(*scene->cylinder));
+}
+
+void	objects_to_scene_data(t_scene_data *scene, t_object *current)
+{
+	int	sphere_index;
+	int	plane_index;
+	int	cylinder_index;
+
+	init_shapes(scene, scene->obj_count);
+	sphere_index = scene->obj_count[SPHERE] - 1;
+	plane_index = scene->obj_count[PLANE] - 1;
+	cylinder_index = scene->obj_count[CYLINDER] - 1;
+	while (current)
+	{
+		if (current->type == AMBIENT)
+			scene->ambient = *(t_ambient *)current->object;
+		else if (current->type == CAMERA)
+			scene->camera = *(t_camera *)current->object;
+		else if (current->type == LIGHT)
+			scene->light = *(t_light *)current->object;
+		else if (current->type == SPHERE)
+			scene->sphere[sphere_index--] = *(t_sphere *)current->object;
+		else if (current->type == PLANE)
+			scene->plane[plane_index--] = *(t_plane *)current->object;
+		else if (current->type == CYLINDER)
+			scene->cylinder[cylinder_index--] = *(t_cylinder *)current->object;
+		current = current->next;
+	}
+}
 
 size_t	arg_count(char **args)
 {
@@ -106,7 +144,7 @@ int	parse_ambient(t_object **head, char **format)
 	t_ambient	*ambient;
 	t_object	*new;
 
-	fprintf(stderr, "parsing ambient\n");
+	// fprintf(stderr, "parsing ambient\n");
 	if (arg_count(format) != 2)
 		return (0);
 	ambient = malloc(sizeof(*ambient));
@@ -126,7 +164,7 @@ int	parse_camera(t_object **head, char **format)
 	t_camera	*camera;
 	t_object	*new;
 
-	fprintf(stderr, "parsing camera\n");
+	// fprintf(stderr, "parsing camera\n");
 	if (arg_count(format) != 3)
 		return (0);
 	camera = malloc(sizeof(*camera));
@@ -147,7 +185,7 @@ int	parse_light(t_object **head, char **format)
 	t_light		*light;
 	t_object	*new;
 
-	fprintf(stderr, "parsing light\n");
+	// fprintf(stderr, "parsing light\n");
 	if (arg_count(format) != 3)
 		return (0);
 	light = malloc(sizeof(*light));
@@ -168,7 +206,7 @@ int	parse_sphere(t_object **head, char **format)
 	t_sphere	*sphere;
 	t_object	*new;
 
-	fprintf(stderr, "parsing sphere\n");
+	// fprintf(stderr, "parsing sphere\n");
 	if (arg_count(format) != 3)
 		return (0);
 	sphere = malloc(sizeof(*sphere));
@@ -189,7 +227,7 @@ int	parse_plane(t_object **head, char **format)
 	t_plane		*plane;
 	t_object	*new;
 
-	fprintf(stderr, "parsing plane\n");
+	// fprintf(stderr, "parsing plane\n");
 	if (arg_count(format) != 3)
 		return (0);
 	plane = malloc(sizeof(*plane));
@@ -210,7 +248,7 @@ int	parse_cylinder(t_object **head, char **format)
 	t_cylinder	*cylinder;
 	t_object	*new;
 
-	fprintf(stderr, "parsing cylinder\n");
+	// fprintf(stderr, "parsing cylinder\n");
 	if (arg_count(format) != 5)
 		return (0);
 	cylinder = malloc(sizeof(*cylinder));
@@ -228,7 +266,7 @@ int	parse_cylinder(t_object **head, char **format)
 	return (1);
 }
 
-int	parse_object(const char *line, t_objectid obj_count[OBJ_COUNT], t_object **head)
+int	parse_object(const char *line, int obj_count[OBJ_COUNT], t_object **head)
 {
 	char		**split;
 	int			ret;
@@ -271,10 +309,9 @@ void	print_object_types(t_object *objects)
 int	parse_rt_file(t_scene_data *scene, int fd)
 {
 	char		*line;
-	t_objectid	obj_count[OBJ_COUNT];
 	t_object	*objects;
 
-	ft_bzero(obj_count, OBJ_COUNT);
+	ft_bzero(scene->obj_count, OBJ_COUNT * sizeof(int));
 	objects = NULL;
 	line = get_next_line(fd);
 	if (!line)
@@ -283,22 +320,25 @@ int	parse_rt_file(t_scene_data *scene, int fd)
 	{
 		if (line[0] != '\n')
 		{
-			if (!parse_object(line, obj_count, &objects))
+			if (!parse_object(line, scene->obj_count, &objects))
 			{
 				fprintf(stderr, "Error: could not parse object.\n");
 				return (clear_objects(objects), free(line), 0);
 			}
 		}
-		if (obj_count[CAMERA] > 1 || obj_count[AMBIENT] > 1)
-			return (clear_objects(objects), free(line), 0);
 		free(line);
 		line = get_next_line(fd);
 	}
-	if (obj_count[AMBIENT] == 0 || obj_count[CAMERA] == 0)
+	if (scene->obj_count[AMBIENT] != 1 || scene->obj_count[CAMERA] != 1 ||
+		scene->obj_count[LIGHT] != 1)
+	{
+		clear_objects(objects);
+		fprintf(stderr, "Error: invalid object count.\n");
 		return (0);
+	}
 	(void)scene;
-	// objects_to_scene_data(scene, objects, obj_count);
-	print_object_types(objects);
+	objects_to_scene_data(scene, objects);
+	// print_object_types(objects);
 	clear_objects(objects);
 	return (1);
 }
