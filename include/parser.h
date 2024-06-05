@@ -2,7 +2,7 @@
 # define PARSER_H
 # define OBJ_COUNT 6
 # include <stdlib.h>
-
+# include "objects.h"
 typedef enum e_objectid
 {
 	AMBIENT,
@@ -14,51 +14,6 @@ typedef enum e_objectid
 	INVALID,
 }	t_objectid;
 
-typedef float	t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
-
-typedef struct s_ambient
-{
-	float	ratio;
-	int		hexcolor;
-}	t_ambient;
-
-typedef struct s_camera
-{
-	t_vec4f	location;
-	t_vec4f	orientation;
-	int		fov;
-}	t_camera;
-
-typedef struct s_light
-{
-	t_vec4f	location;
-	float	ratio;
-	int		hexcolor;
-}	t_light;
-
-typedef struct s_sphere
-{
-	t_vec4f	location;
-	float	diameter;
-	int		hexcolor;
-}	t_sphere;
-
-typedef struct s_plane
-{
-	t_vec4f	location;
-	t_vec4f	vector;
-	int		hexcolor;
-}	t_plane;
-
-typedef struct s_cylinder
-{
-	t_vec4f	location;
-	t_vec4f	vector;
-	float	diameter;
-	float	height;
-	int		hexcolor;
-}	t_cylinder;
-
 typedef struct s_object
 {
 	t_objectid		type;
@@ -68,13 +23,13 @@ typedef struct s_object
 
 typedef struct s_scene_data
 {
+	int			obj_count[OBJ_COUNT];
 	t_ambient	ambient;
 	t_camera	camera;
 	t_light		light;
 	t_sphere	*sphere;
 	t_cylinder	*cylinder;
 	t_plane		*plane;
-	int			obj_count[OBJ_COUNT];
 }	t_scene_data;
 
 t_object	*new_object(t_objectid id, void *object);

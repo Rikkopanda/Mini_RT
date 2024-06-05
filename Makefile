@@ -19,7 +19,7 @@ DIR_PARSER = parser
 DIR_PARSER_OBJECTS = objects
 DIR_OBJ = obj
 
-SRC = main.c debug_info.c
+SRC = main.c
 
 SRC_PARSER =	parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
 				ft_split_charset.c ft_str_endswith.c object_list.c \
@@ -35,7 +35,7 @@ SRC := ${addprefix ${DIR_SRC}/, ${SRC} ${SRC_PARSER}}
 
 OBJ = ${subst ${DIR_SRC}/, ${DIR_OBJ}/, ${SRC:.c=.o}}
 
-${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT}
+${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT} ${LIBGNL}
 	cc ${CFLAGS} $^ ${LINKS} ${LINKS_MLX} -o $@
 
 ${MLX_LIB}:
@@ -43,6 +43,9 @@ ${MLX_LIB}:
 
 ${LIBFT}:
 	make -C ${DIR_LIB}/libft
+
+${LIBGNL}:
+	make -C ${DIR_LIB}/get_next_line
 
 ${OBJ}: ${DIR_OBJ}/%.o: ${DIR_SRC}/%.c
 	@mkdir -p ${@D}
@@ -59,6 +62,9 @@ clean:
 fclean: clean
 	rm -f ${NAME}
 
+tests:
+	make run_tests -C tests
+
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re tests debug

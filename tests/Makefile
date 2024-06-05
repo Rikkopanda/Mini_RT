@@ -1,52 +1,46 @@
 NAME_PARSER = ${DIR_BIN}/parser_tests
+PROGRAM = ../minirt
 
 CFLAGS = -Wall -Wextra -Werror
 
 DIR_LIB = lib
-LIBFT = ../${DIR_LIB}/libft/libft.a
-LIBGNL = ../${DIR_LIB}/get_next_line/libgnl.a
 INCLUDE = -I../include -I../${DIR_LIB}/libft -I../${DIR_LIB}/get_next_line
 
 LINKS = -L../${DIR_LIB}/libft -lft -L../${DIR_LIB}/get_next_line -lgnl
 
-DIR_PARSER = ../src/parser
+DIR_SRC = ../src
+DIR_OBJ = ../obj
 
-SRC_PARSER =	ft_atof.c ft_chcount.c ft_split_charset.c object_parsing.c \
-				parser.c sphere_format.c ft_str_endswith.c
-SRC_PARSER := ${addprefix ${DIR_PARSER}/, ${SRC_PARSER}}
+OBJ = ${shell find ${DIR_OBJ} -name "*.o"}
+OBJ := ${filter-out ${DIR_OBJ}/main.o, ${OBJ}}
 
-DIR_OBJ_PARSER = obj_tests/parser
-
-OBJ_PARSER = ${subst ${DIR_PARSER}/, ${DIR_OBJ_PARSER}/, ${SRC_PARSER:.c=.o}}
-
+DIR_OBJ_TESTS = obj
+DIR_SRC_TESTS = .
+SRC_TESTS = ${addprefix ${DIR_SRC_TESTS}/, main_parser.c debug_info.c}
+OBJ_TESTS = ${subst ${DIR_SRC_TESTS}/, ${DIR_OBJ_TESTS}/, ${SRC_TESTS:.c=.o}}
 DIR_BIN = bin
 
-all: parser
+all: ${NAME_PARSER}
 
-${LIBFT}:
-	make -C libft
+run_tests: parser
 
-${DIR_OBJ_PARSER}/main_parser.o: main_parser.c
+${OBJ_TESTS}: ${DIR_OBJ_TESTS}/%.o: ${DIR_SRC_TESTS}/%.c
 	@mkdir -p ${@D}
 	cc ${CFLAGS} ${INCLUDE} -c $< -o $@
 
 parser: ${NAME_PARSER}
-	${NAME_PARSER}
+	./test_parser.bash
 
-${NAME_PARSER}: ${OBJ_PARSER} ${DIR_OBJ_PARSER}/main_parser.o | ${LIBFT} ${LIBGNL}
+${NAME_PARSER}: ${OBJ} ${OBJ_TESTS}
 	@mkdir -p ${@D}
 	cc ${CFLAGS} $^ ${LINKS} -o $@
 
-${OBJ_PARSER}: ${DIR_OBJ_PARSER}/%.o: ${DIR_PARSER}/%.c
-	@mkdir -p ${@D}
-	cc ${CFLAGS} ${INCLUDE} -c $< -o $@
-
 clean:
-	rm -f ${OBJ_PARSER}
+	rm -f ${OBJ_TESTS}
 
 fclean: clean
 	rm -f ${NAME_PARSER}
 
 re: fclean all
 
-.PHONY: all parser clean fclean re
+.PHONY: all parser clean fclean re run_tests
