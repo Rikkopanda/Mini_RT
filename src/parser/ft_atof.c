@@ -1,6 +1,6 @@
 #include "libft.h"
 
-static int digit_count(int num)
+static int	digit_count(int num)
 {
 	int	count;
 
