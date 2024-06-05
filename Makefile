@@ -18,7 +18,7 @@ DIR_SRC = src
 DIR_PARSER = parser
 DIR_OBJ = obj
 
-SRC = main.c
+SRC = main.c debug_info.c
 SRC_PARSER = parser.c ft_atof.c ft_chcount.c ft_split_charset.c ft_str_endswith.c object_list.c
 
 SRC_PARSER := ${addprefix ${DIR_PARSER}/, ${SRC_PARSER}}

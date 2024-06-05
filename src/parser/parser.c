@@ -300,7 +300,24 @@ int	parse_cylinder(t_object **head, char **format)
 	return (1);
 }
 
-int	parse_object(const char *line, int obj_count[OBJ_COUNT], t_object **head)
+static int	handle_object_type(t_object **objects, t_objectid type, char **format)
+{
+	if (type == AMBIENT)
+		return (parse_ambient(objects, format));
+	else if (type == CAMERA)
+		return (parse_camera(objects, format));
+	else if (type == LIGHT)
+		return (parse_light(objects, format));
+	else if (type == SPHERE)
+		return (parse_sphere(objects, format));
+	else if (type == PLANE)
+		return (parse_plane(objects, format));
+	else if (type == CYLINDER)
+		return (parse_cylinder(objects, format));
+	return (0);
+}
+
+static int	parse_object(const char *line, int obj_count[OBJ_COUNT], t_object **objects)
 {
 	char		**split;
 	int			ret;
@@ -317,34 +334,12 @@ int	parse_object(const char *line, int obj_count[OBJ_COUNT], t_object **head)
 		return (0);
 	}
 	obj_count[type]++;
-	if (type == AMBIENT)
-		ret = parse_ambient(head, split + 1);
-	else if (type == CAMERA)
-		ret = parse_camera(head, split + 1);
-	else if (type == LIGHT)
-		ret = parse_light(head, split + 1);
-	else if (type == SPHERE)
-		ret = parse_sphere(head, split + 1);
-	else if (type == PLANE)
-		ret = parse_plane(head, split + 1);
-	else if (type == CYLINDER)
-		ret = parse_cylinder(head, split + 1);
-	else
-		ret = 0;
+	ret = handle_object_type(objects, type, split + 1);
 	free_2d_array(split);
 	return (ret);
 }
 
-void	print_object_types(t_object *objects)
-{
-	while (objects)
-	{
-		printf("%d\n", objects->type);
-		objects = objects->next;
-	}
-}
-
-int	is_valid_object_count(int count, t_objectid type)
+static int	is_valid_object_count(int count, t_objectid type)
 {
 	if (count == 1)
 		return (1);
@@ -388,7 +383,6 @@ int	parse_rt_file(t_scene_data *scene, int fd)
 	if (!is_valid_object_count(scene->obj_count[LIGHT], LIGHT))
 		return (0);
 	objects_to_scene_data(scene, objects);
-	// print_object_types(objects);
 	clear_objects(objects);
 	return (1);
 }
