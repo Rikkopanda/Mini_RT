@@ -20,23 +20,21 @@ void	free_2d_array(char **array)
 t_objectid	check_identifier(const char *id)
 {
 	unsigned int	len;
-	char			**split;
 
-	split = ft_split_charset(id, " \t\v\f\r\n");
-	len = ft_strlen(split[0]);
-	if (!ft_strncmp("A", split[0], len))
-		return (free_2d_array(split), AMBIENT);
-	else if (!ft_strncmp("C", split[0], len))
-		return (free_2d_array(split), CAMERA);
-	else if (!ft_strncmp("L", split[0], len))
-		return (free_2d_array(split), LIGHT);
-	else if (!ft_strncmp("sp", split[0], len))
-		return (free_2d_array(split), SPHERE);
-	else if (!ft_strncmp("pl", split[0], len))
-		return (free_2d_array(split), PLANE);
-	else if (!ft_strncmp("cy", split[0], len))
-		return (free_2d_array(split), CYLINDER);
-	return (free_2d_array(split), INVALID);
+	len = ft_strlen(id);
+	if (!ft_strncmp("A", id, len))
+		return ( AMBIENT);
+	else if (!ft_strncmp("C", id, len))
+		return (CAMERA);
+	else if (!ft_strncmp("L", id, len))
+		return (LIGHT);
+	else if (!ft_strncmp("sp", id, len))
+		return (SPHERE);
+	else if (!ft_strncmp("pl", id, len))
+		return (PLANE);
+	else if (!ft_strncmp("cy", id, len))
+		return (CYLINDER);
+	return (INVALID);
 }
 
 void	init_shapes(t_scene_data *scene, int id_count[OBJ_COUNT])
@@ -272,13 +270,17 @@ int	parse_object(const char *line, int obj_count[OBJ_COUNT], t_object **head)
 	int			ret;
 	t_objectid	type;
 
-	type = check_identifier(line);
-	if (type == INVALID)
-		return (0);
-	obj_count[type]++;
 	split = ft_split_charset(line, " \t\v\f\r\n");
 	if (!split)
 		return (perror("malloc error"), 0);
+	type = check_identifier(split[0]);
+	if (type == INVALID)
+	{
+		free_2d_array(split);
+		fprintf(stderr, "Error: %s: invalid identifier.\n", split[0]);
+		return (0);
+	}
+	obj_count[type]++;
 	if (type == AMBIENT)
 		ret = parse_ambient(head, split + 1);
 	else if (type == CAMERA)
@@ -306,6 +308,23 @@ void	print_object_types(t_object *objects)
 	}
 }
 
+int	is_valid_object_count(int count, t_objectid type)
+{
+	if (count == 1)
+		return (1);
+	if (count == 0)
+		fprintf(stderr, "Error: missing ");
+	else if (count > 1)
+		fprintf(stderr, "Error: too many ");
+	if (type == AMBIENT)
+		fprintf(stderr, "ambient object(s).\n");
+	else if (type == CAMERA)
+		fprintf(stderr, "camera object(s).\n");
+	else if (type == LIGHT)
+		fprintf(stderr, "light object(s).\n");
+	return (0);
+}
+
 int	parse_rt_file(t_scene_data *scene, int fd)
 {
 	char		*line;
@@ -321,22 +340,17 @@ int	parse_rt_file(t_scene_data *scene, int fd)
 		if (line[0] != '\n')
 		{
 			if (!parse_object(line, scene->obj_count, &objects))
-			{
-				fprintf(stderr, "Error: could not parse object.\n");
 				return (clear_objects(objects), free(line), 0);
-			}
 		}
 		free(line);
 		line = get_next_line(fd);
 	}
-	if (scene->obj_count[AMBIENT] != 1 || scene->obj_count[CAMERA] != 1 ||
-		scene->obj_count[LIGHT] != 1)
-	{
-		clear_objects(objects);
-		fprintf(stderr, "Error: invalid object count.\n");
+	if (!is_valid_object_count(scene->obj_count[AMBIENT], AMBIENT))
 		return (0);
-	}
-	(void)scene;
+	if (!is_valid_object_count(scene->obj_count[CAMERA], CAMERA))
+		return (0);
+	if (!is_valid_object_count(scene->obj_count[LIGHT], LIGHT))
+		return (0);
 	objects_to_scene_data(scene, objects);
 	// print_object_types(objects);
 	clear_objects(objects);
