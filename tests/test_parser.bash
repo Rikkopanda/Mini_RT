@@ -13,7 +13,7 @@ mem_args="--leak-check=full --show-leak-kinds=all --track-origins=yes"
 assert_output() {
 	local -r test_args=$1
 	local -r expected=$2
-	echo -e "$program $test_args: "
+	echo -e "$program $test_args"
 	if [ "$($program $test_args 2>&1)" != "$expected" ]; then
 		echo -e $red"[KO]"$reset
 		echo -e $red"output: "$($program $test_args)$reset
