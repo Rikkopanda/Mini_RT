@@ -149,6 +149,11 @@ int	parse_ambient(t_object **head, char **format)
 	if (!ambient)
 		return (perror("malloc error"), 0);
 	ambient->ratio = ft_atof(format[0]);
+	if (ambient->ratio < 0.0f || ambient->ratio > 1.0f)
+	{
+		fprintf(stderr, "Error: %.2f: ambient lighting ratio out of range [0.0, 1.0]\n", ambient->ratio);
+		return (free(ambient), 0);
+	}
 	ambient->hexcolor = ft_atohex(format[1]);
 	new = new_object(AMBIENT, ambient);
 	if (!new)
@@ -170,7 +175,19 @@ int	parse_camera(t_object **head, char **format)
 		return (perror("malloc error"), 0);
 	camera->location = atovec3f(format[0]);
 	camera->orientation = atovec3f(format[1]);
+	if (camera->orientation[0] < -1 || camera->orientation[0] > 1 ||
+		camera->orientation[1] < -1 || camera->orientation[1] > 1 ||
+		camera->orientation[2] < -1 || camera->orientation[2] > 1)
+	{
+		fprintf(stderr, "Error: camera orientation vector out of range [-1, 1]\n");
+		return (free(camera), 0);
+	}
 	camera->fov = ft_atoi(format[2]);
+	if (camera->fov < 0 || camera->fov > 180)
+	{
+		fprintf(stderr, "Error: %d: camera fov out of range [0, 180]\n", camera->fov);
+		return (free(camera), 0);
+	}
 	new = new_object(CAMERA, camera);
 	if (!new)
 		return (perror("malloc error"), free(camera), 0);
@@ -191,6 +208,11 @@ int	parse_light(t_object **head, char **format)
 		return (perror("malloc error"), 0);
 	light->location = atovec3f(format[0]);
 	light->ratio = ft_atof(format[1]);
+	if (light->ratio < 0.0f || light->ratio > 1.0f)
+	{
+		fprintf(stderr, "Error: %.2f: light brightness ratio out of range [0.0, 1.0]\n", light->ratio);
+		return (free(light), 0);
+	}
 	light->hexcolor = 0xFFFFFF;
 	new = new_object(LIGHT, light);
 	if (!new)
@@ -233,6 +255,13 @@ int	parse_plane(t_object **head, char **format)
 		return (perror("malloc error"), 0);
 	plane->location = atovec3f(format[0]);
 	plane->vector = atovec3f(format[1]);
+	if (plane->vector[0] < -1 || plane->vector[0] > 1 ||
+		plane->vector[1] < -1 || plane->vector[1] > 1 ||
+		plane->vector[2] < -1 || plane->vector[2] > 1)
+	{
+		fprintf(stderr, "Error: plane normal vector out of range [-1, 1]\n");
+		return (free(plane), 0);
+	}
 	plane->hexcolor = ft_atohex(format[2]);
 	new = new_object(PLANE, plane);
 	if (!new)
@@ -254,6 +283,13 @@ int	parse_cylinder(t_object **head, char **format)
 		return (perror("malloc error"), 0);
 	cylinder->location = atovec3f(format[0]);
 	cylinder->vector = atovec3f(format[1]);
+	if (cylinder->vector[0] < -1 || cylinder->vector[0] > 1 ||
+		cylinder->vector[1] < -1 || cylinder->vector[1] > 1 ||
+		cylinder->vector[2] < -1 || cylinder->vector[2] > 1)
+	{
+		fprintf(stderr, "Error: cylinder normal vector out of range [-1, 1]\n");
+		return (free(cylinder), 0);
+	}
 	cylinder->diameter = ft_atof(format[2]);
 	cylinder->height = ft_atof(format[3]);
 	cylinder->hexcolor = ft_atohex(format[4]);
