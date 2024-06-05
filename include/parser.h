@@ -1,6 +1,7 @@
 #ifndef PARSER_H
 # define PARSER_H
 # define OBJ_COUNT 6
+# include <stdlib.h>
 
 typedef enum e_objectid
 {
@@ -81,6 +82,8 @@ void		append_object(t_object **head, t_object *object);
 void		clear_objects(t_object *current);
 
 float		ft_atof(const char *s);
+char		**ft_split_charset(const char *s, const char *set);
 size_t		ft_chcount(const char *s, const char c);
 int			parse_rt_file(t_scene_data *scene, int fd);
+char		*ft_str_endswith(const char *s, const char *end);
 #endif

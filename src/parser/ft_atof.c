@@ -1,11 +1,5 @@
 #include "libft.h"
 
-static int	ft_isspace(int c)
-{
-	return (c == ' ' || c == '\t' || c == '\f' || \
-			c == '\v' || c == '\n' || c == '\r');
-}
-
 static int digit_count(int num)
 {
 	int	count;
@@ -28,7 +22,7 @@ float	ft_atof(const char *s)
 	char	*dot_pos;
 
 	dot_pos = 0;
-	sign = 0;
+	sign = 1;
 	integer = (float)ft_atoi(s);
 	if (integer < 0)
 		sign = -1;

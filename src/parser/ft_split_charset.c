@@ -79,7 +79,7 @@ static char	**splitting(char **str_arr, char *s, const char *set, int nbr_of)
 	{
 		while (ft_strchr(set, s[i]))
 			i++;
-		while (!ft_strchr(set, s[i - len]) && s[i + len] != '\0')
+		while (!ft_strchr(set, s[i + len]) && s[i + len] != '\0')
 			len++;
 		str_arr[j] = split_substr(s, i, len + 1);
 		if (str_arr[j] == NULL)

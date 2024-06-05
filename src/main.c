@@ -3,31 +3,6 @@
 #include "libft.h"
 #include "parser.h"
 
-// char	**ft_split_charset(const char *s, const char *set);
-
-int	ft_str_endswith(const char *s, const char *end)
-{
-	int	len;
-	int	i;
-
-	if (s == end)
-		return (1);
-	if (!s || !end)
-		return (0);
-	len = ft_strlen(end) - 1;
-	i = ft_strlen(s) - 1;
-	if (len < 0 || i < 0 || i < len)
-		return (0);
-	while (len >= 0)
-	{
-		if (end[len] != s[i])
-			return (0);
-		len--;
-		i--;
-	}
-	return (1);
-}
-
 int	main(int argc, char **argv)
 {
 	t_scene_data	scene;
