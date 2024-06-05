@@ -317,7 +317,7 @@ int	is_valid_object_count(int count, t_objectid type)
 	else if (count > 1)
 		fprintf(stderr, "Error: too many ");
 	if (type == AMBIENT)
-		fprintf(stderr, "ambient object(s).\n");
+		fprintf(stderr, "ambient element(s).\n");
 	else if (type == CAMERA)
 		fprintf(stderr, "camera object(s).\n");
 	else if (type == LIGHT)
