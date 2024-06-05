@@ -63,7 +63,7 @@ fclean: clean
 	rm -f ${NAME}
 
 tests:
-	make run_tests -C tests
+	make run_tests -C tests IS_INCLUDED=1
 
 re: fclean all
 

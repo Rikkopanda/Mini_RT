@@ -1,3 +1,7 @@
+ifndef IS_INCLUDED
+$(error This Makefile cannot be run directly)
+endif
+
 NAME_PARSER = ${DIR_BIN}/parser_tests
 PROGRAM = ../minirt
 
