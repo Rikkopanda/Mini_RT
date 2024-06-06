@@ -3,9 +3,9 @@ NAME = minirt
 CFLAGS = -Wall -Wextra -Werror
 
 DIR_LIB = lib
-LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/get_next_line -lgnl
+LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/get_next_line -lgnl -lm
 
-LINKS_MLX = -L${DIR_LIB}/minilibx-linux -lmlx
+LINKS_MLX = -L${DIR_LIB}/minilibx-linux -lmlx -lX11 -lXext
 
 INCLUDE = -I./include -I./${DIR_LIB}/minilibx-linux -I./${DIR_LIB}/libft -I./${DIR_LIB}/get_next_line
 
@@ -19,7 +19,7 @@ DIR_PARSER = parser
 DIR_PARSER_OBJECTS = objects
 DIR_OBJ = obj
 
-SRC = main.c
+SRC = main.c render_scene.c
 
 SRC_PARSER =	parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
 				ft_split_charset.c ft_str_endswith.c object_list.c \

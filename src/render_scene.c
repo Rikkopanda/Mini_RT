@@ -1,6 +1,7 @@
 #include "mlx.h"
 #include <X11/X.h>
 #include <stdlib.h>
+#include "parser.h"
 # define KEY_ESC 65307
 
 typedef struct
@@ -19,7 +20,7 @@ typedef struct
 	t_img_data	*img;
 }	t_mlx_data;
 
-int	rgb_to_hex(unsigned char r, unsigned char g, unsigned char b)
+static int	rgb_to_hex(unsigned char r, unsigned char g, unsigned char b)
 {
 	int hex;
 
@@ -29,7 +30,7 @@ int	rgb_to_hex(unsigned char r, unsigned char g, unsigned char b)
 	return (hex);
 }
 
-void	put_pixel_to_img(t_img_data *data, int x, int y, int color)
+static void	put_pixel_to_img(t_img_data *data, int x, int y, int color)
 {
 	char	*dst;
 
@@ -38,26 +39,25 @@ void	put_pixel_to_img(t_img_data *data, int x, int y, int color)
 	*(unsigned int *)dst = color;
 }
 
-int	end_loop(void *mlx_ptr)
+static int	end_loop(void *mlx_ptr)
 {
 	mlx_loop_end(mlx_ptr);
 	return (0);
 }
 
-int	key_hook(int key, t_mlx_data *data)
+static int	key_hook(int key, t_mlx_data *data)
 {
 	if (key == KEY_ESC)
 		end_loop(data->mlx);
 	return (0);
 }
 
-int	main(int argc, char **argv)
+void	render_scene(t_scene_data *scene)
 {
-	(void)argc;
-	(void)argv;
 	t_img_data	img;
 	t_mlx_data	data;
 
+	(void)scene;
 	data.mlx = mlx_init();
 	data.mlx_win = mlx_new_window(data.mlx, 1920, 1080, "minirt");
 	img.img = mlx_new_image(data.mlx, 1920, 1080);
@@ -73,5 +73,4 @@ int	main(int argc, char **argv)
 	mlx_destroy_window(data.mlx, data.mlx_win);
 	mlx_destroy_display(data.mlx);
 	free(data.mlx);
-	return (0);
 }
