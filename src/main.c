@@ -7,7 +7,7 @@
 static int	exit_error(int code, int fd, const char *arg)
 {
 	if (code == 0)
-		printf("Usage: %s examplefile.rt\n", arg);
+		printf("Usage: %s maps/[..]/examplefile.rt\n", arg);
 	else if (code == 1)
 		fprintf(stderr, "Error: %s: not an .rt file.\n", arg);
 	if (code != 0 && fd != -1)
