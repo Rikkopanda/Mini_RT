@@ -28,7 +28,7 @@ int	main(int argc, char **argv)
 		return (perror(argv[1]), 1);
 	if (!ft_str_endswith(argv[1], ".rt"))
 	{
-		printf("Error: %s: not an .rt file.\n", argv[1]);
+		fprintf(stderr, "Error: %s: not an .rt file.\n", argv[1]);
 		close(fd);
 		return (1);
 	}
