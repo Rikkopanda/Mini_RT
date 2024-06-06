@@ -70,13 +70,4 @@ t_object	*last_object(t_object *head);
 void		append_object(t_object **head, t_object *object);
 void		clear_objects(t_object *current);
 
-int			parse_ambient(t_object **objects, char **format);
-int			parse_camera(t_object **objects, char **format);
-int			parse_light(t_object **objects, char **format);
-int			parse_sphere(t_object **objects, char **format);
-int			parse_plane(t_object **objects, char **format);
-int			parse_cylinder(t_object **objects, char **format);
-int			parse_object(const char *line, int obj_count[OBJ_COUNT], \
-						t_object **objects);
-
 #endif

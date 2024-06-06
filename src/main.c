@@ -13,6 +13,7 @@ static int	exit_error(int code, int fd, const char *arg)
 		close(fd);
 	return (code);
 }
+
 static void	init_scene_data(t_scene_data *scene)
 {
 	scene->sphere = NULL;
@@ -33,7 +34,7 @@ int	main(int argc, char **argv)
 		return (perror(argv[1]), 1);
 	init_scene_data(&scene);
 	if (!ft_str_endswith(argv[1], ".rt"))
-		return(exit_error(1, fd, argv[1]));
+		return (exit_error(1, fd, argv[1]));
 	else if (!parse_rt_file(&scene, fd))
 		return (exit_error(2, fd, NULL));
 	close(fd);

@@ -80,7 +80,7 @@ static int	is_valid_scene(t_scene_data *scene)
 	return (1);
 }
 
-/* calling get_next_line with -1 as fd flushes buffer if its not empty */
+/* calling get_next_line with -1 as fd frees buffer if its not empty */
 
 int	parse_rt_file(t_scene_data *scene, int fd)
 {
