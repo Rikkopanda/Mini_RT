@@ -42,7 +42,7 @@ int	main(int argc, char **argv)
 	else if (!parse_rt_file(&scene, fd))
 		return (exit_error(2, fd, NULL));
 	close(fd);
-	// print_scene_data(scene);
+	print_scene_data(scene);
 	cleanup_scene_data(&scene);
 	return (0);
 }
