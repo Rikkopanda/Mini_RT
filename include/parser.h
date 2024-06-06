@@ -28,7 +28,6 @@ size_t		ft_2darray_size(char **arr);
 void		ft_free_2darray(char **array);
 void		cleanup_scene_data(t_scene_data *scene);
 
-
 int			parse_ambient(t_object **objects, char **format);
 int			parse_camera(t_object **objects, char **format);
 int			parse_light(t_object **objects, char **format);
