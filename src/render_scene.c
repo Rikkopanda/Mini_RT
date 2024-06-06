@@ -22,6 +22,12 @@ typedef struct
 	t_img_data	*img;
 }	t_mlx_data;
 
+typedef struct
+{
+	t_vec4f	origin;
+	t_vec4f	direction;
+}	t_ray;
+
 static void	put_pixel_to_img(t_img_data *data, int x, int y, int color)
 {
 	char	*dst;
