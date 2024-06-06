@@ -6,7 +6,7 @@
 /*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/12 12:50:44 by kwchu         #+#    #+#                 */
-/*   Updated: 2024/02/19 11:22:37 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/06 12:38:41 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,23 @@ static char	*ft_read_newline(int fd, char *buffer, char **leftover)
 	return (ft_splitline(leftover));
 }
 
+void	*flush_buffer(char *buffer)
+{
+	if (buffer)
+		free(buffer);
+	buffer = NULL;
+	return (NULL);
+}
+
 char	*get_next_line(int fd)
 {
 	char		*buffer;
 	char		*one_line;
 	static char	*leftover = NULL;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0)
+		return (flush_buffer(leftover));
+	if (BUFFER_SIZE <= 0)
 		return (NULL);
 	if (leftover == NULL)
 		leftover = gnl_strdup("");
