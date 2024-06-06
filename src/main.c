@@ -16,10 +16,13 @@ static int	exit_error(int code, int fd, const char *arg)
 
 static void	init_scene_data(t_scene_data *scene)
 {
+	ft_bzero(scene->obj_count, sizeof(*scene->obj_count) * OBJ_COUNT);
+	ft_bzero(&scene->ambient, sizeof(scene->ambient));
+	ft_bzero(&scene->camera, sizeof(scene->camera));
+	ft_bzero(&scene->light, sizeof(scene->light));
 	scene->sphere = NULL;
 	scene->plane = NULL;
 	scene->cylinder = NULL;
-	ft_bzero(scene->obj_count, sizeof(*scene->obj_count) * OBJ_COUNT);
 }
 
 int	main(int argc, char **argv)
