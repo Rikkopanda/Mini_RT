@@ -6,7 +6,6 @@ int	parse_cylinder(t_object **objects, char **format)
 	t_cylinder	*cylinder;
 	t_object	*new;
 
-	// fprintf(stderr, "parsing cylinder\n");
 	if (ft_2darray_size(format) != 5)
 		return (0);
 	cylinder = malloc(sizeof(*cylinder));
@@ -14,9 +13,7 @@ int	parse_cylinder(t_object **objects, char **format)
 		return (perror("malloc error"), 0);
 	cylinder->location = atovec3f(format[0]);
 	cylinder->vector = atovec3f(format[1]);
-	if (cylinder->vector[0] < -1 || cylinder->vector[0] > 1 ||
-		cylinder->vector[1] < -1 || cylinder->vector[1] > 1 ||
-		cylinder->vector[2] < -1 || cylinder->vector[2] > 1)
+	if (!ft_vec_in_range(cylinder->vector, -1, 1))
 	{
 		fprintf(stderr, "Error: cylinder normal vector out of range [-1, 1]\n");
 		return (free(cylinder), 0);

@@ -4,16 +4,6 @@
 #include "parser.h"
 #include "debug_info.h"
 
-static void	cleanup_scene_data(t_scene_data *scene)
-{
-	if (scene->sphere)
-		free(scene->sphere);
-	if (scene->plane)
-		free(scene->plane);
-	if (scene->cylinder)
-		free(scene->cylinder);
-}
-
 int	main(int argc, char **argv)
 {
 	t_scene_data	scene;
@@ -39,7 +29,7 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	close(fd);
-	print_scene_data(scene);
+	// print_scene_data(scene);
 	cleanup_scene_data(&scene);
 	return (0);
 }

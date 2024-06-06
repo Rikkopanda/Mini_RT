@@ -7,7 +7,6 @@ int	parse_sphere(t_object **head, char **format)
 	t_sphere	*sphere;
 	t_object	*new;
 
-	// fprintf(stderr, "parsing sphere\n");
 	if (ft_2darray_size(format) != 3)
 		return (0);
 	sphere = malloc(sizeof(*sphere));

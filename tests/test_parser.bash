@@ -1,8 +1,11 @@
 #!/bin/bash
 
+show_cursor="\033[?25h"
+hide_cursor="\033[?25l"
 green="\033[0;32m"
 red="\033[0;31m"
 cyan="\033[0;36m"
+purple="\033[35m"
 reset="\033[0m"
 
 program=bin/parser_tests
@@ -16,7 +19,7 @@ assert_output() {
 	echo -e "$program $test_args"
 	if [ "$($program $test_args 2>&1)" != "$expected" ]; then
 		echo -e $red"[KO]"$reset
-		echo -e $red"output: "$($program $test_args)$reset
+		echo -e $red"output: $($program $test_args)"$reset
 		echo -e $green"expected: $expected"$reset
 		exit 0
 	else
@@ -40,7 +43,11 @@ assert_mem() {
 	rm $tmpfile
 }
 
-echo -e $cyan"Running invalid input tests"$reset
+echo -ne $hide_cursor
+
+echo -e $purple"Running tests..."$reset
+
+echo -e $cyan"[invalid input]"$reset
 
 assert_output \
 	"" \
@@ -82,7 +89,7 @@ assert_output \
 	"$maps_path/toomanyobjects.rt" \
 	"Error: too many ambient element(s)."
 
-echo -e $cyan"Running valid input tests"$reset
+echo -e $cyan"\n[valid input]"$reset
 
 assert_output \
 	"$maps_path/multipleobjects.rt" \
@@ -95,3 +102,5 @@ assert_output \
 assert_output \
 	"$maps_path/subjectexample.rt" \
 	""
+
+echo -ne $show_cursor

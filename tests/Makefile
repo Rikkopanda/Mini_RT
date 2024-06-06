@@ -2,10 +2,6 @@ ifndef IS_INCLUDED
 $(error This Makefile cannot be run directly)
 endif
 
-ifeq ($(OBJ),)
-$(error OBJ is empty)
-endif
-
 NAME_PARSER = ${DIR_BIN}/parser_tests
 PROGRAM = ../minirt
 
@@ -22,6 +18,9 @@ DIR_OBJ = ../obj
 OBJ = ${shell find ${DIR_OBJ} -name "*.o"}
 OBJ := ${filter-out ${DIR_OBJ}/main.o, ${OBJ}}
 
+ifeq ($(OBJ),)
+$(error OBJ is empty)
+endif
 
 DIR_OBJ_TESTS = obj
 DIR_SRC_TESTS = .

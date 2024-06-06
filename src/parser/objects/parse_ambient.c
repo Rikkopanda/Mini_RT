@@ -6,7 +6,6 @@ int	parse_ambient(t_object **objects, char **format)
 	t_ambient	*ambient;
 	t_object	*new;
 
-	// fprintf(stderr, "parsing ambient\n");
 	if (ft_2darray_size(format) != 2)
 		return (0);
 	ambient = malloc(sizeof(*ambient));
@@ -15,7 +14,8 @@ int	parse_ambient(t_object **objects, char **format)
 	ambient->ratio = ft_atof(format[0]);
 	if (ambient->ratio < 0.0f || ambient->ratio > 1.0f)
 	{
-		fprintf(stderr, "Error: %.2f: ambient lighting ratio out of range [0.0, 1.0]\n", ambient->ratio);
+		fprintf(stderr, "Error: %.2f: ambient lighting ratio \
+out of range [0.0, 1.0]\n", ambient->ratio);
 		return (free(ambient), 0);
 	}
 	ambient->hexcolor = ft_atohex(format[1]);
