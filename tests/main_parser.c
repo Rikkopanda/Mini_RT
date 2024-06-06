@@ -39,7 +39,7 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	close(fd);
-	// print_scene_data(scene);
+	print_scene_data(scene);
 	cleanup_scene_data(&scene);
 	return (0);
 }
