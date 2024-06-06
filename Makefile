@@ -3,36 +3,50 @@ NAME = minirt
 CFLAGS = -Wall -Wextra -Werror
 
 DIR_LIB = lib
-LINKS = -L${DIR_LIB}/libft -lft -lXext -lX11 -lm -lz
+LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/get_next_line -lgnl
 
-LINKS_MLX = -L${DIR_LIB}/minilibx-linux -lmlx_Linux
+LINKS_MLX = -L${DIR_LIB}/minilibx-linux -lmlx
 
-INCLUDE = -I./include -I./${DIR_LIB}/minilibx-linux -I./${DIR_LIB}/libft
+INCLUDE = -I./include -I./${DIR_LIB}/minilibx-linux -I./${DIR_LIB}/libft -I./${DIR_LIB}/get_next_line
 
 MLX_LIB = ${DIR_LIB}/minilibx-linux/libmlx.a
 
 LIBFT = ${DIR_LIB}/libft/libft.a
+LIBGNL = ${DIR_LIB}/get_next_line/libgnl.a
 
 DIR_SRC = src
 DIR_PARSER = parser
+DIR_PARSER_OBJECTS = objects
 DIR_OBJ = obj
 
 SRC = main.c
-SRC_PARSER = parser.c
-SRC_PARSER := ${addprefix ${DIR_PARSER}/, ${SRC_PARSER}}
+
+SRC_PARSER =	parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
+				ft_split_charset.c ft_str_endswith.c object_list.c \
+				ft_min_max.c ft_atohex.c ft_free_2darray.c clamped_rgb_to_hex.c \
+				ft_vec_in_range.c cleanup_scene_data.c parse_object.c
+
+SRC_PARSER_OBJECTS =	parse_ambient.c parse_camera.c parse_cylinder.c \
+						parse_light.c parse_plane.c parse_sphere.c
+
+SRC_PARSER_OBJECTS := ${addprefix ${DIR_PARSER_OBJECTS}/, ${SRC_PARSER_OBJECTS}}
+SRC_PARSER := ${addprefix ${DIR_PARSER}/, ${SRC_PARSER} ${SRC_PARSER_OBJECTS}}
 
 SRC := ${addprefix ${DIR_SRC}/, ${SRC} ${SRC_PARSER}}
 
 OBJ = ${subst ${DIR_SRC}/, ${DIR_OBJ}/, ${SRC:.c=.o}}
 
-${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT}
-	cc ${CFLAGS} $< ${LINKS} ${LINKS_MLX} -o $@
+${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT} ${LIBGNL}
+	cc ${CFLAGS} $^ ${LINKS} ${LINKS_MLX} -o $@
 
 ${MLX_LIB}:
-	make -C minilibx-linux
+	make -C ${DIR_LIB}/minilibx-linux
 
 ${LIBFT}:
-	make -C libft
+	make -C ${DIR_LIB}/libft
+
+${LIBGNL}:
+	make -C ${DIR_LIB}/get_next_line
 
 ${OBJ}: ${DIR_OBJ}/%.o: ${DIR_SRC}/%.c
 	@mkdir -p ${@D}
@@ -40,12 +54,18 @@ ${OBJ}: ${DIR_OBJ}/%.o: ${DIR_SRC}/%.c
 
 all: ${NAME}
 
+debug: CFLAGS += -g
+debug: re
+
 clean:
 	rm -f ${OBJ}
 
 fclean: clean
 	rm -f ${NAME}
 
+tests: ${OBJ}
+	@make run_tests -C tests IS_INCLUDED=1
+
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re tests debug

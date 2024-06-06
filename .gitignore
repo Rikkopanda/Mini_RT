@@ -2,5 +2,7 @@ obj
 *.o
 *.out
 *.a
-.vscode
 minirt
+.vscode
+bin
+.log
