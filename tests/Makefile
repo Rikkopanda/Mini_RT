@@ -15,7 +15,7 @@ LINKS = -L../${DIR_LIB}/libft -lft -L../${DIR_LIB}/get_next_line -lgnl
 DIR_SRC = ../src
 DIR_OBJ = ../obj
 
-OBJ = ${shell find ${DIR_OBJ} -name "*.o"}
+OBJ = ${shell find ${DIR_OBJ}/parser -name "*.o"}
 OBJ := ${filter-out ${DIR_OBJ}/main.o, ${OBJ}}
 
 ifeq ($(OBJ),)
@@ -41,7 +41,7 @@ parser: ${NAME_PARSER}
 
 ${NAME_PARSER}: ${OBJ} ${OBJ_TESTS}
 	@mkdir -p ${@D}
-	cc ${CFLAGS} $^ ${LINKS} -o $@
+	cc ${CFLAGS} $^ ${LINKS} ${LINKS_MLX} -o $@
 
 clean:
 	rm -f ${OBJ_TESTS}

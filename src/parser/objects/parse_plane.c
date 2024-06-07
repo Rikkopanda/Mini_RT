@@ -7,7 +7,10 @@ int	parse_plane(t_object **objects, char **format)
 	t_object	*new;
 
 	if (ft_2darray_size(format) != 3)
+	{
+		fprintf(stderr, "Error: incorrect plane info format.\n");
 		return (0);
+	}
 	plane = malloc(sizeof(*plane));
 	if (!plane)
 		return (perror("malloc error"), 0);

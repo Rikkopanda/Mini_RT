@@ -7,7 +7,10 @@ int	parse_light(t_object **objects, char **format)
 	t_object	*new;
 
 	if (ft_2darray_size(format) != 3)
+	{
+		fprintf(stderr, "Error: incorrect light info format.\n");
 		return (0);
+	}
 	light = malloc(sizeof(*light));
 	if (!light)
 		return (perror("malloc error"), 0);

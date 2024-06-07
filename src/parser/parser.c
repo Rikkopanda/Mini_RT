@@ -52,28 +52,37 @@ static void	objects_to_scene_data(t_scene_data *scene, t_object *current)
 	}
 }
 
-static int	is_valid_object_count(int count, t_objectid type)
+static int	is_valid_object_count(int count, t_objectid type, int low, int high)
 {
-	if (count == 1)
-		return (1);
-	if (count == 0)
-		fprintf(stderr, "Error: missing ");
-	else if (count > 1)
+	if (count < low)
+		fprintf(stderr, "Error: not enough ");
+	else if (count > high)
 		fprintf(stderr, "Error: too many ");
+	else
+		return (1);
 	if (type == AMBIENT)
-		fprintf(stderr, "ambient element(s).\n");
+		fprintf(stderr, "ambient lighting elements. -> [%d-%d]\n", low, high);
 	else if (type == CAMERA)
-		fprintf(stderr, "camera object(s).\n");
+		fprintf(stderr, "cameras. -> [%d-%d]\n", low, high);
 	else if (type == LIGHT)
-		fprintf(stderr, "light object(s).\n");
+		fprintf(stderr, "lights. -> [%d-%d]\n", low, high);
+	else if (type == SPHERE)
+		fprintf(stderr, "spheres. -> [%d-%d]\n", low, high);
+	else if (type == PLANE)
+		fprintf(stderr, "planes. -> [%d-%d]\n", low, high);
+	else if (type == CYLINDER)
+		fprintf(stderr, "cylinders. -> [%d-%d]\n", low, high);
 	return (0);
 }
 
 static int	is_valid_scene(t_scene_data *scene)
 {
-	if (!is_valid_object_count(scene->obj_count[AMBIENT], AMBIENT) || \
-		!is_valid_object_count(scene->obj_count[CAMERA], CAMERA) || \
-		!is_valid_object_count(scene->obj_count[LIGHT], LIGHT))
+	if (!is_valid_object_count(scene->obj_count[AMBIENT], AMBIENT, 1, 1) || \
+		!is_valid_object_count(scene->obj_count[CAMERA], CAMERA, 1, 1) || \
+		!is_valid_object_count(scene->obj_count[LIGHT], LIGHT, 1, 1) || \
+		!is_valid_object_count(scene->obj_count[SPHERE], SPHERE, 0, 10) || \
+		!is_valid_object_count(scene->obj_count[PLANE], PLANE, 0, 10) || \
+		!is_valid_object_count(scene->obj_count[CYLINDER], CYLINDER, 0, 10))
 		return (0);
 	if (!init_shapes(scene, scene->obj_count))
 		return (0);

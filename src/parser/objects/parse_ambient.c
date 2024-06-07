@@ -7,7 +7,10 @@ int	parse_ambient(t_object **objects, char **format)
 	t_object	*new;
 
 	if (ft_2darray_size(format) != 2)
+	{
+		fprintf(stderr, "Error: incorrect ambient lighting info format.\n");
 		return (0);
+	}
 	ambient = malloc(sizeof(*ambient));
 	if (!ambient)
 		return (perror("malloc error"), 0);

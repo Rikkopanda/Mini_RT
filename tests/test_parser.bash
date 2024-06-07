@@ -11,6 +11,8 @@ reset="\033[0m"
 program=bin/parser_tests
 log_path=logs
 maps_path=../maps
+valid_map_dir=valid
+invalid_map_dir=invalid
 mem_args="--leak-check=full --show-leak-kinds=all --track-origins=yes"
 
 assert_output() {
@@ -21,6 +23,21 @@ assert_output() {
 		echo -e $red"[KO]"$reset
 		echo -e $red"output: $($program $test_args)"$reset
 		echo -e $green"expected: $expected"$reset
+		echo -ne $show_cursor
+		exit 0
+	else
+		echo -ne $green"[OK] "$reset
+	fi
+	assert_mem $test_args
+}
+
+assert_non_error() {
+	local -r test_args=$1
+	echo -e "$program $test_args"
+	if [ "$($program $test_args 2>&1 | grep -i "error")" != "" ]; then
+		echo -e $red"output: $($program $test_args)"$reset
+		echo -e $red"[KO]"$reset
+		echo -ne $show_cursor
 		exit 0
 	else
 		echo -ne $green"[OK] "$reset
@@ -36,6 +53,7 @@ assert_mem() {
 		echo -e $red"[MEM_KO]"$reset
 		cat $tmpfile
 		rm $tmpfile
+		echo -ne $show_cursor
 		exit 0
 	else
 		echo -e $green"[MEM_OK]"$reset
@@ -54,53 +72,61 @@ assert_output \
 	"Usage: $program examplefile.rt"
 
 assert_output \
-	"$maps_path/nonexistingfile.rt" \
-	"../maps/nonexistingfile.rt: No such file or directory"
+	"$maps_path/$invalid_map_dir/nonexistingfile.rt" \
+	"$maps_path/$invalid_map_dir/nonexistingfile.rt: No such file or directory"
 
 assert_output \
-	"$maps_path/invalidextension.txt" \
-	"Error: ../maps/invalidextension.txt: not an .rt file."
+	"$maps_path/$invalid_map_dir/invalidextension.txt" \
+	"Error: $maps_path/$invalid_map_dir/invalidextension.txt: not an .rt file."
 
 assert_output \
-	"$maps_path/invalididentifier.rt" \
+	"$maps_path/$invalid_map_dir/invalididentifier.rt" \
 	"Error: pla: invalid identifier."
 
 assert_output \
-	"$maps_path/missingambient.rt" \
-	"Error: missing ambient element(s)."
+	"$maps_path/$invalid_map_dir/missingambient.rt" \
+	"Error: not enough ambient lighting elements. -> [1-1]"
 
 assert_output \
-	"$maps_path/missingcamera.rt" \
-	"Error: missing camera object(s)."
+	"$maps_path/$invalid_map_dir/missingcamera.rt" \
+	"Error: not enough cameras. -> [1-1]"
 
 assert_output \
-	"$maps_path/missinglight.rt" \
-	"Error: missing light object(s)."
+	"$maps_path/$invalid_map_dir/missinglight.rt" \
+	"Error: not enough lights. -> [1-1]"
 
 assert_output \
-	"$maps_path/outofrangeratio.rt" \
+	"$maps_path/$invalid_map_dir/outofrangeratio.rt" \
 	"Error: 1.10: ambient lighting ratio out of range [0.0, 1.0]"
 
 assert_output \
-	"$maps_path/outofrangevector.rt" \
+	"$maps_path/$invalid_map_dir/outofrangevector.rt" \
 	"Error: camera orientation vector out of range [-1, 1]"
 
 assert_output \
-	"$maps_path/toomanyobjects.rt" \
-	"Error: too many ambient element(s)."
+	"$maps_path/$invalid_map_dir/toomanyambient.rt" \
+	"Error: too many ambient lighting elements. -> [1-1]"
+
+assert_output \
+	"$maps_path/$invalid_map_dir/toomanycameras.rt" \
+	"Error: too many cameras. -> [1-1]"
+
+assert_output \
+	"$maps_path/$invalid_map_dir/toomanylights.rt" \
+	"Error: too many lights. -> [1-1]"
 
 echo -e $cyan"\n[valid input]"$reset
 
-assert_output \
-	"$maps_path/multipleobjects.rt" \
+assert_non_error \
+	"$maps_path/$valid_map_dir/multipleobjects.rt" \
 	""
 
-assert_output \
-	"$maps_path/randomorder.rt" \
+assert_non_error \
+	"$maps_path/$valid_map_dir/randomorder.rt" \
 	""
 
-assert_output \
-	"$maps_path/subjectexample.rt" \
+assert_non_error \
+	"$maps_path/$valid_map_dir/example.rt" \
 	""
 
 echo -ne $show_cursor
