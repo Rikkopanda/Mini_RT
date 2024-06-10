@@ -49,7 +49,7 @@ assert_mem() {
 	local -r test_args=$1
 	local tmpfile=$(mktemp)
 	valgrind --log-file=$tmpfile $mem_args $program $test_args > /dev/null 2>&1
-	if ! grep -q "no leaks are possible" $tmpfile; then
+	if ! grep -qE 'no leaks are possible|Segmentation fault' $tmpfile; then
 		echo -e $red"[MEM_KO]"$reset
 		cat $tmpfile
 		rm $tmpfile

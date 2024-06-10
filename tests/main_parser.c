@@ -21,9 +21,7 @@ static void	init_scene_data(t_scene_data *scene)
 	ft_bzero(&scene->ambient, sizeof(scene->ambient));
 	ft_bzero(&scene->camera, sizeof(scene->camera));
 	ft_bzero(&scene->light, sizeof(scene->light));
-	scene->sphere = NULL;
-	scene->plane = NULL;
-	scene->cylinder = NULL;
+	scene->objects = NULL;
 }
 
 int	main(int argc, char **argv)
@@ -43,6 +41,6 @@ int	main(int argc, char **argv)
 		return (exit_error(2, fd, NULL));
 	close(fd);
 	print_scene_data(scene);
-	cleanup_scene_data(&scene);
+	clear_objects(scene.objects);
 	return (0);
 }

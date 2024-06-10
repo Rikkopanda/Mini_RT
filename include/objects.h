@@ -62,6 +62,7 @@ typedef struct s_object
 {
 	t_objectid		type;
 	void			*object;
+	const void		*intersect;
 	struct s_object	*next;
 }	t_object;
 
@@ -69,5 +70,6 @@ t_object	*new_object(t_objectid id, void *object);
 t_object	*last_object(t_object *head);
 void		append_object(t_object **head, t_object *object);
 void		clear_objects(t_object *current);
+void		object_removetype(t_object **head, t_objectid type);
 
 #endif

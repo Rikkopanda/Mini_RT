@@ -68,10 +68,14 @@ void	print_scene_data(t_scene_data data)
 	print_ambient_info(data.ambient);
 	print_camera_info(data.camera);
 	print_light_info(data.light);
-	for (int i = 0; i < data.obj_count[SPHERE]; i++)
-		print_sphere_info(data.sphere[i]);
-	for (int i = 0; i < data.obj_count[PLANE]; i++)
-		print_plane_info(data.plane[i]);
-	for (int i = 0; i < data.obj_count[CYLINDER]; i++)
-		print_cylinder_info(data.cylinder[i]);
+	while (data.objects)
+	{
+		if (data.objects->type == SPHERE)
+			print_sphere_info(*(t_sphere *)data.objects);
+		else if (data.objects->type == PLANE)
+			print_plane_info(*(t_plane *)data.objects);
+		else if (data.objects->type == CYLINDER)
+			print_cylinder_info(*(t_cylinder *)data.objects);
+		data.objects = data.objects->next;
+	}
 }
