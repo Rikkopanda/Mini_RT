@@ -6,11 +6,11 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:29:35 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/11 13:06:33 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/11 15:25:18 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minirt.h"
+#include "minirt.h"
 
 void	init_t_around_z(t_vec4f R[3], float rad)
 {
@@ -51,14 +51,14 @@ void	init_t_around_x(t_vec4f R[3], float rad)
 	R[2][2] = cos(rad);
 }
 
-void	init_result(t_vec4f M)
+void	init_result(t_vec4f *M)
 {
 	int	i;
 
 	i = 0;
 	while (i < 4)
 	{
-		M[i] = 0;
+		(*M)[i] = 0;
 		i++;
 	}
 }

@@ -1,5 +1,5 @@
 
-#include "../../include/minirt.h"
+#include "minirt.h"
 
 
 int	get_r(int color)
@@ -24,11 +24,11 @@ void init_rgb(t_color *color, int color_code)
 	color->rgb[2] = get_b(color_code);
 }
 
-void init_rgb_f(t_vec4f rgb_f, int rgb[3])
+void init_rgb_f(t_vec4f *rgb_f, int rgb[3])
 {
-	rgb_f[0] = rgb[0];
-	rgb_f[1] = rgb[1];
-	rgb_f[2] = rgb[2];
+	(*rgb_f)[0] = rgb[0];
+	(*rgb_f)[1] = rgb[1];
+	(*rgb_f)[2] = rgb[2];
 }
 void make_rgb_with_normalized_rgb_f(int rgb[3], t_vec4f rgb_f)
 {

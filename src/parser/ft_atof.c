@@ -1,4 +1,4 @@
-#include "../../include/minirt.h"
+#include "parser.h"
 
 
 static int	digit_count(int num)

@@ -1,5 +1,5 @@
-#include "../../include/minirt.h"
-
+#include "parser.h"
+#include "get_next_line.h"
 
 int	example_intersect(void)
 {

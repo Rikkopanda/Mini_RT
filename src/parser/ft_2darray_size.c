@@ -1,4 +1,4 @@
-#include "../../include/minirt.h"
+#include "parser.h"
 
 size_t	ft_2darray_size(char **arr)
 {

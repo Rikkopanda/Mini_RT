@@ -1,4 +1,4 @@
-#include "../../include/minirt.h"
+#include "parser.h"
 
 static char	*split_substr(char const *s, unsigned int start, size_t len)
 {

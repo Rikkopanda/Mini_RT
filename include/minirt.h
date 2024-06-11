@@ -12,7 +12,7 @@
 # include "../../lib/minilibx-linux/mlx.h"
 # include <stdlib.h>
 # include "libft.h"
-
+# define PRINT_DEBUG 1
 # include "color.h"
 // # include "parser.h"
 # include "objects.h"
@@ -48,7 +48,7 @@ enum keys
 enum e_hex_code
 {
 	NADA = -1,
-	BLACK = 0x000000FF,
+	BLACK = 0x000000,
 	GREY = 0x808080,
 	WHITE = 0xFFFFFFFF,
 	RED = 0x00FF00FF,
@@ -120,13 +120,27 @@ typedef struct s_ray_sending_tools
 	float	perpendicular_distance_vert_triangle;
 } t_ray_sending_tools;
 
-void	matrix_multiplication(t_vec4f comp[3], t_ray *ray, t_vec4f camera_vector);
-void	matrix_multiply_1x3_3x3(t_vec4f m1, t_vec4f m2[3], t_vec4f result_m);
-void	compilation_matrix(t_vec4f comp[3], t_vec4f R[3], t_vec4f R3[3]);
-void	copy_matrix(t_vec4f dst, t_vec4f src);
+typedef struct s_scene_data
+{
+	int			obj_count[OBJ_COUNT];
+	t_ambient	ambient;
+	t_camera	camera;
+	t_light		light;
+	t_ray		ray;
+	t_sphere	sphere;
+	t_object	*objects;
+	t_win		mlx;
+	t_img		image;
+}	t_scene_data;
 
-void	normalize_vector(t_vec4f v);
-void	vector_scaling(t_vec4f v, float scale);
+
+void	matrix_multiplication(t_vec4f comp[3], t_ray *ray, t_vec4f camera_vector);
+void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m);
+void	compilation_matrix(t_vec4f comp[3], t_vec4f R[3], t_vec4f R3[3]);
+void	copy_matrix(t_vec4f *dst, t_vec4f src);
+
+void	normalize_vector(t_vec4f *v);
+void	vector_scaling(t_vec4f *v, float scale);
 
 
 int		interpolate(int color_A, int color_B, float t);
@@ -135,7 +149,7 @@ void	init_ray_send_tools(t_ray_sending_tools *r_t, t_scene_data *scene);
 void	init_t_around_z(t_vec4f R[3], float rad);
 void	init_t_around_y(t_vec4f R[3], float rad);
 void	init_t_around_x(t_vec4f R[3], float rad);
-void	init_result(t_vec4f M);
+void	init_result(t_vec4f *M);
 float	ft_degr_to_rad(float x);
 float	ft_rad_to_degr(float x);
 int		render_scene(t_scene_data *data);
@@ -144,7 +158,7 @@ int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert);
 
 void	put_pixel_img(t_img img, int x, int y, int color);
 void	init_rgb(t_color *rgb, int color);
-void 	init_rgb_f(t_vec4f rgb_f, int rgb[3]);
+void 	init_rgb_f(t_vec4f *rgb_f, int rgb[3]);
 void	make_rgb_with_normalized_rgb_f(int rgb[3], t_vec4f rgb_f);
 int		create_color(int r, int g, int b);
 

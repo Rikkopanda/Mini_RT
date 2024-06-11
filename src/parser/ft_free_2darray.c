@@ -1,4 +1,4 @@
-#include "../../include/minirt.h"
+#include "parser.h"
 
 void	ft_free_2darray(char **array)
 {

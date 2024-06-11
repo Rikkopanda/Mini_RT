@@ -1,4 +1,4 @@
-#include "../../include/minirt.h"
+#include "parser.h"
 
 static void	swap_floats(float *a, float *b)
 {

@@ -19,7 +19,7 @@ typedef struct s_ray
 typedef struct s_ambient
 {
 	float	ratio;
-	int		hexcolor;
+	t_color	color;
 }	t_ambient;
 
 typedef struct s_camera
@@ -49,7 +49,7 @@ typedef struct s_plane
 {
 	t_vec4f	location;
 	t_vec4f	vector;
-	int		hexcolor;
+	t_color	color;
 }	t_plane;
 
 typedef struct s_cylinder
@@ -59,7 +59,7 @@ typedef struct s_cylinder
 	float	diameter;
 	float	radius;
 	float	height;
-	int		hexcolor;
+	t_color	color;
 }	t_cylinder;
 
 typedef enum e_objectid

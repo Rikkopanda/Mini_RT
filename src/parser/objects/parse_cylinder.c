@@ -42,7 +42,7 @@ int	parse_cylinder(t_object **objects, char **format)
 	cylinder->height = ft_atof(format[3]);
 	if (!has_valid_ranges(cylinder))
 		return (free(cylinder), 0);
-	cylinder->hexcolor = ft_atohex(format[4]);
+	cylinder->color.color_code = ft_atohex(format[4]);
 	new = new_object(CYLINDER, cylinder);
 	if (!new)
 		return (perror("malloc error"), free(cylinder), 0);

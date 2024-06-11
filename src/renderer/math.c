@@ -6,8 +6,8 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 17:17:07 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/11 13:05:13 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/11 13:45:57 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minirt.h"
+#include "minirt.h"

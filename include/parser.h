@@ -16,20 +16,6 @@
 // typedef struct s_win		t_win;
 // typedef struct s_img		t_img;
 
-
-typedef struct s_scene_data
-{
-	int			obj_count[OBJ_COUNT];
-	t_ambient	ambient;
-	t_camera	camera;
-	t_light		light;
-	t_ray		ray;
-	t_sphere	sphere;
-	t_object	*objects;
-	t_win		mlx;
-	t_img		image;
-}	t_scene_data;
-
 /* parser lib functions */
 int			ft_min(int a, int b);
 int			ft_max(int a, int b);

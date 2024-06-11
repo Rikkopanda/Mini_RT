@@ -1,4 +1,4 @@
-#include "../../include/minirt.h"
+#include "parser.h"
 
 t_vec4f	atovec3f(const char *a_vec3f)
 {

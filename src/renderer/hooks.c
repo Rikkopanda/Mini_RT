@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/11 12:04:34 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/11 15:47:27 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,30 +70,30 @@ int	rotate_view(int keysym, t_scene_data *data)
 	t_vec4f	add_angle[3];
 	t_vec4f	original_orientation_matrix;
 
-	copy_matrix(original_orientation_matrix, data->camera.orientation);
+	copy_matrix(&original_orientation_matrix, data->camera.orientation);
 	if (keysym == UP)
 	{
 		init_t_around_y(add_angle, DEGR_10_IN_RAD);
-		matrix_multiply_1x3_3x3(original_orientation_matrix, add_angle, data->camera.orientation);	
+		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);	
 		return (printf("rotating...\n"), TRUE);
 	}
 	else if (keysym == DOWN)
 	{
 		init_t_around_y(add_angle, -DEGR_10_IN_RAD);
-		matrix_multiply_1x3_3x3(original_orientation_matrix, add_angle, data->camera.orientation);
+		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
 		return (printf("rotating...\n"), TRUE);
 	}
 	else if (keysym == LEFT)
 	{
 		init_t_around_z(add_angle, DEGR_10_IN_RAD);
-		matrix_multiply_1x3_3x3(original_orientation_matrix, add_angle, data->camera.orientation);
+		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
 		return (printf("rotating...\n"), TRUE);
 
 	}
 	else if (keysym == RIGHT)
 	{
 		init_t_around_z(add_angle, -DEGR_10_IN_RAD);
-		matrix_multiply_1x3_3x3(original_orientation_matrix, add_angle, data->camera.orientation);
+		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
 		return (printf("rotating...\n"), TRUE);
 	}
 	return (FALSE);

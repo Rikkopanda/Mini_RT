@@ -2,7 +2,8 @@ NAME = minirt
 
 CFLAGS = #-Wall -Wextra -Werror
 # CFLAGS := -fsanitize=address
-# CFLAGS := -Ofast
+CFLAGS := -Ofast
+# CFLAGS := -g
 
 DIR_LIB = lib
 LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/get_next_line -lgnl

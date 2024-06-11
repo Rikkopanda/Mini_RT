@@ -1,4 +1,4 @@
-#include "../../include/minirt.h"
+#include "parser.h"
 
 
 static t_objectid	check_identifier(const char *id)

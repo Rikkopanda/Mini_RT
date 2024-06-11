@@ -22,7 +22,7 @@ int	parse_light(t_object **objects, char **format)
 out of range [0.0, 1.0]\n", light->ratio);
 		return (free(light), 0);
 	}
-	light->hexcolor = 0xFFFFFF;
+	light->color.color_code = 0xFFFFFF;
 	new = new_object(LIGHT, light);
 	if (!new)
 		return (perror("malloc error"), free(light), 0);

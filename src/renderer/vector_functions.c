@@ -1,15 +1,15 @@
 
-#include "../../include/minirt.h"
+#include "parser.h"
 
 /**
  * https://www.freetext.org/Introduction_to_Linear_Algebra/Basic_Vector_Operations/Normalization/
 */
-void normalize_vector(t_vec4f v)
+void normalize_vector(t_vec4f *v)
 {
 	float magnitude;
 	double squared;
 
-	squared = pow((double)v[0], 2) + pow((double)v[1], 2) + pow((double)v[2], 2);
+	squared = pow((double)(*v)[0], 2) + pow((double)(*v)[1], 2) + pow((double)(*v)[2], 2);
 	magnitude = (float)sqrt(squared);
 	vector_scaling(v, 1 / magnitude);
 }

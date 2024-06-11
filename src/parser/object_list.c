@@ -1,4 +1,4 @@
-#include "../../include/minirt.h"
+#include "parser.h"
 
 t_object	*new_object(t_objectid type, void *object)
 {

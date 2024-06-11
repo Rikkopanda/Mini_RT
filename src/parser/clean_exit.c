@@ -1,5 +1,5 @@
 
-#include "../../include/minirt.h"
+#include "parser.h"
 
 
 // void	clean_and_exit(t_exit_code code) // perhaps a buffer to clean everything
