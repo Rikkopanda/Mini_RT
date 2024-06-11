@@ -24,7 +24,7 @@ SRC = main.c render_scene.c
 SRC_PARSER =	parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
 				ft_split_charset.c ft_str_endswith.c object_list.c \
 				ft_min_max.c ft_atohex.c ft_free_2darray.c clamped_rgb_to_hex.c \
-				ft_vec_in_range.c cleanup_scene_data.c parse_object.c
+				ft_vec_in_range.c parse_object.c
 
 SRC_PARSER_OBJECTS =	parse_ambient.c parse_camera.c parse_cylinder.c \
 						parse_light.c parse_plane.c parse_sphere.c

@@ -21,9 +21,7 @@ static void	init_scene_data(t_scene_data *scene)
 	ft_bzero(&scene->ambient, sizeof(scene->ambient));
 	ft_bzero(&scene->camera, sizeof(scene->camera));
 	ft_bzero(&scene->light, sizeof(scene->light));
-	scene->sphere = NULL;
-	scene->plane = NULL;
-	scene->cylinder = NULL;
+	scene->objects = NULL;
 }
 
 int	main(int argc, char **argv)
@@ -42,7 +40,6 @@ int	main(int argc, char **argv)
 	else if (!parse_rt_file(&scene, fd))
 		return (exit_error(2, fd, NULL));
 	close(fd);
-	render_scene(&scene);
-	cleanup_scene_data(&scene);
+	clear_objects(scene.objects);
 	return (0);
 }

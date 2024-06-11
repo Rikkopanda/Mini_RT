@@ -9,9 +9,7 @@ typedef struct s_scene_data
 	t_ambient	ambient;
 	t_camera	camera;
 	t_light		light;
-	t_sphere	*sphere;
-	t_cylinder	*cylinder;
-	t_plane		*plane;
+	t_object	*objects;
 }	t_scene_data;
 
 /* parser lib functions */
@@ -26,7 +24,6 @@ char		**ft_split_charset(const char *s, const char *set);
 char		*ft_str_endswith(const char *s, const char *end);
 size_t		ft_2darray_size(char **arr);
 void		ft_free_2darray(char **array);
-void		cleanup_scene_data(t_scene_data *scene);
 
 int			parse_ambient(t_object **objects, char **format);
 int			parse_camera(t_object **objects, char **format);

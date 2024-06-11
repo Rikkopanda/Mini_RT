@@ -25,7 +25,10 @@ int	parse_camera(t_object **objects, char **format)
 	t_object	*new;
 
 	if (ft_2darray_size(format) != 3)
+	{
+		fprintf(stderr, "Error: incorrect camera info format.\n");
 		return (0);
+	}
 	camera = malloc(sizeof(*camera));
 	if (!camera)
 		return (perror("malloc error"), 0);

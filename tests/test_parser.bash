@@ -23,6 +23,21 @@ assert_output() {
 		echo -e $red"[KO]"$reset
 		echo -e $red"output: $($program $test_args)"$reset
 		echo -e $green"expected: $expected"$reset
+		echo -ne $show_cursor
+		exit 0
+	else
+		echo -ne $green"[OK] "$reset
+	fi
+	assert_mem $test_args
+}
+
+assert_non_error() {
+	local -r test_args=$1
+	echo -e "$program $test_args"
+	if [ "$($program $test_args 2>&1 | grep -i "error")" != "" ]; then
+		echo -e $red"output: $($program $test_args)"$reset
+		echo -e $red"[KO]"$reset
+		echo -ne $show_cursor
 		exit 0
 	else
 		echo -ne $green"[OK] "$reset
@@ -47,10 +62,11 @@ assert_mem() {
 	local -r test_args=$1
 	local tmpfile=$(mktemp)
 	valgrind --log-file=$tmpfile $mem_args $program $test_args > /dev/null 2>&1
-	if ! grep -q "no leaks are possible" $tmpfile; then
+	if ! grep -qE 'no leaks are possible|Segmentation fault' $tmpfile; then
 		echo -e $red"[MEM_KO]"$reset
 		cat $tmpfile
 		rm $tmpfile
+		echo -ne $show_cursor
 		exit 0
 	else
 		echo -e $green"[MEM_OK]"$reset

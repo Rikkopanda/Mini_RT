@@ -45,3 +45,30 @@ void	clear_objects(t_object *current)
 		free(tmp);
 	}
 }
+
+void	object_removetype(t_object **head, t_objectid type)
+{
+	t_object	*current;
+	t_object	*remove;
+
+	current = *head;
+	while (current->next)
+	{
+		if (current->next->type == type)
+		{
+			remove = current->next;
+			current->next = remove->next;
+			free(remove->object);
+			free(remove);
+		}
+		else
+			current = current->next;
+	}
+	if ((*head)->type == type)
+	{
+		remove = *head;
+		*head = remove->next;
+		free(remove->object);
+		free(remove);
+	}
+}
