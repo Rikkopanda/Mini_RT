@@ -2,6 +2,7 @@
 # define PARSER_H
 # include <stdlib.h>
 # include "objects.h"
+# include "minirt.h"
 
 typedef struct s_scene_data
 {
@@ -9,7 +10,11 @@ typedef struct s_scene_data
 	t_ambient	ambient;
 	t_camera	camera;
 	t_light		light;
+	t_ray		ray;
+	t_sphere	sphere;
 	t_object	*objects;
+	t_win		mlx;
+	t_img		image;
 }	t_scene_data;
 
 /* parser lib functions */

@@ -23,6 +23,7 @@ int	parse_sphere(t_object **head, char **format)
 cannot be 0 or lower.\n", sphere->diameter);
 		return (free(sphere), 0);
 	}
+	sphere->radius /= sphere->diameter;
 	sphere->hexcolor = ft_atohex(format[2]);
 	new = new_object(SPHERE, sphere);
 	if (!new)

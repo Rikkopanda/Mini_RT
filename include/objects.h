@@ -4,6 +4,14 @@
 
 typedef float	t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
 
+typedef struct s_ray
+{
+	t_vec4f	normalized_vec;
+	t_vec4f	scaled_vec;
+	t_vec4f	world_pos_of_scaled_vec;
+	float	step;
+} t_ray;
+
 typedef struct s_ambient
 {
 	float	ratio;
@@ -27,6 +35,7 @@ typedef struct s_light
 typedef struct s_sphere
 {
 	t_vec4f	location;
+	float	radius;
 	float	diameter;
 	int		hexcolor;
 }	t_sphere;
@@ -43,6 +52,7 @@ typedef struct s_cylinder
 	t_vec4f	location;
 	t_vec4f	vector;
 	float	diameter;
+	float	radius;
 	float	height;
 	int		hexcolor;
 }	t_cylinder;
