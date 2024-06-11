@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <fcntl.h>
-#include "../include/minirt.h"
-
+#include "minirt.h"
+#include "parser.h"
 
 static int	exit_error(int code, int fd, const char *arg)
 {

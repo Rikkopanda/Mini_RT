@@ -11,7 +11,10 @@
 # include <stdio.h>
 # include "../../lib/minilibx-linux/mlx.h"
 # include <stdlib.h>
-# include "parser.h"
+# include "libft.h"
+
+# include "color.h"
+// # include "parser.h"
 # include "objects.h"
 
 typedef float			t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
@@ -102,13 +105,6 @@ typedef struct s_transform_index
 	int	l;
 	int	m;
 }	t_transform_index;
-
-typedef struct s_color
-{
-	int		rgb[3];
-	int		color_code;
-	t_vec4f	rgb_f;
-} t_color;
 
 typedef struct s_ray_sending_tools
 {

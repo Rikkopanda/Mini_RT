@@ -3,9 +3,10 @@
 
 # define OBJ_COUNT 6
 # include "minirt.h"
+# include "color.h"
 
 typedef float	t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
-typedef struct s_color t_color;
+// typedef struct s_color	t_color;
 
 typedef struct s_ray
 {

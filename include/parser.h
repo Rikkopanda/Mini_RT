@@ -3,6 +3,7 @@
 # include <stdlib.h>
 
 # include "minirt.h"
+// # include "objects.h"
 
 // typedef float	t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
 // 
