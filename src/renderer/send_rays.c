@@ -6,13 +6,11 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/11 12:04:34 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/11 13:06:22 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
-#include "libft.h"
-#include "minirt.h"
+#include "../../include/minirt.h"
 
 /**
  * make factor fall between 0 and 1
@@ -267,7 +265,7 @@ void send_rays(t_scene_data *scene)
 		{
 			r_t.angle_horiz = atan2(-r_t.half_screen_width + r_t.pixel_x, r_t.perpendicular_distance_horiz_triangle);
 			color = NADA;
-			// color = hit_ray(scene, r_t.angle_horiz, r_t.angle_vert);
+			color = hit_ray(scene, r_t.angle_horiz, r_t.angle_vert);
 			if (color == NADA)
 			{
 				float unit_point;
@@ -275,6 +273,8 @@ void send_rays(t_scene_data *scene)
 				unit_point = (r_t.angle_vert - r_t.start_angle_vert) / ft_degr_to_rad((float)scene->camera.fov);
 				color = interpolate(WHITE, BLUE, unit_point);
 			}
+			// printf("%p", (void *)&scene->image);
+			// exit(0);
 			put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
 			r_t.pixel_x++;
 		}

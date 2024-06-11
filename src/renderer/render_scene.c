@@ -1,6 +1,4 @@
-#include "parser.h"
-#include "libft.h"
-#include "minirt.h"
+#include "../../include/minirt.h"
 
 void init_ray_send_tools(t_ray_sending_tools *r_t, t_scene_data *scene)
 {
@@ -12,12 +10,57 @@ void init_ray_send_tools(t_ray_sending_tools *r_t, t_scene_data *scene)
 	r_t->perpendicular_distance_vert_triangle = r_t->half_screen_height / (float)tan(r_t->start_angle_vert);
 }
 
-void render_scene(t_scene_data *data)
+void	init_light_source(t_scene_data *data)
 {
+	data->light.brightness = 1;
+	data->light.location[0] = 0;
+	data->light.location[1] = 0;
+	data->light.location[2] = -100;
+	data->light.color.rgb[0] = 255;
+	data->light.color.rgb[1] = 255;
+	data->light.color.rgb[2] = 255;
+}
+
+void	init_sphere(t_scene_data *data)
+{
+	data->sphere.radius = 30;
+	data->sphere.color.color_code = ORANGE;
+	data->sphere.location[0] = 100;
+	data->sphere.location[1] = 40;
+	data->sphere.location[2] = 0;
+}
+
+void	init_camera(t_scene_data *data)
+{
+	data->camera.fov = ft_degr_to_rad(70);
+	data->camera.orientation[0] = 1;
+	data->camera.orientation[1] = 0;
+	data->camera.orientation[2] = 0;
+	data->camera.location[0] = 0;
+	data->camera.location[1] = 0;
+	data->camera.location[2] = 0;
+}
+
+int render_scene(t_scene_data *data)
+{
+
+	data->mlx = new_window(WINDOW_HEIGHT, WINDOW_WIDTH, "My first window");
+	if (!data->mlx.win_ptr)
+		return (1);
+	data->image = new_img(WINDOW_HEIGHT, WINDOW_WIDTH, data->mlx);
+
+	mlx_key_hook(data->mlx.win_ptr, handle_input, data);
+
+	init_camera(&data);
+	init_light_source(&data);
+	init_sphere(&data);
+
+
 	send_rays(data);
 	mlx_put_image_to_window(data->mlx.mlx_ptr, data->mlx.win_ptr, data->image.img_ptr, 0, 0);
 	mlx_loop(data->mlx.mlx_ptr);
 	mlx_destroy_window(data->mlx.mlx_ptr, data->mlx.win_ptr);
 	destroy_image(data->image);
 	free(data->mlx.mlx_ptr);
+	return (0);
 }

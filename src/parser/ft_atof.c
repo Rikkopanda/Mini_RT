@@ -1,4 +1,5 @@
-#include "libft.h"
+#include "../../include/minirt.h"
+
 
 static int	digit_count(int num)
 {

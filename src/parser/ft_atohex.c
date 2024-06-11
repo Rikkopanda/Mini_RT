@@ -1,5 +1,4 @@
-#include "parser.h"
-#include "libft.h"
+#include "../../include/minirt.h"
 
 int	ft_atohex(const char *a_rgb)
 {

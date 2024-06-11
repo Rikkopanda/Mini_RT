@@ -1,5 +1,4 @@
-#include <stddef.h>
-#include "libft.h"
+#include "../../include/minirt.h"
 
 char	*ft_str_endswith(const char *s, const char *end)
 {

@@ -1,18 +1,21 @@
+// #pragma once
 
-#ifndef RENDERER_H
-# define RENDERER_H
+#ifndef MINIRT_H
+# define MINIRT_H
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
+// #pragma GCC diagnostic push
+// #pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
 
-#include <math.h>
-#include <unistd.h>
-#include <stdio.h>
-#include "../../lib/minilibx-linux/mlx.h"
-#include <stdlib.h>
-#include "minirt.h"
+# include <math.h>
+# include <unistd.h>
+# include <stdio.h>
+# include "../../lib/minilibx-linux/mlx.h"
+# include <stdlib.h>
+# include "parser.h"
+# include "objects.h"
 
-
+typedef float			t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
+typedef struct s_ray	t_ray;
 
 # define WINDOW_HEIGHT 800
 # define WINDOW_WIDTH 800
@@ -139,7 +142,7 @@ void	init_t_around_x(t_vec4f R[3], float rad);
 void	init_result(t_vec4f M);
 float	ft_degr_to_rad(float x);
 float	ft_rad_to_degr(float x);
-void	render_scene(t_scene_data *scene);
+int		render_scene(t_scene_data *data);
 void	send_rays(t_scene_data *scene);
 int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert);
 

@@ -6,13 +6,11 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/11 11:58:46 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/11 13:06:37 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
-#include "libft.h"
-#include "minirt.h"
+#include "../../include/minirt.h"
 
 void	init_comp_m(t_vec4f comp[3])
 {

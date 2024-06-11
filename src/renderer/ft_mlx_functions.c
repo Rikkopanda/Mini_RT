@@ -6,13 +6,12 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 09:27:12 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/11 12:06:45 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/11 13:06:40 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
-#include "libft.h"
-#include "minirt.h"
+#include "../../include/minirt.h"
+
 /**
  * mlxinit prepares essential data bts
 */

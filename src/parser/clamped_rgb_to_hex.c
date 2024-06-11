@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "../../include/minirt.h"
 
 int	clamped_rgb_to_hex(int r, int g, int b)
 {

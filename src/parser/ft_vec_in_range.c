@@ -1,4 +1,4 @@
-#include "objects.h"
+#include "../../include/minirt.h"
 
 static void	swap_floats(float *a, float *b)
 {

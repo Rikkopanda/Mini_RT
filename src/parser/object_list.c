@@ -1,5 +1,4 @@
-#include "parser.h"
-#include "libft.h"
+#include "../../include/minirt.h"
 
 t_object	*new_object(t_objectid type, void *object)
 {

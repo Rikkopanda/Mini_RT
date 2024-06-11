@@ -1,8 +1,20 @@
 #ifndef PARSER_H
 # define PARSER_H
 # include <stdlib.h>
-# include "objects.h"
+
 # include "minirt.h"
+
+// typedef float	t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
+// 
+// typedef struct s_object		t_object;
+// typedef struct t_ambient	t_ambient;
+// typedef struct s_camera		t_camera;
+// typedef struct s_light		t_light;
+// typedef struct s_ray		t_ray;
+// typedef struct s_sphere		t_sphere;
+// typedef struct s_win		t_win;
+// typedef struct s_img		t_img;
+
 
 typedef struct s_scene_data
 {

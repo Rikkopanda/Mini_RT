@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include "libft.h"
-#include "parser.h"
+#include "../../include/minirt.h"
+
 
 static t_objectid	check_identifier(const char *id)
 {

@@ -6,10 +6,8 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 17:17:07 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/11 10:27:59 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/11 13:05:13 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
-#include "libft.h"
-#include "minirt.h"
+#include "../../include/minirt.h"

@@ -1,15 +1,18 @@
 NAME = minirt
 
 CFLAGS = #-Wall -Wextra -Werror
+# CFLAGS := -fsanitize=address
+# CFLAGS := -Ofast
 
 DIR_LIB = lib
 LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/get_next_line -lgnl
 
-LINKS_MLX = -L${DIR_LIB}/minilibx-linux -lmlx
+LINKS_MLX = -L${DIR_LIB}/minilibx-linux -lmlx -lX11 -lXext -lm -lz
 
 INCLUDE = -I./include -I./${DIR_LIB}/minilibx-linux -I./${DIR_LIB}/libft -I./${DIR_LIB}/get_next_line
 
 MLX_LIB = ${DIR_LIB}/minilibx-linux/libmlx.a
+
 
 LIBFT = ${DIR_LIB}/libft/libft.a
 LIBGNL = ${DIR_LIB}/get_next_line/libgnl.a

@@ -1,8 +1,11 @@
 #ifndef OBJECTS_H
 # define OBJECTS_H
+
 # define OBJ_COUNT 6
+# include "minirt.h"
 
 typedef float	t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
+typedef struct s_color t_color;
 
 typedef struct s_ray
 {
@@ -29,7 +32,8 @@ typedef struct s_light
 {
 	t_vec4f	location;
 	float	ratio;
-	int		hexcolor;
+	t_color	color;
+	float	brightness; // range 0.0-1.0
 }	t_light;
 
 typedef struct s_sphere
@@ -37,7 +41,7 @@ typedef struct s_sphere
 	t_vec4f	location;
 	float	radius;
 	float	diameter;
-	int		hexcolor;
+	t_color	color;
 }	t_sphere;
 
 typedef struct s_plane

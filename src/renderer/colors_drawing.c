@@ -1,7 +1,6 @@
 
-#include "parser.h"
-#include "libft.h"
-#include "minirt.h"
+#include "../../include/minirt.h"
+
 
 int	get_r(int color)
 {

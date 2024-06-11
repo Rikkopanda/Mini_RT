@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <fcntl.h>
-#include "libft.h"
-#include "parser.h"
-#include "minirt.h"
+#include "../include/minirt.h"
+
 
 static int	exit_error(int code, int fd, const char *arg)
 {

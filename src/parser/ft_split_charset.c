@@ -1,4 +1,4 @@
-#include "libft.h"
+#include "../../include/minirt.h"
 
 static char	*split_substr(char const *s, unsigned int start, size_t len)
 {
