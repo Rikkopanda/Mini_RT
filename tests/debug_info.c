@@ -71,11 +71,11 @@ void	print_scene_data(t_scene_data data)
 	while (data.objects)
 	{
 		if (data.objects->type == SPHERE)
-			print_sphere_info(*(t_sphere *)data.objects);
+			print_sphere_info(*(t_sphere *)data.objects->object);
 		else if (data.objects->type == PLANE)
-			print_plane_info(*(t_plane *)data.objects);
+			print_plane_info(*(t_plane *)data.objects->object);
 		else if (data.objects->type == CYLINDER)
-			print_cylinder_info(*(t_cylinder *)data.objects);
+			print_cylinder_info(*(t_cylinder *)data.objects->object);
 		data.objects = data.objects->next;
 	}
 }
