@@ -20,6 +20,7 @@ void	init_light_source(t_scene_data *data)
 	data->light.location[0] = 0;
 	data->light.location[1] = 0;
 	data->light.location[2] = -100;
+	data->light.location[3] = 0;
 	data->light.color.rgb[0] = 255;
 	data->light.color.rgb[1] = 255;
 	data->light.color.rgb[2] = 255;
@@ -32,6 +33,7 @@ void	init_sphere(t_scene_data *data)
 	data->sphere.location[0] = 100;
 	data->sphere.location[1] = 40;
 	data->sphere.location[2] = 0;
+	data->sphere.location[3] = 0;
 }
 
 void	init_camera(t_scene_data *data)
@@ -40,9 +42,11 @@ void	init_camera(t_scene_data *data)
 	data->camera.orientation[0] = 1;
 	data->camera.orientation[1] = 0;
 	data->camera.orientation[2] = 0;
+	data->camera.orientation[3] = 0;
 	data->camera.location[0] = 0;
 	data->camera.location[1] = 0;
 	data->camera.location[2] = 0;
+	data->camera.location[3] = 0;
 	if (PRINT_DEBUG) printf("original\n");
 	if (PRINT_DEBUG) print_matrix_1_3(data->camera.orientation);
 }
@@ -59,8 +63,7 @@ int render_scene(t_scene_data *data)
 
 	init_camera(data);
 	init_light_source(data);
-	init_sphere(data);
-
+	// init_sphere(data);
 
 	send_rays(data);
 	mlx_put_image_to_window(data->mlx.mlx_ptr, data->mlx.win_ptr, data->image.img_ptr, 0, 0);

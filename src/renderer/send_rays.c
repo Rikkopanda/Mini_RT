@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/12 14:22:03 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/06/12 17:57:03 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ int visualize_sphere_normals(t_scene_data *data, t_vec4f res_xyz)
 	t_vec4f rgb_factor;
 	(void)data;
 	normalize_vector(&res_xyz);
-	copy_matrix(&rgb_factor, res_xyz);
+	// copy_matrix(&rgb_factor, res_xyz);
+	rgb_factor = res_xyz;
 	// fit_interpolation_range(&rgb_factor[0]);
 	// fit_interpolation_range(&rgb_factor[1]);
 	// fit_interpolation_range(&rgb_factor[2]);
@@ -50,17 +51,13 @@ t_vec4f	points_derived_vector(t_vec4f point_A, t_vec4f point_B)
 {
 	t_vec4f	result_vec;
 
-	result_vec[0] = point_B[0] - point_A[0]; 
- 	result_vec[1] = point_B[1] - point_A[1];  
-	result_vec[2] = point_B[2] - point_A[2];  
+	result_vec = point_B - point_A;   
 	return (result_vec);
 }
 
 void moved_vector_position(t_vec4f *result, t_vec4f target_vec, t_vec4f offset)
 {
-	(*result)[0] = target_vec[0] - offset[0]; 
- 	(*result)[1] = target_vec[1] - offset[1];  
-	(*result)[2] = target_vec[2] - offset[2];
+	(*result) = target_vec - offset; 
 }
 
 int	sphere_intersection_equation(t_scene_data *data, t_vec4f obj_to_ray_vec)
@@ -91,6 +88,7 @@ float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
 int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
 {
 	// printf("check if hit _____________________\n"); 
+	t_object *current;
 
 	moved_vector_position(&ray->world_pos_of_scaled_vec, ray->scaled_vec, data->camera.location);
 	// print_matrix_1_3(ray->world_pos_of_scaled_vec);
@@ -101,16 +99,37 @@ int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
 	// printf("obj to ray vec\n");
 	// print_matrix_1_3(*obj_to_ray_vec);
 	// sleep(1);
-	if (sphere_intersection_equation(data, *obj_to_ray_vec) == TRUE)
+	// while ()
+
+	current = data->objects;
+	while (current != NULL)
 	{
-		// visualize_sphere_normals(data, res_xyz);
-		// return (visualize_sphere_normals(data, (*obj_to_ray_vec)));
-		// int shadow_check = shadow_ray_to_light();
-		// return ();
-		return (data->sphere.color.color_code);
+		// printf("hallo\n");
+		if (current->intersect(current->object, *obj_to_ray_vec) == TRUE)
+		{
+			if (current->type == SPHERE)
+			{
+				t_sphere *object_ptr;
+				object_ptr = current->object;
+				// printf("color %d\n", object_ptr->color.color_code);
+				return (object_ptr->color.color_code);
+			}
+			// if (current->type == PLANE)
+			// {
+			// 	t_plane *object_ptr;
+			// 	object_ptr = current->object;
+			// 	return (object_ptr->color.color_code);
+			// }
+			// if (current->type == CYLINDER)
+			// {
+			// 	t_cylinder *object_ptr;
+			// 	object_ptr = current->object;
+			// 	return (object_ptr->color.color_code);
+			// }
+		}
+		current = current->next;
 	}
-	else
-		return ((int)NADA);
+	return ((int)NADA);
 	// usleep(5000);
 	// printf("result xyz %f %f %f\n", res_xyz[0], res_xyz[1], res_xyz[2]);
 	// printf("sqrt(squared) %f\n", sqrt(squared));
@@ -144,9 +163,7 @@ int	shadow_ray_to_light(t_scene_data *data)
 
 void	increment_vec4f(t_vec4f *scaled_vector, t_vec4f *normalize_vector)
 {
-	(*scaled_vector)[0] += (*normalize_vector)[0];
-	(*scaled_vector)[1] += (*normalize_vector)[1];
-	(*scaled_vector)[2] += (*normalize_vector)[2];
+	(*scaled_vector) += (*normalize_vector);
 }
 
 // float	*int_1x3_to_float_1x3(int i_arr[3])
@@ -182,8 +199,8 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 	// if (PRINT_DEBUG) printf("original\n");
 	// if (PRINT_DEBUG) print_matrix_1_3(data->camera.orientation);
 
-	init_result(&data->ray.normalized_vec);
-
+	// init_result(&data->ray.normalized_vec);
+	data->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
 	matrix_multiply_1x3_3x3(&data->camera.orientation, comp, &data->ray.normalized_vec);
 
 	// if (PRINT_DEBUG) printf("result:\n");
@@ -191,8 +208,9 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 	// if (PRINT_DEBUG) printf("_________________\n\n");
 	// sleep(2);
 	data->ray.step = 1;
-	init_result(&data->ray.scaled_vec);
-
+	// init_result(&data->ray.scaled_vec);
+	data->ray.scaled_vec = (t_vec4f){0, 0, 0, 0};
+	
 	while (data->ray.step < 200)
 	{
 		// int		resulting_color;
@@ -200,19 +218,30 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 		t_color	color;
 
 		increment_vec4f(&data->ray.scaled_vec, &data->ray.normalized_vec);
+		init_result(&obj_to_ray_vec);
+		init_result(&color.rgb_f);
 		color.color_code = check_if_hit(data, &data->ray, &obj_to_ray_vec);
+		
+		
+		// printf("color code: %d\n", color.color_code);
 		if (color.color_code != NADA)
 		{
 			t_vec4f surface_normal;
-			
-			copy_matrix(&surface_normal, obj_to_ray_vec);
+			// printf("color code: %d\n", color.color_code);
+
+			surface_normal = obj_to_ray_vec;
+
 			normalize_vector(&surface_normal);
 			// t_vec4f	*surface_point = &data->ray.scaled_vec;// must be actual surface point, not in the object! like now
+			// printf("color code: %d\n", color.color_code);
 
 			t_vec4f surface_to_light_ray = points_derived_vector(data->ray.scaled_vec, data->light.location);
+			// printf(" DEZE color code: %d\n", color.color_code);
 			normalize_vector(&surface_to_light_ray);
+			// printf(" DIE color code: %d\n", color.color_code);
 			float rgb_factor = dot_product_3d(surface_normal, surface_to_light_ray);
 			// printf("%f\n", rgb_factor);
+
 			if (rgb_factor <= 0)
 			{
 				// if (PRINT_DEBUG) printf("___________\nnormalized:\n");
@@ -224,8 +253,11 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 				return (BLACK);
 			}
 			// if (rgb_factor > 0.2)
-				// printf("black: %f\n", rgb_factor);
-			init_rgb(&color, data->sphere.color.color_code);
+			// 	printf("black after: %f\n", rgb_factor);
+			// printf("color code: %d\n", color.color_code);
+
+			init_rgb(&color, color.color_code);
+			// printf("bug gespot: %d -> %d %d %d\n", color.color_code, color.rgb[0], color.rgb[1], color.rgb[2]);
 			init_rgb_f(&color.rgb_f, color.rgb);
 			normalize_vector(&color.rgb_f);
 			vector_scaling(&color.rgb_f, rgb_factor);

@@ -1,25 +1,42 @@
 #include "parser.h"
 #include "get_next_line.h"
 
-int	example_intersect(void)
+int	example_intersect_sphere(void *object, t_vec4f obj_to_ray_vec)
 {
-	return (1);
+	t_sphere *sphere = (t_sphere *)object;
+
+	const float squared = powf(obj_to_ray_vec[0], 2) + powf(obj_to_ray_vec[1], 2) + powf(obj_to_ray_vec[2], 2);
+	// printf("hoi sphere:  %f, squared_root %f, color %d\n", sphere->radius, sqrtf(squared), sphere->color.color_code);
+	if (sqrtf(squared) <= sphere->radius)
+		return (TRUE);
+	else
+		return (FALSE);
+}
+
+int	example_intersect_cylinder(void *object, t_vec4f obj_to_ray_vec)
+{
+	return (FALSE);
+}
+
+int example_intersect_plane(void *object, t_vec4f obj_to_ray_vec)
+{
+	return (FALSE);
 }
 
 void	assign_intersect_functions(t_object *current)
 {
-	const void	*function_pointer[OBJ_COUNT] = {
+	const intersect_ptr	function_pointer[OBJ_COUNT] = {
 		NULL,
 		NULL,
 		NULL,
-		example_intersect,
-		example_intersect,
-		example_intersect,
+		example_intersect_sphere,
+		example_intersect_plane,
+		example_intersect_cylinder,
 	};
 
 	while (current)
 	{
-		current->intersect = function_pointer[current->type];
+		current->intersect = (intersect_ptr)function_pointer[current->type];
 		current = current->next;
 	}
 }
@@ -39,7 +56,7 @@ static void	objects_to_scene_data(t_scene_data *scene, t_object *current)
 	object_removetype(&scene->objects, AMBIENT);
 	object_removetype(&scene->objects, CAMERA);
 	object_removetype(&scene->objects, LIGHT);
-	assign_intersect_functions(current);
+	assign_intersect_functions(scene->objects);
 }
 
 static int	is_valid_object_count(int count, t_objectid type, int low, int high)
