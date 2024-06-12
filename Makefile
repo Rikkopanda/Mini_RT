@@ -1,12 +1,15 @@
 NAME = minirt
 
-CFLAGS = #-Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 # CFLAGS := -fsanitize=address
-CFLAGS := -Ofast
+CFLAGS += -Ofast
+# CFLAGS += -fPIE
 # CFLAGS := -g
 
+CC = gcc
+
 DIR_LIB = lib
-LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/get_next_line -lgnl
+LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/get_next_line -lgnl 
 
 LINKS_MLX = -L${DIR_LIB}/minilibx-linux -lmlx -lX11 -lXext -lm -lz
 
@@ -46,7 +49,7 @@ SRC := ${addprefix ${DIR_SRC}/, ${SRC} ${SRC_PARSER} ${SRC_RENDERER} }
 OBJ = ${subst ${DIR_SRC}/, ${DIR_OBJ}/, ${SRC:.c=.o}}
 
 ${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT} ${LIBGNL}
-	cc ${CFLAGS} $^ ${LINKS} ${LINKS_MLX} -o $@
+	$(CC) ${CFLAGS} $^ ${LINKS} ${LINKS_MLX} -o $@
 
 ${MLX_LIB}:
 	make -C ${DIR_LIB}/minilibx-linux
@@ -59,7 +62,7 @@ ${LIBGNL}:
 
 ${OBJ}: ${DIR_OBJ}/%.o: ${DIR_SRC}/%.c
 	@mkdir -p ${@D}
-	cc ${CFLAGS} ${INCLUDE} -c $< -o $@
+	$(CC) ${CFLAGS} ${INCLUDE} -c $< -o $@
 
 all: ${NAME}
 

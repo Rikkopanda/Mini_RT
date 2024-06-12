@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/11 16:18:12 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/12 14:22:03 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ int visualize_sphere_normals(t_scene_data *data, t_vec4f res_xyz)
 	(void)data;
 	normalize_vector(&res_xyz);
 	copy_matrix(&rgb_factor, res_xyz);
-	fit_interpolation_range(&rgb_factor[0]);
-	fit_interpolation_range(&rgb_factor[1]);
-	fit_interpolation_range(&rgb_factor[2]);
+	// fit_interpolation_range(&rgb_factor[0]);
+	// fit_interpolation_range(&rgb_factor[1]);
+	// fit_interpolation_range(&rgb_factor[2]);
 	// printf("factor\n");
 	// print_matrix_1_3(rgb_factor);
 	// printf("________________________\n");
@@ -121,9 +121,9 @@ int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
 int	shadow_ray_to_light(t_scene_data *data)
 {
 
-	t_vec4f	position[3];
-	t_vec4f	light_ray[3];
-
+	// t_vec4f	position[3];
+	// t_vec4f	light_ray[3];
+	(void)data;
 // 	int steps = 0;
 
 // 	position[0] = surface_point[0] + light_ray[0];
@@ -172,6 +172,7 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 
 	init_t_around_z(rota_horiz, angle_horiz);
 	init_t_around_y(rota_vert, angle_vert);
+	init_comp_m(comp);
 	compilation_matrix(comp, rota_horiz, rota_vert);
 
 	// if (PRINT_DEBUG) printf("angles horizontal, vertical: %f\t%f\n", ft_rad_to_degr(angle_horiz), ft_rad_to_degr(angle_vert));
@@ -194,7 +195,7 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 
 	while (data->ray.step < 200)
 	{
-		int		resulting_color;
+		// int		resulting_color;
 		t_vec4f	obj_to_ray_vec;
 		t_color	color;
 
@@ -206,13 +207,24 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 			
 			copy_matrix(&surface_normal, obj_to_ray_vec);
 			normalize_vector(&surface_normal);
-			t_vec4f	*surface_point = &data->ray.scaled_vec;// must be actual surface point, not in the object! like now
+			// t_vec4f	*surface_point = &data->ray.scaled_vec;// must be actual surface point, not in the object! like now
 
 			t_vec4f surface_to_light_ray = points_derived_vector(data->ray.scaled_vec, data->light.location);
 			normalize_vector(&surface_to_light_ray);
 			float rgb_factor = dot_product_3d(surface_normal, surface_to_light_ray);
+			// printf("%f\n", rgb_factor);
 			if (rgb_factor <= 0)
+			{
+				// if (PRINT_DEBUG) printf("___________\nnormalized:\n");
+				// if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
+				// printf("surface to light:\n");
+				// if (rgb_factor > 0.2)
+				// 	printf("black: %f\n", rgb_factor);
+				// print_matrix_1_3(surface_to_light_ray);
 				return (BLACK);
+			}
+			// if (rgb_factor > 0.2)
+				// printf("black: %f\n", rgb_factor);
 			init_rgb(&color, data->sphere.color.color_code);
 			init_rgb_f(&color.rgb_f, color.rgb);
 			normalize_vector(&color.rgb_f);
@@ -228,8 +240,6 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 	return (NADA);
 }
 /*
-		if (PRINT_DEBUG) printf("normalized:\n");
-		if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
 		print_matrix_1_3(data->ray.scaled_vec);
 
 		printf("dot product %f\n", dot_product_3d(surface_normal, surface_to_light_ray));
@@ -238,8 +248,6 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 
 	printf("surface normal:\n");
 	print_matrix_1_3(surface_normal);
-	printf("surface to light:\n");
-	print_matrix_1_3(surface_to_light_ray);
 	printf(" ______:\n");
 	sleep(1);
 	float one[3] = {-200, -200, -100};

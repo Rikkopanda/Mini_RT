@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hooks.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/11 15:47:27 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/12 14:22:22 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,13 @@ int	left_up_right_down_forward_backward(int keysym, t_scene_data *data)
 
 int move_lighting(int keysym, t_scene_data *data)
 {
-	if (keysym == 'j')
+	if (keysym == 'i')
 		return (data->light.location[0] += 50, 1);
-	else if (keysym == 'l')
-		return (data->light.location[0] -= 50, 1);	
 	else if (keysym == 'k')
+		return (data->light.location[0] -= 50, 1);	
+	else if (keysym == 'j')
 		return (data->light.location[1] += 50, 1);	
-	else if (keysym == 'i')
+	else if (keysym == 'l')
 		return (data->light.location[1] -= 50, 1);	
 	else if (keysym == 'o')
 		return (data->light.location[2] += 50, 1);	
@@ -70,6 +70,7 @@ int	rotate_view(int keysym, t_scene_data *data)
 	t_vec4f	add_angle[3];
 	t_vec4f	original_orientation_matrix;
 
+	init_comp_m(add_angle);
 	copy_matrix(&original_orientation_matrix, data->camera.orientation);
 	if (keysym == UP)
 	{

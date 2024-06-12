@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   matrix_tools.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/11 15:35:24 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/12 14:20:28 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	init_comp_m(t_vec4f comp[3])
 	while (i < 3)
 	{
 		j = 0;
-		while (j < 3)
+		while (j < 4)
 		{
 			comp[i][j] = 0;
 			j++;
@@ -86,6 +86,7 @@ void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m)
 		}
 		i++;
 	}
+	
 }
 
 
