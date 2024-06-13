@@ -54,10 +54,10 @@ void	init_camera(t_scene_data *data)
 int render_scene(t_scene_data *data)
 {
 
-	data->mlx = new_window(WINDOW_HEIGHT, WINDOW_WIDTH, "My first window");
+	data->mlx = new_window(WINDOW_WIDTH, WINDOW_HEIGHT, "My first window");
 	if (!data->mlx.win_ptr)
 		return (1);
-	data->image = new_img(WINDOW_HEIGHT, WINDOW_WIDTH, data->mlx);
+	data->image = new_img(WINDOW_WIDTH, WINDOW_HEIGHT, data->mlx);
 
 	mlx_key_hook(data->mlx.win_ptr, handle_input, data);
 
