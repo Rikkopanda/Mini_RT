@@ -1,5 +1,4 @@
 #include "parser.h"
-#include "libft.h"
 
 int	ft_atohex(const char *a_rgb)
 {

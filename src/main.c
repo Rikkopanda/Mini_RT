@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <fcntl.h>
-#include "libft.h"
+#include "minirt.h"
 #include "parser.h"
 
 static int	exit_error(int code, int fd, const char *arg)
@@ -39,6 +39,7 @@ int	main(int argc, char **argv)
 	else if (!parse_rt_file(&scene, fd))
 		return (exit_error(2, fd, NULL));
 	close(fd);
+	render_scene(&scene);
 	clear_objects(scene.objects);
 	return (0);
 }

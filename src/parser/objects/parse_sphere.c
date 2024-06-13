@@ -16,6 +16,8 @@ int	parse_sphere(t_object **head, char **format)
 	if (!sphere)
 		return (perror("malloc error"), 0);
 	sphere->location = atovec3f(format[0]);
+	print_sphere_data(sphere);
+	// exit(0);
 	sphere->diameter = ft_atof(format[1]);
 	if (sphere->diameter <= 0)
 	{
@@ -23,7 +25,8 @@ int	parse_sphere(t_object **head, char **format)
 cannot be 0 or lower.\n", sphere->diameter);
 		return (free(sphere), 0);
 	}
-	sphere->hexcolor = ft_atohex(format[2]);
+	sphere->radius = sphere->diameter / 2;
+	sphere->color.color_code = ft_atohex(format[2]);
 	new = new_object(SPHERE, sphere);
 	if (!new)
 		return (perror("malloc error"), free(sphere), 0);

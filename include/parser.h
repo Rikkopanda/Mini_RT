@@ -1,16 +1,20 @@
 #ifndef PARSER_H
 # define PARSER_H
 # include <stdlib.h>
-# include "objects.h"
 
-typedef struct s_scene_data
-{
-	int			obj_count[OBJ_COUNT];
-	t_ambient	ambient;
-	t_camera	camera;
-	t_light		light;
-	t_object	*objects;
-}	t_scene_data;
+# include "minirt.h"
+// # include "objects.h"
+
+// typedef float	t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
+// 
+// typedef struct s_object		t_object;
+// typedef struct t_ambient	t_ambient;
+// typedef struct s_camera		t_camera;
+// typedef struct s_light		t_light;
+// typedef struct s_ray		t_ray;
+// typedef struct s_sphere		t_sphere;
+// typedef struct s_win		t_win;
+// typedef struct s_img		t_img;
 
 /* parser lib functions */
 int			ft_min(int a, int b);
@@ -34,4 +38,9 @@ int			parse_cylinder(t_object **objects, char **format);
 int			parse_object(const char *line, int obj_count[OBJ_COUNT], \
 						t_object **objects);
 int			parse_rt_file(t_scene_data *scene, int fd);
+
+/* debug functions */
+void		print_sphere_data(void *object);
+void		print_camera_data(void *object);
+
 #endif
