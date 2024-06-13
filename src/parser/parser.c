@@ -45,7 +45,7 @@ t_vec4f t_get_location_sphere(void *object)
 
 void	assign_intersect_functions(t_object *current)
 {
-	const intersect_ptr	function_pointer[OBJ_COUNT] = {
+	const intersect_ptr	function_pointer[OBJ_TYPE_COUNT] = {
 		NULL,
 		NULL,
 		NULL,
@@ -53,7 +53,7 @@ void	assign_intersect_functions(t_object *current)
 		example_intersect_plane,
 		example_intersect_cylinder,
 	};
-	const print_data	function_pointer_data[OBJ_COUNT] = {
+	const print_data	function_pointer_data[OBJ_TYPE_COUNT] = {
 		NULL,
 		print_camera_data,
 		NULL,
@@ -61,7 +61,7 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 	};
-	const t_get_location	location_getters[OBJ_COUNT] = {
+	const t_get_location	location_getters[OBJ_TYPE_COUNT] = {
 		NULL,
 		NULL,
 		NULL,

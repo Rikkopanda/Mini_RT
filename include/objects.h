@@ -9,10 +9,8 @@ typedef float	t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
 
 typedef struct s_ray
 {
-	t_vec4f	normalized_vec;
-	t_vec4f	scaled_vec;
-	t_vec4f	world_pos_of_scaled_vec;
-	float	step;
+	t_vec4f	origin;
+	t_vec4f	direction;
 } t_ray;
 
 typedef struct s_ambient
@@ -70,7 +68,7 @@ typedef enum e_objectid
 	SPHERE,
 	PLANE,
 	CYLINDER,
-	OBJ_COUNT,
+	OBJ_TYPE_COUNT,
 }	t_objectid;
 
 typedef void (*print_data)(void *object);

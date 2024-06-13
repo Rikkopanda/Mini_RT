@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   send_rays.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/13 12:11:26 by rikverhoeve      ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   send_rays.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
+/*   Updated: 2024/06/13 17:08:15 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -323,31 +323,28 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 
 void send_rays(t_scene_data *scene)
 {
-	t_ray_sending_tools	r_t;
-	int					color;
+	int		ray_x;
+	int		ray_y;
+	float	pixel_camera_x;
+	float	pixel_camera_y;
+	t_ray	ray;
+	const float	aspect_ratio = WINDOW_WIDTH / WINDOW_HEIGHT;
 
-	init_ray_send_tools(&r_t, scene);
-	r_t.pixel_y = 0;
-	while (r_t.pixel_y <= WINDOW_HEIGHT)
+	ray_x = 0;
+	ray_y = 0;
+	while (ray_y < WINDOW_HEIGHT)
 	{
-		r_t.pixel_x = 0;
-		r_t.angle_vert = atan2(r_t.half_screen_height - r_t.pixel_y, r_t.perpendicular_distance_vert_triangle);
-		while (r_t.pixel_x <= WINDOW_WIDTH)
+		while (ray_x < WINDOW_WIDTH)
 		{
-			r_t.angle_horiz = atan2(-r_t.half_screen_width + r_t.pixel_x, r_t.perpendicular_distance_horiz_triangle);
-			color = NADA;
-			color = hit_ray(scene, r_t.angle_horiz, r_t.angle_vert);
-			if (color == NADA)
-			{
-				float unit_point;
-				// unit_point = world_horizon_opposed_to_ray(data);
-				unit_point = (r_t.angle_vert - r_t.start_angle_vert) / ft_degr_to_rad((float)scene->camera.fov);
-				color = interpolate(WHITE, BLUE, unit_point);
-			}
-			put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
-			r_t.pixel_x++;
+			pixel_camera_x = (2 * ((ray_x + 0.5) / WINDOW_WIDTH) - 1) * aspect_ratio * tanf(ft_degr_to_rad(scene->camera.fov) / 2);
+			pixel_camera_y = 1 - (2 * ((ray_y + 0.5) / WINDOW_HEIGHT)) * tanf(ft_degr_to_rad(scene->camera.fov) / 2);
+			ray.origin = (t_vec4f){0, 0, 0, 0};
+			ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 0};
+			normalize_vector(&ray.direction);
+			
+			ray_x++;
 		}
-		r_t.pixel_y++;
+		ray_y++;
 	}
 	printf("done\n");
 }

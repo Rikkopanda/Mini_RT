@@ -19,8 +19,8 @@
 
 typedef struct s_ray	t_ray;
 
-# define WINDOW_HEIGHT 800
-# define WINDOW_WIDTH 800
+# define WINDOW_HEIGHT 60
+# define WINDOW_WIDTH 60
 
 typedef struct s_scene_data t_scene_data;
 
@@ -121,7 +121,7 @@ typedef struct s_ray_sending_tools
 
 typedef struct s_scene_data
 {
-	int			obj_count[OBJ_COUNT];
+	int			obj_count[OBJ_TYPE_COUNT];
 	t_ambient	ambient;
 	t_camera	camera;
 	t_light		light;

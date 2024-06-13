@@ -16,7 +16,7 @@ int	parse_sphere(t_object **head, char **format)
 	if (!sphere)
 		return (perror("malloc error"), 0);
 	sphere->location = atovec3f(format[0]);
-	print_sphere_data(sphere);
+	// print_sphere_data(sphere);
 	// exit(0);
 	sphere->diameter = ft_atof(format[1]);
 	if (sphere->diameter <= 0)
