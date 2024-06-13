@@ -126,7 +126,6 @@ typedef struct s_scene_data
 	t_camera	camera;
 	t_light		light;
 	t_ray		ray;
-	t_sphere	sphere;
 	t_object	*objects;
 	t_win		mlx;
 	t_img		image;

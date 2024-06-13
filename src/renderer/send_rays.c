@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/13 12:09:43 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/13 12:11:26 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,15 @@ void moved_vector_position(t_vec4f *result, t_vec4f target_vec, t_vec4f offset)
 	(*result) = target_vec - offset; 
 }
 
-int	sphere_intersection_equation(t_scene_data *data, t_vec4f obj_to_ray_vec)
-{
-	const float squared = powf(obj_to_ray_vec[0], 2) + powf(obj_to_ray_vec[1], 2) + powf(obj_to_ray_vec[2], 2);
+// int	sphere_intersection_equation(t_scene_data *data, t_vec4f obj_to_ray_vec)
+// {
+// 	const float squared = powf(obj_to_ray_vec[0], 2) + powf(obj_to_ray_vec[1], 2) + powf(obj_to_ray_vec[2], 2);
 
-	if (sqrtf(squared) <= data->sphere.radius)
-		return (TRUE);
-	else
-		return (FALSE);
-}
+// 	if (sqrtf(squared) <= data->sphere.radius)
+// 		return (TRUE);
+// 	else
+// 		return (FALSE);
+// }
 
 float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B)
 {

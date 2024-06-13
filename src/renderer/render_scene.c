@@ -26,15 +26,15 @@ void	init_light_source(t_scene_data *data)
 	data->light.color.rgb[2] = 255;
 }
 
-void	init_sphere(t_scene_data *data)
-{
-	data->sphere.radius = 30;
-	data->sphere.color.color_code = ORANGE;
-	data->sphere.location[0] = 100;
-	data->sphere.location[1] = 40;
-	data->sphere.location[2] = 0;
-	data->sphere.location[3] = 0;
-}
+// void	init_sphere(t_scene_data *data)
+// {
+// 	data->sphere.radius = 30;
+// 	data->sphere.color.color_code = ORANGE;
+// 	data->sphere.location[0] = 100;
+// 	data->sphere.location[1] = 40;
+// 	data->sphere.location[2] = 0;
+// 	data->sphere.location[3] = 0;
+// }
 
 void	init_camera(t_scene_data *data)
 {
