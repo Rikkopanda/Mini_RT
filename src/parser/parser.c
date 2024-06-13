@@ -35,6 +35,13 @@ void print_camera_data(void *object)
 	printf("data camera: x, y, z %f %f %f\n", camera->location[0], camera->location[1], camera->location[2]);
 }
 
+t_vec4f t_get_location_sphere(void *object)
+{
+	t_sphere *sphere = (t_sphere *)object;
+
+	return sphere->location;
+}
+
 
 void	assign_intersect_functions(t_object *current)
 {
@@ -54,10 +61,19 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 	};
+	const t_get_location	location_getters[OBJ_COUNT] = {
+		NULL,
+		NULL,
+		NULL,
+		t_get_location_sphere,
+		NULL,
+		NULL,
+	};
 	while (current)
 	{
 		current->intersect = (intersect_ptr)function_pointer[current->type];
 		current->print_object_data = (print_data)function_pointer_data[current->type];
+		current->get_location = (t_get_location)location_getters[current->type];
 		current = current->next;
 	}
 }

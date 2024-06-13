@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/13 11:39:13 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/13 12:09:43 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,17 +88,23 @@ float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
 */
 int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
 {
-	// printf("check if hit _____________________\n"); 
+	// printf("check if hit _____________________\n");
+
 	t_object *current;
 
+	// printf("sphere.location\n");
+	// print_matrix_1_3(data->sphere.location);
 	moved_vector_position(&ray->world_pos_of_scaled_vec, ray->scaled_vec, data->camera.location);
+
+	// printf("world_pos_of_scaled_vec\n");
 	// print_matrix_1_3(ray->world_pos_of_scaled_vec);
-	
-	*obj_to_ray_vec = points_derived_vector(data->sphere.location, ray->world_pos_of_scaled_vec);
+	// printf("sphere.location\n");
+	// print_matrix_1_3(data->sphere.location);
+
+
 	// printf("ray scaled\n"); 
 	// print_matrix_1_3(ray->scaled_vec);
-	// printf("obj to ray vec\n");
-	// print_matrix_1_3(*obj_to_ray_vec);
+
 	// sleep(1);
 	// while ()
 
@@ -110,6 +116,18 @@ int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
 
 		// printf("hallo\n");
 		// current->print_object_data(current->object);
+		if (current->type == SPHERE)
+		{
+			// t_sphere *object_ptr;
+			// object_ptr = current->object;
+			// printf("color %d\n", object_ptr->color.color_code);
+			*obj_to_ray_vec = points_derived_vector(current->get_location(current->object), ray->world_pos_of_scaled_vec);
+			// printf("sphere.location\n");
+			// print_matrix_1_3(current->get_location(current->object));
+			// printf("obj to ray vec\n");
+			// print_matrix_1_3(*obj_to_ray_vec);
+			// return (object_ptr->color.color_code);
+		}
 		if (current->intersect(current->object, *obj_to_ray_vec) == TRUE)
 		{
 			if (current->type == SPHERE)
@@ -235,6 +253,8 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 			// printf("color code: %d\n", color.color_code);
 
 			surface_normal = obj_to_ray_vec;
+			// printf("____________________\n scaled HIT: ");
+			// if (PRINT_DEBUG) print_matrix_1_3(data->ray.scaled_vec);
 			// print_matrix_1_3(surface_normal);
 			normalize_vector(&surface_normal);
 			// t_vec4f	*surface_point = &data->ray.scaled_vec;// must be actual surface point, not in the object! like now
@@ -338,8 +358,6 @@ t = clock() - t;
 double time_taken = ((double)t)/CLOCKS_PER_SEC; // calculate the elapsed time
 printf("The program took %f seconds to execute\n
 ", time_taken);
-
-
 // printf("angles horizontal, vertical: 1  %f\t%f\n", ft_rad_to_degr(r_t.angle_horiz), ft_rad_to_degr(r_t.angle_vert));
 // printf("perp hori %f\n", r_t.perpendicular_distance_horiz_triangle);
 // printf("perp verti %f\n", r_t.perpendicular_distance_vert_triangle);
