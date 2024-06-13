@@ -4,8 +4,13 @@ void init_ray_send_tools(t_ray_sending_tools *r_t, t_scene_data *scene)
 {
 	r_t->half_screen_width = WINDOW_WIDTH * 0.5;
 	r_t->half_screen_height = WINDOW_HEIGHT * 0.5;
+
+	float aspect_ratio = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
+	printf("aspect ratio %f\n", aspect_ratio);
 	r_t->start_angle_horiz = ft_degr_to_rad((float)scene->camera.fov)  * 0.5;
-	r_t->start_angle_vert = ft_degr_to_rad((float)scene->camera.fov) * 0.5;
+	r_t->start_angle_vert = r_t->start_angle_horiz / aspect_ratio;
+	printf("fov verti %f\t horizontal %f\n", r_t->start_angle_horiz, r_t->start_angle_vert);
+
 	printf("%f\t%f\n", r_t->start_angle_horiz, r_t->start_angle_vert);
 	r_t->perpendicular_distance_horiz_triangle = r_t->half_screen_width / (float)tan(r_t->start_angle_horiz);
 	r_t->perpendicular_distance_vert_triangle = r_t->half_screen_height / (float)tan(r_t->start_angle_vert);
@@ -38,7 +43,7 @@ void	init_light_source(t_scene_data *data)
 
 void	init_camera(t_scene_data *data)
 {
-	data->camera.fov = 70;
+	// data->camera.fov = 70;
 	data->camera.orientation[0] = 1;
 	data->camera.orientation[1] = 0;
 	data->camera.orientation[2] = 0;
@@ -51,6 +56,17 @@ void	init_camera(t_scene_data *data)
 	if (PRINT_DEBUG) print_matrix_1_3(data->camera.orientation);
 }
 
+// void determine_window_ratio(t_scene_data *data)
+// {
+// 	// float verti_triangle_angle = ft_degr_to_rad((float)data->camera.fov_verti) * 0.5;
+// 	// float horiz_triangle_angle = ft_degr_to_rad((float)data->camera.fov_horiz) * 0.5;
+
+// 	// float fov_ratio
+
+// 	// float pixel_
+
+// }
+
 int render_scene(t_scene_data *data)
 {
 
@@ -60,6 +76,9 @@ int render_scene(t_scene_data *data)
 	data->image = new_img(WINDOW_WIDTH, WINDOW_HEIGHT, data->mlx);
 
 	mlx_key_hook(data->mlx.win_ptr, handle_input, data);
+
+	// determine_window_ratio(data);
+
 
 	init_camera(data);
 	init_light_source(data);

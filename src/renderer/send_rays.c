@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/13 12:11:26 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/13 17:49:45 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,6 +325,7 @@ void send_rays(t_scene_data *scene)
 {
 	t_ray_sending_tools	r_t;
 	int					color;
+	const float aspect_ratio = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
 
 	init_ray_send_tools(&r_t, scene);
 	r_t.pixel_y = 0;
@@ -337,14 +338,15 @@ void send_rays(t_scene_data *scene)
 			r_t.angle_horiz = atan2(-r_t.half_screen_width + r_t.pixel_x, r_t.perpendicular_distance_horiz_triangle);
 			color = NADA;
 			color = hit_ray(scene, r_t.angle_horiz, r_t.angle_vert);
-			if (color == NADA)
+			if (color != NADA)
 			{
-				float unit_point;
+				// float unit_point;
 				// unit_point = world_horizon_opposed_to_ray(data);
-				unit_point = (r_t.angle_vert - r_t.start_angle_vert) / ft_degr_to_rad((float)scene->camera.fov);
-				color = interpolate(WHITE, BLUE, unit_point);
+				// unit_point = (r_t.angle_vert - r_t.start_angle_vert) / ft_degr_to_rad((float)scene->camera.fov / aspect_ratio);
+				// color = interpolate(GREEN, BLUE, unit_point);
+				put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
 			}
-			put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
+			// put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
 			r_t.pixel_x++;
 		}
 		r_t.pixel_y++;
