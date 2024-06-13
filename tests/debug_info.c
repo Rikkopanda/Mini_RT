@@ -10,7 +10,7 @@ void	print_ambient_info(t_ambient ambient)
 {
 	printf("[ambient]\n");
 	printf("ratio: %.2f\n", ambient.ratio);
-	printf("hexcolor: #%06X\n", ambient.hexcolor);
+	printf("hexcolor: #%06X\n", ambient.color.color_code);
 }
 
 void	print_sphere_info(t_sphere sphere)
@@ -19,7 +19,7 @@ void	print_sphere_info(t_sphere sphere)
 	printf("location: ");
 	print_vec4f(sphere.location);
 	printf("\ndiameter: %.2f", sphere.diameter);
-	printf("\nhexcolor: #%06X\n", sphere.hexcolor);
+	printf("\nhexcolor: #%06X\n", sphere.color.color_code);
 }
 
 void	print_plane_info(t_plane plane)
@@ -29,7 +29,7 @@ void	print_plane_info(t_plane plane)
 	print_vec4f(plane.location);
 	printf("\nvector: ");
 	print_vec4f(plane.vector);
-	printf("\nhexcolor: #%06X\n", plane.hexcolor);
+	printf("\nhexcolor: #%06X\n", plane.color.color_code);
 }
 
 void	print_cylinder_info(t_cylinder cylinder)
@@ -41,7 +41,7 @@ void	print_cylinder_info(t_cylinder cylinder)
 	print_vec4f(cylinder.vector);
 	printf("\ndiameter: %.2f", cylinder.diameter);
 	printf("\nheight: %.2f", cylinder.height);
-	printf("\nhexcolor: #%06X\n", cylinder.hexcolor);
+	printf("\nhexcolor: #%06X\n", cylinder.color.color_code);
 }
 
 void	print_camera_info(t_camera camera)
@@ -60,7 +60,7 @@ void	print_light_info(t_light light)
 	printf("location: ");
 	print_vec4f(light.location);
 	printf("\nratio: %.2f", light.ratio);
-	printf("\nhexcolor: #%06X\n", light.hexcolor);
+	printf("\nhexcolor: #%06X\n", light.color.color_code);
 }
 
 void	print_scene_data(t_scene_data data)

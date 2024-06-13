@@ -1,5 +1,4 @@
 #include "parser.h"
-#include "libft.h"
 
 t_vec4f	atovec3f(const char *a_vec3f)
 {

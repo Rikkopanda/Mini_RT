@@ -21,7 +21,7 @@ int	parse_ambient(t_object **objects, char **format)
 out of range [0.0, 1.0]\n", ambient->ratio);
 		return (free(ambient), 0);
 	}
-	ambient->hexcolor = ft_atohex(format[1]);
+	ambient->color.color_code = ft_atohex(format[1]);
 	new = new_object(AMBIENT, ambient);
 	if (!new)
 		return (perror("malloc error"), free(ambient), 0);

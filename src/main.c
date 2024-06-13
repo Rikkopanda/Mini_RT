@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <fcntl.h>
-#include "libft.h"
+#include "minirt.h"
 #include "parser.h"
 #include "minirt.h"
 
