@@ -17,7 +17,6 @@
 // # include "parser.h"
 # include "objects.h"
 
-typedef float			t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
 typedef struct s_ray	t_ray;
 
 # define WINDOW_HEIGHT 800

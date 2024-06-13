@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/12 17:57:03 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/06/13 11:39:13 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
+#include "parser.h"
 
 /**
  * make factor fall between 0 and 1
@@ -104,7 +105,11 @@ int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
 	current = data->objects;
 	while (current != NULL)
 	{
+		// print_camera_data(data->camera);
+		// printf("data camera: x, y, z %f %f %f\n", data->camera.location[0], data->camera.location[1], data->camera.location[2]);
+
 		// printf("hallo\n");
+		// current->print_object_data(current->object);
 		if (current->intersect(current->object, *obj_to_ray_vec) == TRUE)
 		{
 			if (current->type == SPHERE)
@@ -222,7 +227,7 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 		init_result(&color.rgb_f);
 		color.color_code = check_if_hit(data, &data->ray, &obj_to_ray_vec);
 		
-		
+		// printf("ptr:1 %p\n", &obj_to_ray_vec);
 		// printf("color code: %d\n", color.color_code);
 		if (color.color_code != NADA)
 		{
@@ -230,7 +235,7 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
 			// printf("color code: %d\n", color.color_code);
 
 			surface_normal = obj_to_ray_vec;
-
+			// print_matrix_1_3(surface_normal);
 			normalize_vector(&surface_normal);
 			// t_vec4f	*surface_point = &data->ray.scaled_vec;// must be actual surface point, not in the object! like now
 			// printf("color code: %d\n", color.color_code);
@@ -324,6 +329,7 @@ void send_rays(t_scene_data *scene)
 		}
 		r_t.pixel_y++;
 	}
+	printf("done\n");
 }
 /*
 clock_t				t;
@@ -332,7 +338,6 @@ t = clock() - t;
 double time_taken = ((double)t)/CLOCKS_PER_SEC; // calculate the elapsed time
 printf("The program took %f seconds to execute\n
 ", time_taken);
-printf("done\n");
 
 
 // printf("angles horizontal, vertical: 1  %f\t%f\n", ft_rad_to_degr(r_t.angle_horiz), ft_rad_to_degr(r_t.angle_vert));

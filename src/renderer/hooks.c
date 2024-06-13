@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hooks.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/12 14:33:31 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/06/13 11:01:41 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,17 @@ int	extra_keys(int keysym, t_scene_data *data)
 int	left_up_right_down_forward_backward(int keysym, t_scene_data *data)
 {
 	if (keysym == 'w')
-		return (data->camera.location[0] += 10, 1);
+		return (printf("move camara x+...\n"), data->camera.location[0] += 10, 1);
 	else if (keysym == 's')
-		return (data->camera.location[0] -= 10, 1);	
+		return (printf("move camara x-...\n"), data->camera.location[0] -= 10, 1);	
 	else if (keysym == 'a')
-		return (data->camera.location[1] += 10, 1);	
+		return (printf("move camara y+...\n"), data->camera.location[1] += 10, 1);	
 	else if (keysym == 'd')
-		return (data->camera.location[1] -= 10, 1);	
+		return (printf("move camara y-...\n"), data->camera.location[1] -= 10, 1);	
 	else if (keysym == 'r')
-		return (data->camera.location[2] += 10, 1);	
+		return (printf("move camara z+...\n"), data->camera.location[2] += 10, 1);	
 	else if (keysym == 'f')
-		return (data->camera.location[2] -= 10, 1);
+		return (printf("move camara z-...\n"), data->camera.location[2] -= 10, 1);
 	else
 		return (0);
 }
@@ -43,17 +43,17 @@ int	left_up_right_down_forward_backward(int keysym, t_scene_data *data)
 int move_lighting(int keysym, t_scene_data *data)
 {
 	if (keysym == 'i')
-		return (data->light.location[0] += 50, 1);
+		return (printf("move lighting x+...\n"), data->light.location[0] += 50, 1);
 	else if (keysym == 'k')
-		return (data->light.location[0] -= 50, 1);	
+		return (printf("move lighting x-...\n"), data->light.location[0] -= 50, 1);	
 	else if (keysym == 'j')
-		return (data->light.location[1] += 50, 1);	
+		return (printf("move lighting y+...\n"), data->light.location[1] += 50, 1);	
 	else if (keysym == 'l')
-		return (data->light.location[1] -= 50, 1);	
+		return (printf("move lighting y-...\n"), data->light.location[1] -= 50, 1);	
 	else if (keysym == 'o')
-		return (data->light.location[2] += 50, 1);	
+		return (printf("move lighting z+...\n"), data->light.location[2] += 50, 1);	
 	else if (keysym == 'p')
-		return (data->light.location[2] -= 50, 1);
+		return (printf("move lighting z-...\n"), data->light.location[2] -= 50, 1);
 	else
 		return (0);
 }
@@ -77,26 +77,26 @@ int	rotate_view(int keysym, t_scene_data *data)
 	{
 		init_t_around_y(add_angle, DEGR_10_IN_RAD);
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);	
-		return (printf("rotating...\n"), TRUE);
+		return (printf("rotating up...\n"), TRUE);
 	}
 	else if (keysym == DOWN)
 	{
 		init_t_around_y(add_angle, -DEGR_10_IN_RAD);
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
-		return (printf("rotating...\n"), TRUE);
+		return (printf("rotating down...\n"), TRUE);
 	}
 	else if (keysym == LEFT)
 	{
 		init_t_around_z(add_angle, DEGR_10_IN_RAD);
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
-		return (printf("rotating...\n"), TRUE);
+		return (printf("rotating left...\n"), TRUE);
 
 	}
 	else if (keysym == RIGHT)
 	{
 		init_t_around_z(add_angle, -DEGR_10_IN_RAD);
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
-		return (printf("rotating...\n"), TRUE);
+		return (printf("rotating right...\n"), TRUE);
 	}
 	return (FALSE);
 }

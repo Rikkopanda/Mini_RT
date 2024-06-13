@@ -38,4 +38,9 @@ int			parse_cylinder(t_object **objects, char **format);
 int			parse_object(const char *line, int obj_count[OBJ_COUNT], \
 						t_object **objects);
 int			parse_rt_file(t_scene_data *scene, int fd);
+
+/* debug functions */
+void		print_sphere_data(void *object);
+void		print_camera_data(void *object);
+
 #endif

@@ -64,7 +64,7 @@ int render_scene(t_scene_data *data)
 	init_camera(data);
 	init_light_source(data);
 	// init_sphere(data);
-
+	// printf("data object: x, y, z %d %d %d\n", );
 	send_rays(data);
 	mlx_put_image_to_window(data->mlx.mlx_ptr, data->mlx.win_ptr, data->image.img_ptr, 0, 0);
 	mlx_loop(data->mlx.mlx_ptr);

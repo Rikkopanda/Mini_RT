@@ -23,6 +23,19 @@ int example_intersect_plane(void *object, t_vec4f obj_to_ray_vec)
 	return (FALSE);
 }
 
+void print_sphere_data(void *object)
+{
+	t_sphere *sphere = (t_sphere *)object;
+	printf("data object: x, y, z %f %f %f\n", sphere->location[0], sphere->location[1], sphere->location[2]);
+}
+
+void print_camera_data(void *object)
+{
+	t_camera *camera = (t_camera *)object;
+	printf("data camera: x, y, z %f %f %f\n", camera->location[0], camera->location[1], camera->location[2]);
+}
+
+
 void	assign_intersect_functions(t_object *current)
 {
 	const intersect_ptr	function_pointer[OBJ_COUNT] = {
@@ -33,10 +46,18 @@ void	assign_intersect_functions(t_object *current)
 		example_intersect_plane,
 		example_intersect_cylinder,
 	};
-
+	const print_data	function_pointer_data[OBJ_COUNT] = {
+		NULL,
+		print_camera_data,
+		NULL,
+		print_sphere_data,
+		NULL,
+		NULL,
+	};
 	while (current)
 	{
 		current->intersect = (intersect_ptr)function_pointer[current->type];
+		current->print_object_data = (print_data)function_pointer_data[current->type];
 		current = current->next;
 	}
 }

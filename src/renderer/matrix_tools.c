@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   matrix_tools.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/12 17:28:09 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/06/13 10:53:30 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,14 +93,7 @@ void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m)
 
 void	vector_scaling(t_vec4f *v, float scale)
 {
-	int	i;
-
-	i = 0;
-	while (i < 3)
-	{
-		v[i] = v[i] * scale;
-		i++;
-	}
+	*v = *v * scale;
 }
 
 float	ft_rad_to_degr(float x)

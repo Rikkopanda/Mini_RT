@@ -73,12 +73,15 @@ typedef enum e_objectid
 	INVALID,
 }	t_objectid;
 
+typedef void (*print_data)(void *object);
+
 typedef int (*intersect_ptr)(void *object, t_vec4f v);
 
 typedef struct s_object
 {
 	t_objectid		type;
 	void			*object;
+	print_data		print_object_data;
 	intersect_ptr	intersect;
 	struct s_object	*next;
 }	t_object;
