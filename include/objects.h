@@ -1,7 +1,6 @@
 #ifndef OBJECTS_H
 # define OBJECTS_H
 
-# define OBJ_COUNT 6
 # include "minirt.h"
 # include "color.h"
 
@@ -64,13 +63,14 @@ typedef struct s_cylinder
 
 typedef enum e_objectid
 {
-	AMBIENT,
+	INVALID = -1,
+	AMBIENT = 0,
 	CAMERA,
 	LIGHT,
 	SPHERE,
 	PLANE,
 	CYLINDER,
-	INVALID,
+	OBJ_COUNT,
 }	t_objectid;
 
 typedef void (*print_data)(void *object);

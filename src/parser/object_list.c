@@ -58,7 +58,7 @@ void	object_removetype(t_object **head, t_objectid type)
 		// // 	// t_camera *carmeraptr;
 
 		// // 	// carmeraptr = current;
-			print_camera_data(current);
+			// print_camera_data(current);
 		// // 	// exit(0);
 		// // }
 		if (current->next->type == type)
