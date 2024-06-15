@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/13 17:49:45 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/06/14 14:56:13 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -335,18 +335,25 @@ void send_rays(t_scene_data *scene)
 		r_t.angle_vert = atan2(r_t.half_screen_height - r_t.pixel_y, r_t.perpendicular_distance_vert_triangle);
 		while (r_t.pixel_x <= WINDOW_WIDTH)
 		{
+			float pixelNDCx = ((float)r_t.pixel_x + (float)0.5) / (float)WINDOW_WIDTH;
+			float pixelNDCy = ((float)r_t.pixel_y + (float)0.5) / (float)WINDOW_HEIGHT;
+			// printf("NDC space x y %f\t%f\n", pixelNDCx, pixelNDCy);
+
+			float pixel_screen_x = ((2 * pixelNDCx) - 1) * aspect_ratio;
+			float pixel_screen_y = 1 - (2 * pixelNDCy);
+			printf("screen space x y %f\t%f\n\n", pixel_screen_x, pixel_screen_y);
+
 			r_t.angle_horiz = atan2(-r_t.half_screen_width + r_t.pixel_x, r_t.perpendicular_distance_horiz_triangle);
-			color = NADA;
 			color = hit_ray(scene, r_t.angle_horiz, r_t.angle_vert);
-			if (color != NADA)
+			if (color == NADA)
 			{
-				// float unit_point;
+				float unit_point;
 				// unit_point = world_horizon_opposed_to_ray(data);
-				// unit_point = (r_t.angle_vert - r_t.start_angle_vert) / ft_degr_to_rad((float)scene->camera.fov / aspect_ratio);
-				// color = interpolate(GREEN, BLUE, unit_point);
-				put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
+				unit_point = (r_t.angle_vert - r_t.start_angle_vert) / ft_degr_to_rad((float)scene->camera.fov / aspect_ratio);
+				color = interpolate(GREEN, BLUE, unit_point);
+				// put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
 			}
-			// put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
+			put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
 			r_t.pixel_x++;
 		}
 		r_t.pixel_y++;

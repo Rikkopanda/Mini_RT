@@ -14,13 +14,14 @@
 # include "libft.h"
 # define PRINT_DEBUG 1
 # include "color.h"
-// # include "parser.h"
+
+
 # include "objects.h"
 
 typedef struct s_ray	t_ray;
 
-# define WINDOW_HEIGHT 1080
-# define WINDOW_WIDTH 1920
+# define WINDOW_HEIGHT 600
+# define WINDOW_WIDTH 1000
 
 typedef struct s_scene_data t_scene_data;
 

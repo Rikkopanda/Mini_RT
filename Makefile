@@ -1,7 +1,7 @@
 NAME = minirt
 
 # CFLAGS = -Wall -Wextra -Werror
-# CFLAGS := -fsanitize=address
+#  CFLAGS := -fsanitize=address
 CFLAGS += -Ofast
 # CFLAGS += -fPIE
 # CFLAGS := -g
