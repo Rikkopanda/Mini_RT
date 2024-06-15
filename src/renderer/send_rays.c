@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/15 14:37:07 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/06/15 16:11:22 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,22 +226,22 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert, t_vec4f new
 	data->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
 	matrix_multiply_1x3_3x3(&data->camera.orientation, comp, &data->ray.normalized_vec);
 
-	if (PRINT_DEBUG) printf("result:\n");
-	if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
-	if (PRINT_DEBUG) printf("_________________\n\n");
+	// if (PRINT_DEBUG) printf("result:\n");
+	// if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
+	// if (PRINT_DEBUG) printf("_________________\n\n");
 	data->ray.normalized_vec = new_dir_method_ray_test;
 	normalize_vector(&data->ray.normalized_vec);
-	if (PRINT_DEBUG) printf("new result:\n");
-	if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
-	if (PRINT_DEBUG) printf("_________________\n\n");
+	// if (PRINT_DEBUG) printf("new result:\n");
+	// if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
+	// if (PRINT_DEBUG) printf("_________________\n\n");
 
-	sleep(2);
+	// sleep(2);
 	data->ray.step = 1;
 	// init_result(&data->ray.scaled_vec);
 	data->ray.scaled_vec = (t_vec4f){0, 0, 0, 0};
 	// sleep(2);
 
-	while (data->ray.step < 200)
+	while (data->ray.step < 300)
 	{
 		// int		resulting_color;
 		t_vec4f	obj_to_ray_vec;
@@ -363,10 +363,9 @@ void send_rays(t_scene_data *scene)
 
 			t_ray ray;
 
-			ray.normalized_vec = t_vec4f_construct(1, pixel_screen_x * -1, pixel_screen_y);
+			ray.normalized_vec = t_vec4f_construct(1, pixel_screen_y, pixel_screen_x * -1);
 			// printf("camera space(3d) x y z %f\t%f\t%f\n\n", ray.normalized_vec[0], ray.normalized_vec[1], ray.normalized_vec[2]);
 			// sleep(1);
-			
 			color = hit_ray(scene, r_t.angle_horiz, r_t.angle_vert, ray.normalized_vec);
 			if (color == NADA)
 			{
