@@ -141,6 +141,7 @@ void	init_comp_m(t_vec4f comp[3]);
 
 void	normalize_vector(t_vec4f *v);
 void	vector_scaling(t_vec4f *v, float scale);
+t_vec4f t_vec4f_construct(float x, float y, float z);
 
 
 int		interpolate(int color_A, int color_B, float t);
@@ -154,7 +155,7 @@ float	ft_degr_to_rad(float x);
 float	ft_rad_to_degr(float x);
 int		render_scene(t_scene_data *data);
 void	send_rays(t_scene_data *scene);
-int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert);
+int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert, t_vec4f new_dir_method_ray_test);
 
 void	put_pixel_img(t_img img, int x, int y, int color);
 void	init_rgb(t_color *rgb, int color);
