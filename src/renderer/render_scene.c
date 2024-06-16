@@ -39,16 +39,16 @@ void init_ray_send_tools(t_ray_sending_tools *r_t, t_scene_data *scene)
 
 
 
-	r_t->start_angle_horiz = ft_degr_to_rad((float)scene->camera.fov)  * 0.5;
-	r_t->start_angle_vert = r_t->start_angle_horiz / aspect_ratio;
-	printf("fov verti %f\t horizontal %f\n", r_t->start_angle_vert, r_t->start_angle_horiz);
+	// r_t->start_angle_horiz = ft_degr_to_rad((float)scene->camera.fov)  * 0.5;
+	// r_t->start_angle_vert = r_t->start_angle_horiz / aspect_ratio;
+	// printf("fov verti %f\t horizontal %f\n", r_t->start_angle_vert, r_t->start_angle_horiz);
 	// exit(0);
 
 
-	printf("%f\t%f\n", r_t->start_angle_horiz, r_t->start_angle_vert);
-	r_t->perpendicular_distance_horiz_triangle = r_t->half_screen_width / (float)tan(r_t->start_angle_horiz);
-	r_t->perpendicular_distance_vert_triangle = r_t->half_screen_height / (float)tan(r_t->start_angle_vert);
-	printf("%f\t%f\n", r_t->perpendicular_distance_vert_triangle, r_t->perpendicular_distance_horiz_triangle);
+	// printf("%f\t%f\n", r_t->start_angle_horiz, r_t->start_angle_vert);
+	// r_t->perpendicular_distance_horiz_triangle = r_t->half_screen_width / (float)tan(r_t->start_angle_horiz);
+	// r_t->perpendicular_distance_vert_triangle = r_t->half_screen_height / (float)tan(r_t->start_angle_vert);
+	// printf("%f\t%f\n", r_t->perpendicular_distance_vert_triangle, r_t->perpendicular_distance_horiz_triangle);
 	// exit(0);
 
 }

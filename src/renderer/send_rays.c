@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/15 16:11:22 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/06/16 13:53:39 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,44 +204,18 @@ void	increment_vec4f(t_vec4f *scaled_vector, t_vec4f *normalize_vector)
 // }
 
 
-int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert, t_vec4f new_dir_method_ray_test)
+int	hit_ray(t_scene_data *data, t_vec4f new_dir_method_ray_test)
 {
-	t_vec4f	rota_horiz[3];
-	t_vec4f	rota_vert[3];
-	t_vec4f	comp[3];
-
-	init_t_around_z(rota_horiz, angle_horiz);
-	init_t_around_y(rota_vert, angle_vert);
-	init_comp_m(comp);
-	compilation_matrix(comp, rota_horiz, rota_vert);
-
-	// if (PRINT_DEBUG) printf("angles horizontal, vertical: %f\t%f\n", ft_rad_to_degr(angle_horiz), ft_rad_to_degr(angle_vert));
-	// if (PRINT_DEBUG) printf("_________________\n");
-	// if (PRINT_DEBUG) printf("rotation\n");
-	// if (PRINT_DEBUG) print_matrix_3_3(comp);
-	// if (PRINT_DEBUG) printf("original\n");
-	// if (PRINT_DEBUG) print_matrix_1_3(data->camera.orientation);
-
-	// init_result(&data->ray.normalized_vec);
-	data->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
-	matrix_multiply_1x3_3x3(&data->camera.orientation, comp, &data->ray.normalized_vec);
-
-	// if (PRINT_DEBUG) printf("result:\n");
-	// if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
-	// if (PRINT_DEBUG) printf("_________________\n\n");
 	data->ray.normalized_vec = new_dir_method_ray_test;
 	normalize_vector(&data->ray.normalized_vec);
 	// if (PRINT_DEBUG) printf("new result:\n");
 	// if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
 	// if (PRINT_DEBUG) printf("_________________\n\n");
 
-	// sleep(2);
 	data->ray.step = 1;
-	// init_result(&data->ray.scaled_vec);
 	data->ray.scaled_vec = (t_vec4f){0, 0, 0, 0};
-	// sleep(2);
 
-	while (data->ray.step < 300)
+	while (data->ray.step < 200)
 	{
 		// int		resulting_color;
 		t_vec4f	obj_to_ray_vec;
@@ -277,12 +251,6 @@ int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert, t_vec4f new
 
 			if (rgb_factor <= 0)
 			{
-				// if (PRINT_DEBUG) printf("___________\nnormalized:\n");
-				// if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
-				// printf("surface to light:\n");
-				// if (rgb_factor > 0.2)
-				// 	printf("black: %f\n", rgb_factor);
-				// print_matrix_1_3(surface_to_light_ray);
 				return (BLACK);
 			}
 			// if (rgb_factor > 0.2)
@@ -340,10 +308,8 @@ void send_rays(t_scene_data *scene)
 	while (r_t.pixel_y <= WINDOW_HEIGHT)
 	{
 		r_t.pixel_x = 0;
-		r_t.angle_vert = atan2(r_t.half_screen_height - r_t.pixel_y, r_t.perpendicular_distance_vert_triangle);
 		while (r_t.pixel_x <= WINDOW_WIDTH)
 		{
-			r_t.angle_horiz = atan2(-r_t.half_screen_width + r_t.pixel_x, r_t.perpendicular_distance_horiz_triangle);
 			float pixelNDCx = ((float)r_t.pixel_x + (float)0.5) / (float)WINDOW_WIDTH;
 			// + 0.5 because it has to be in the middle of the pixel(raster square, how u want to call it)
 			float pixelNDCy = ((float)r_t.pixel_y + (float)0.5) / (float)WINDOW_HEIGHT;
@@ -366,12 +332,12 @@ void send_rays(t_scene_data *scene)
 			ray.normalized_vec = t_vec4f_construct(1, pixel_screen_y, pixel_screen_x * -1);
 			// printf("camera space(3d) x y z %f\t%f\t%f\n\n", ray.normalized_vec[0], ray.normalized_vec[1], ray.normalized_vec[2]);
 			// sleep(1);
-			color = hit_ray(scene, r_t.angle_horiz, r_t.angle_vert, ray.normalized_vec);
+			color = hit_ray(scene, ray.normalized_vec);
 			if (color == NADA)
 			{
 				float unit_point;
 				// unit_point = world_horizon_opposed_to_ray(data);
-				unit_point = (r_t.angle_vert - r_t.start_angle_vert) / ft_degr_to_rad((float)scene->camera.fov / aspect_ratio);
+				unit_point = r_t.pixel_y / (float)WINDOW_HEIGHT;
 				color = interpolate(GREEN, BLUE, unit_point);
 				// put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
 			}
