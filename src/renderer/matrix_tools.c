@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/13 10:53:30 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/16 14:26:46 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,16 @@ void	compilation_matrix(t_vec4f comp[3], t_vec4f R[3], t_vec4f R3[3])
 // 		i++;
 // 	}
 // }
+void	construct_4x4vec4f(t_vec4f translate, t_vec4f rotation[3], t_vec4f *transform_result[4])
+{
+	(*transform_result)[0] = (t_vec4f){0,0,0,0};
+
+	(*transform_result)[0] = rotation[0];
+	(*transform_result)[1] = rotation[1];
+	(*transform_result)[2] = rotation[2];
+	(*transform_result)[3] = translate;
+}
+
 
 void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m)
 {
@@ -86,7 +96,6 @@ void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m)
 		}
 		i++;
 	}
-	
 }
 
 

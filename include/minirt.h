@@ -20,8 +20,8 @@
 
 typedef struct s_ray	t_ray;
 
-# define WINDOW_HEIGHT 700
-# define WINDOW_WIDTH 300
+# define WINDOW_HEIGHT 300
+# define WINDOW_WIDTH 700
 
 typedef struct s_scene_data t_scene_data;
 
@@ -155,7 +155,7 @@ float	ft_degr_to_rad(float x);
 float	ft_rad_to_degr(float x);
 int		render_scene(t_scene_data *data);
 void	send_rays(t_scene_data *scene);
-int		hit_ray(t_scene_data *scene, t_vec4f new_dir_method_ray_test);
+int		hit_ray(t_scene_data *data);
 
 void	put_pixel_img(t_img img, int x, int y, int color);
 void	init_rgb(t_color *rgb, int color);

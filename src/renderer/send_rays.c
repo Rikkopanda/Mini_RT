@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/16 13:53:39 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/16 14:49:14 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,9 +204,9 @@ void	increment_vec4f(t_vec4f *scaled_vector, t_vec4f *normalize_vector)
 // }
 
 
-int	hit_ray(t_scene_data *data, t_vec4f new_dir_method_ray_test)
+int	hit_ray(t_scene_data *data)
 {
-	data->ray.normalized_vec = new_dir_method_ray_test;
+	// data->ray.normalized_vec = new_dir_method_ray_test;
 	normalize_vector(&data->ray.normalized_vec);
 	// if (PRINT_DEBUG) printf("new result:\n");
 	// if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
@@ -215,7 +215,7 @@ int	hit_ray(t_scene_data *data, t_vec4f new_dir_method_ray_test)
 	data->ray.step = 1;
 	data->ray.scaled_vec = (t_vec4f){0, 0, 0, 0};
 
-	while (data->ray.step < 200)
+	while (data->ray.step < 300)
 	{
 		// int		resulting_color;
 		t_vec4f	obj_to_ray_vec;
@@ -327,12 +327,32 @@ void send_rays(t_scene_data *scene)
 			float pixel_camara_x = pixel_screen_x * tanf(pixel_angle_screen_space_x);
 			float pixel_camara_y = pixel_screen_y * tanf(pixel_angle_screen_space_y);
 
-			t_ray ray;
+			t_vec4f	rota_horiz[3];
+			t_vec4f	rota_vert[3];
+			t_vec4f	comp[3];
 
-			ray.normalized_vec = t_vec4f_construct(1, pixel_screen_y, pixel_screen_x * -1);
+			init_t_around_z(rota_horiz, pixel_angle_screen_space_x);
+			init_t_around_y(rota_vert, pixel_angle_screen_space_y);
+			init_comp_m(comp);
+			compilation_matrix(comp, rota_horiz, rota_vert);
+
+			// if (PRINT_DEBUG) printf("angles horizontal, vertical: %f\t%f\n", ft_rad_to_degr(angle_horiz), ft_rad_to_degr(angle_vert));
+			// if (PRINT_DEBUG) printf("_________________\n");
+			// if (PRINT_DEBUG) printf("rotation\n");
+			// if (PRINT_DEBUG) print_matrix_3_3(comp);
+			// if (PRINT_DEBUG) printf("original\n");
+			if (PRINT_DEBUG) print_matrix_1_3(scene->camera.orientation);
+
+			// init_result(&data->ray.normalized_vec);
+			// t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_screen_y, pixel_screen_x * -1);
+			scene->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
+			matrix_multiply_1x3_3x3(&scene->camera.orientation, comp, &scene->ray.normalized_vec);
+
+			
+
 			// printf("camera space(3d) x y z %f\t%f\t%f\n\n", ray.normalized_vec[0], ray.normalized_vec[1], ray.normalized_vec[2]);
 			// sleep(1);
-			color = hit_ray(scene, ray.normalized_vec);
+			color = hit_ray(scene);
 			if (color == NADA)
 			{
 				float unit_point;

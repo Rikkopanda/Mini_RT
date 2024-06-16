@@ -113,8 +113,8 @@ int render_scene(t_scene_data *data)
 
 	// determine_window_ratio(data);
 
-	init_camera(data);
-	init_light_source(data);
+	// init_camera(data);
+	// init_light_source(data);
 	// init_sphere(data);
 	// printf("data object: x, y, z %d %d %d\n", );
 	send_rays(data);

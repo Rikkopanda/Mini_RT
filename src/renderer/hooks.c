@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/13 11:01:41 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/16 14:44:19 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ int	rotate_view(int keysym, t_scene_data *data)
 
 	init_comp_m(add_angle);
 	original_orientation_matrix = data->camera.orientation;
-	// copy_matrix(&original_orientation_matrix, data->camera.orientation);
 	if (keysym == UP)
 	{
 		init_t_around_y(add_angle, DEGR_10_IN_RAD);
