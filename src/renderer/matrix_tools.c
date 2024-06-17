@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   matrix_tools.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/16 14:26:46 by rikverhoeve      ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   matrix_tools.c                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/01/07 15:29:32 by rverhoev      #+#    #+#                 */
+/*   Updated: 2024/06/17 15:27:21 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,11 +126,15 @@ void	print_matrix_1_3(t_vec4f m)
 	int i;
 
 	i = 0;
+	printf("(");
 	while (i < 3)
 	{
-		printf("%f\t", m[i]);
+		printf("%f", m[i]);
+		if (i != 2)
+			printf(", ");
 		i++;
 	}
+	printf(")");
 	printf("\n");
 	// printf("_________________\n");
 }

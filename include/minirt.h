@@ -20,8 +20,8 @@
 
 typedef struct s_ray	t_ray;
 
-# define WINDOW_HEIGHT 300
-# define WINDOW_WIDTH 700
+# define WINDOW_HEIGHT 75
+# define WINDOW_WIDTH 175
 
 typedef struct s_scene_data t_scene_data;
 

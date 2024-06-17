@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   send_rays.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/17 09:04:21 by rikverhoeve      ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   send_rays.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
+/*   Updated: 2024/06/17 17:00:03 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,16 +283,19 @@ void send_rays(t_scene_data *scene)
 			// printf("NDC space x y %f\t%f\n", pixelNDCx, pixelNDCy);
 
 			float pixel_screen_x = ((2 * pixelNDCx) - 1) * aspect_ratio;
-			float pixel_screen_y = 1 - (2 * pixelNDCy);
+			float pixel_screen_y = (1 - (2 * pixelNDCy));
+			
+			pixel_screen_x *= tan(ft_degr_to_rad(scene->camera.fov / 2));
+			pixel_screen_y *= tan(ft_degr_to_rad(scene->camera.fov / 2));
 			// printf("angles horizontal, vertical:  %f\t%f\n", ft_rad_to_degr(r_t.angle_horiz), ft_rad_to_degr(r_t.angle_vert));
 	
-			// printf("screen space x y %f\t%f\n\n", pixel_screen_x, pixel_screen_y);
+			// printf("screen space x y %f\t%f\n", pixel_screen_x, pixel_screen_y);
 			float pixel_angle_screen_space_x = atanf(pixel_screen_x / 1);
 			float pixel_angle_screen_space_y = atanf(pixel_screen_y / 1);
-			// printf("angle pixel camara space along x, y; %f\t%f\n\n", ft_rad_to_degr(pixel_angle_screen_space_x), ft_rad_to_degr(pixel_angle_screen_space_y));
+			// // printf("angle pixel camara space along x, y; %f\t%f\n\n", ft_rad_to_degr(pixel_angle_screen_space_x), ft_rad_to_degr(pixel_angle_screen_space_y));
 
-			float pixel_camara_x = pixel_screen_x * tanf(pixel_angle_screen_space_x);
-			float pixel_camara_y = pixel_screen_y * tanf(pixel_angle_screen_space_y);
+			// float pixel_camara_x = pixel_screen_x * tanf(pixel_angle_screen_space_x);
+			// float pixel_camara_y = pixel_screen_y * tanf(pixel_angle_screen_space_y);
 
 			t_vec4f	rota_horiz[3];
 			t_vec4f	rota_vert[3];
@@ -312,7 +315,7 @@ void send_rays(t_scene_data *scene)
 
 			// init_result(&data->ray.normalized_vec);
 			// t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_screen_y, pixel_screen_x * -1);
-			scene->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
+			scene->ray.normalized_vec = (t_vec4f){pixel_screen_x, pixel_screen_y, -1, 0};
 			matrix_multiply_1x3_3x3(&scene->camera.orientation, comp, &scene->ray.normalized_vec);
 
 			
@@ -333,6 +336,7 @@ void send_rays(t_scene_data *scene)
 		}
 		r_t.pixel_y++;
 	}
+	print_matrix_1_3(scene->camera.orientation);
 	printf("done\n");
 }
 /*

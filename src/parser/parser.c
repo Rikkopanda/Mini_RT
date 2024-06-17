@@ -168,9 +168,9 @@ static int	is_valid_scene(t_scene_data *scene)
 	if (!is_valid_object_count(scene->obj_count[AMBIENT], AMBIENT, 1, 1) || \
 		!is_valid_object_count(scene->obj_count[CAMERA], CAMERA, 1, 1) || \
 		!is_valid_object_count(scene->obj_count[LIGHT], LIGHT, 1, 1) || \
-		!is_valid_object_count(scene->obj_count[SPHERE], SPHERE, 0, 10) || \
-		!is_valid_object_count(scene->obj_count[PLANE], PLANE, 0, 10) || \
-		!is_valid_object_count(scene->obj_count[CYLINDER], CYLINDER, 0, 10))
+		!is_valid_object_count(scene->obj_count[SPHERE], SPHERE, 0, 20) || \
+		!is_valid_object_count(scene->obj_count[PLANE], PLANE, 0, 20) || \
+		!is_valid_object_count(scene->obj_count[CYLINDER], CYLINDER, 0, 20))
 		return (0);
 	return (1);
 }

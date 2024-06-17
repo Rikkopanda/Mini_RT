@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   hooks.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/16 14:44:19 by rikverhoeve      ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   hooks.c                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/05/27 09:26:30 by rverhoev      #+#    #+#                 */
+/*   Updated: 2024/06/17 17:03:01 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,14 +84,14 @@ int	rotate_view(int keysym, t_scene_data *data)
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
 		return (printf("rotating down...\n"), TRUE);
 	}
-	else if (keysym == LEFT)
+	else if (keysym == RIGHT)
 	{
 		init_t_around_z(add_angle, DEGR_10_IN_RAD);
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
 		return (printf("rotating left...\n"), TRUE);
 
 	}
-	else if (keysym == RIGHT)
+	else if (keysym == LEFT)
 	{
 		init_t_around_z(add_angle, -DEGR_10_IN_RAD);
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
