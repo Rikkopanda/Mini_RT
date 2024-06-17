@@ -1,7 +1,7 @@
 #include "parser.h"
 #include "get_next_line.h"
 
-int	example_intersect_sphere(void *object, t_vec4f obj_to_ray_vec)
+int	intersect_sphere(void *object, t_vec4f obj_to_ray_vec)
 {
 	t_sphere *sphere = (t_sphere *)object;
 
@@ -13,9 +13,24 @@ int	example_intersect_sphere(void *object, t_vec4f obj_to_ray_vec)
 		return (FALSE);
 }
 
-int	example_intersect_cylinder(void *object, t_vec4f obj_to_ray_vec)
+int	intersect_cylinder(void *object, t_vec4f obj_to_ray_vec)
 {
-	return (FALSE);
+	t_cylinder *cylinder = (t_cylinder *)object;
+
+
+	// print_matrix_1_3(obj_to_ray_vec);
+	float xy_plane_len = sqrtf(powf(obj_to_ray_vec[0], 2) + powf(obj_to_ray_vec[1], 2));
+	float positive_z = obj_to_ray_vec[2];
+
+	if (positive_z < 0)
+		positive_z = positive_z * (float)-1;
+	// printf("height %f\n0", cylinder->height);
+	// printf("pos z %f\n",positive_z);
+
+	if (xy_plane_len <= cylinder->diameter / 2 && positive_z <= cylinder->height)
+		return (TRUE);
+	else
+		return (FALSE);
 }
 
 int example_intersect_plane(void *object, t_vec4f obj_to_ray_vec)
@@ -42,6 +57,26 @@ t_vec4f t_get_location_sphere(void *object)
 	return sphere->location;
 }
 
+t_vec4f t_get_location_cylinder(void *object)
+{
+	t_cylinder *cylinder = (t_cylinder *)object;
+
+	return cylinder->location;
+}
+
+int t_get_color_sphere(void *object)
+{
+	t_sphere *sphere = (t_sphere *)object;
+
+	return sphere->color.color_code;
+}
+
+int t_get_color_cylinder(void *object)
+{
+	t_cylinder *cylinder = (t_cylinder *)object;
+
+	return cylinder->color.color_code;
+}
 
 void	assign_intersect_functions(t_object *current)
 {
@@ -49,9 +84,9 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 		NULL,
-		example_intersect_sphere,
+		intersect_sphere,
 		example_intersect_plane,
-		example_intersect_cylinder,
+		intersect_cylinder,
 	};
 	const print_data	function_pointer_data[OBJ_COUNT] = {
 		NULL,
@@ -67,13 +102,22 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		t_get_location_sphere,
 		NULL,
+		t_get_location_cylinder,
+	};
+	const t_get_color	color_getters[OBJ_COUNT] = {
 		NULL,
+		NULL,
+		NULL,
+		t_get_color_sphere,
+		NULL,
+		t_get_color_cylinder,
 	};
 	while (current)
 	{
 		current->intersect = (intersect_ptr)function_pointer[current->type];
 		current->print_object_data = (print_data)function_pointer_data[current->type];
 		current->get_location = (t_get_location)location_getters[current->type];
+		current->get_color = (t_get_color)location_getters[current->type];
 		current = current->next;
 	}
 }

@@ -79,6 +79,7 @@ typedef int (*intersect_ptr)(void *object, t_vec4f v);
 
 typedef t_vec4f (*t_get_location)(void *object);
 
+typedef int (*t_get_color)(void *object);
 
 typedef struct s_object
 {
@@ -86,6 +87,7 @@ typedef struct s_object
 	void			*object;
 	print_data		print_object_data;
 	t_get_location	get_location;
+	t_get_color		get_color;
 	intersect_ptr	intersect;
 	struct s_object	*next;
 }	t_object;

@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/16 14:49:14 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/17 09:04:21 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,10 +101,8 @@ int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
 	// printf("sphere.location\n");
 	// print_matrix_1_3(data->sphere.location);
 
-
 	// printf("ray scaled\n"); 
 	// print_matrix_1_3(ray->scaled_vec);
-
 	// sleep(1);
 	// while ()
 
@@ -116,40 +114,9 @@ int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
 
 		// printf("hallo\n");
 		// current->print_object_data(current->object);
-		if (current->type == SPHERE)
-		{
-			// t_sphere *object_ptr;
-			// object_ptr = current->object;
-			// printf("color %d\n", object_ptr->color.color_code);
-			*obj_to_ray_vec = points_derived_vector(current->get_location(current->object), ray->world_pos_of_scaled_vec);
-			// printf("sphere.location\n");
-			// print_matrix_1_3(current->get_location(current->object));
-			// printf("obj to ray vec\n");
-			// print_matrix_1_3(*obj_to_ray_vec);
-			// return (object_ptr->color.color_code);
-		}
+		*obj_to_ray_vec = points_derived_vector(current->get_location(current->object), ray->world_pos_of_scaled_vec);
 		if (current->intersect(current->object, *obj_to_ray_vec) == TRUE)
-		{
-			if (current->type == SPHERE)
-			{
-				t_sphere *object_ptr;
-				object_ptr = current->object;
-				// printf("color %d\n", object_ptr->color.color_code);
-				return (object_ptr->color.color_code);
-			}
-			// if (current->type == PLANE)
-			// {
-			// 	t_plane *object_ptr;
-			// 	object_ptr = current->object;
-			// 	return (object_ptr->color.color_code);
-			// }
-			// if (current->type == CYLINDER)
-			// {
-			// 	t_cylinder *object_ptr;
-			// 	object_ptr = current->object;
-			// 	return (object_ptr->color.color_code);
-			// }
-		}
+			return (current->get_color(current->object));
 		current = current->next;
 	}
 	return ((int)NADA);
@@ -341,7 +308,7 @@ void send_rays(t_scene_data *scene)
 			// if (PRINT_DEBUG) printf("rotation\n");
 			// if (PRINT_DEBUG) print_matrix_3_3(comp);
 			// if (PRINT_DEBUG) printf("original\n");
-			if (PRINT_DEBUG) print_matrix_1_3(scene->camera.orientation);
+			// if (PRINT_DEBUG) print_matrix_1_3(scene->camera.orientation);
 
 			// init_result(&data->ray.normalized_vec);
 			// t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_screen_y, pixel_screen_x * -1);
