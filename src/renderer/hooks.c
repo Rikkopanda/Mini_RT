@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/17 15:19:44 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/06/18 13:30:13 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,9 @@ int	rotate_view(int keysym, t_scene_data *data)
 
 		init_t_around_y(add_angle, DEGR_10_IN_RAD);
 		init_t_around_y(rota1, DEGR_10_IN_RAD);
-		data->camera.rotation_around_y[0] += rota1[0];
-		data->camera.rotation_around_y[1] += rota1[1];
-		data->camera.rotation_around_y[2] += rota1[2];
+		// data->camera.rotation_around_y[0] += rota1[0];
+		// data->camera.rotation_around_y[1] += rota1[1];
+		// data->camera.rotation_around_y[2] += rota1[2];
 
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);	
 		return (printf("rotating up...\n"), TRUE);
