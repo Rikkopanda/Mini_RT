@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/18 15:36:56 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/06/18 16:38:25 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,18 +110,18 @@ int	rotate_view(int keysym, t_scene_data *data)
 		t_vec4f	rota3[3];
 
 		init_t_around_z(add_angle, DEGR_10_IN_RAD);
-		init_t_around_z(rota3, ft_degr_to_rad(45));
-		// t_vec4f	placeholder[3];
-		// placeholder[0] = data->camera.rotation_comp[0];
-		// placeholder[1] = data->camera.rotation_comp[1];
-		// placeholder[2] = data->camera.rotation_comp[2];
+		init_t_around_z(rota3, DEGR_10_IN_RAD);
+		t_vec4f	placeholder[3];
+		placeholder[0] = data->camera.rotation_comp[0];
+		placeholder[1] = data->camera.rotation_comp[1];
+		placeholder[2] = data->camera.rotation_comp[2];
 		// print_matrix_3_3(data->camera.rotation_comp);
 
-		// matrix_multiply_3x3_3x3(placeholder, rota3, data->camera.rotation_comp);
+		matrix_multiply_3x3_3x3(placeholder, rota3, data->camera.rotation_comp);
 
 		// print_matrix_3_3(data->camera.rotation_comp);
 		// print_matrix_3_3(data->camera.rotation_around_z);
-		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
+		// matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
 		return (printf("rotating left...\n"), TRUE);
 
 	}
@@ -129,10 +129,15 @@ int	rotate_view(int keysym, t_scene_data *data)
 	{
 		t_vec4f	rota4[3];
 		init_t_around_z(rota4, -DEGR_10_IN_RAD);
-		// init_t_around_z(add_angle, -DEGR_10_IN_RAD);
-		// data->camera.rotation_around_z[0] += rota4[0];
-		// data->camera.rotation_around_z[1] += rota4[1];
-		// data->camera.rotation_around_z[2] += rota4[2];
+		init_t_around_z(add_angle, -DEGR_10_IN_RAD);
+		t_vec4f	placeholder[3];
+
+		placeholder[0] = data->camera.rotation_comp[0];
+		placeholder[1] = data->camera.rotation_comp[1];
+		placeholder[2] = data->camera.rotation_comp[2];
+
+		matrix_multiply_3x3_3x3(placeholder, rota4, data->camera.rotation_comp);
+
 		// matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
 		return (printf("rotating right...\n"), TRUE);
 	}

@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/18 16:05:38 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/06/18 16:36:09 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,7 +319,7 @@ void send_rays(t_scene_data *scene)
 			t_vec4f	comp3[3];
 			// if (PRINT_DEBUG) printf("angles horizontal, vertical: %f\t%f\n", ft_rad_to_degr(pixel_angle_screen_space_x), ft_rad_to_degr(pixel_angle_screen_space_y));
 			
-			init_t_around_z(rota_horiz, DEGR_10_IN_RAD * 4);
+			init_t_around_z(rota_horiz, DEGR_10_IN_RAD * 2);
 
 			// init_t_around_z(rota_horiz, pixel_angle_screen_space_x);
 			// rota_horiz[0] += scene->camera.rotation_around_z[0];
@@ -327,9 +327,9 @@ void send_rays(t_scene_data *scene)
 			// rota_horiz[2] += scene->camera.rotation_around_z[2];
 			// init_t_around_y(rota_vert, pixel_angle_screen_space_y);
 
-			matrix_multiply_3x3_3x3(rota_horiz, rota_vert, comp);
+			// matrix_multiply_3x3_3x3(rota_horiz, rota_vert, comp);
 
-			matrix_multiply_3x3_3x3(scene->camera.rotation_comp, comp, comp2); // rota_comp either be identity(no change), or adjusted by hook
+			matrix_multiply_3x3_3x3(scene->camera.rotation_comp, rota_horiz, comp2); // rota_comp either be identity(no change), or adjusted by hook
 
 			// if (PRINT_DEBUG && r_t.pixel_x == 0 && r_t.pixel_y == WINDOW_HEIGHT / 2) print_matrix_3_3(comp);
 			
@@ -342,9 +342,7 @@ void send_rays(t_scene_data *scene)
 			// init_t_around_y(rota_vert, 0);
 			// init_identy_matrix(comp2);
 			// matrix_multiply_3x3_3x3(comp2, rota_horiz, rota_vert);
-
 			// init_identy_matrix(comp3);
-
 			// matrix_multiply_3x3_3x3(comp2, comp, comp3);
 
 			// if (PRINT_DEBUG) printf("angles horizontal, vertical: %f\t%f\n", ft_rad_to_degr(angle_horiz), ft_rad_to_degr(angle_vert));
@@ -365,7 +363,7 @@ void send_rays(t_scene_data *scene)
 			t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_screen_x, pixel_screen_y * -1);
 			// scene->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
 			// scene->ray.normalized_vec = camara_space_vec;
-			matrix_multiply_1x3_3x3(&camara_space_vec, rota_horiz, &scene->ray.normalized_vec);
+			matrix_multiply_1x3_3x3(&camara_space_vec, comp2, &scene->ray.normalized_vec);
 
 			// matrix_multiply_1x3_3x3(&scene->camera.orientation, comp3, &scene->ray.normalized_vec);
 
