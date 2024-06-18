@@ -6,11 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/06/17 15:18:32 by rverhoev         ###   ########.fr       */
-=======
-/*   Updated: 2024/06/17 19:09:43 by rikverhoeve      ###   ########.fr       */
->>>>>>> origin/different_adding_of_angles
+/*   Updated: 2024/06/18 16:05:38 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,45 +294,58 @@ void send_rays(t_scene_data *scene)
 			float pixelNDCy = ((float)r_t.pixel_y + (float)0.5) / (float)WINDOW_HEIGHT;
 			// printf("NDC space x y %f\t%f\n", pixelNDCx, pixelNDCy);
 
-			float pixel_screen_x = ((2 * pixelNDCx) - 1) * aspect_ratio;
-			float pixel_screen_y = 1 - (2 * pixelNDCy);
+			float scale = tanf(ft_degr_to_rad(scene->camera.fov) * 0.5);
+			float pixel_screen_x = ((2 * pixelNDCx) - 1) * aspect_ratio * scale;
+			float pixel_screen_y = (1 - (2 * pixelNDCy)) * scale;
 			
 			// float pixel_screen_x =  pixelNDCx * aspect_ratio;
 			// float pixel_screen_y =  pixelNDCy;
 			// printf("angles horizontal, vertical:  %f\t%f\n", ft_rad_to_degr(r_t.angle_horiz), ft_rad_to_degr(r_t.angle_vert));
-	
+
 			// printf("screen space x y %f\t%f\n\n", pixel_screen_x, pixel_screen_y);
-			float pixel_angle_screen_space_x = atanf(pixel_screen_x / 1);
-			float pixel_angle_screen_space_y = atanf(pixel_screen_y / 1);
+			// float pixel_angle_screen_space_x = atanf(pixel_screen_x / 1);
+			// float pixel_angle_screen_space_y = atanf(pixel_screen_y / 1);
+			// float pixel_angle_screen_space_x = tanf(ft_degr_to_rad(scene->camera.fov) * 0.5);
+			// float pixel_angle_screen_space_y = tanf(ft_degr_to_rad(scene->camera.fov) * 0.5);
 			// printf("angle pixel camara space along x, y; %f\t%f\n\n", ft_rad_to_degr(pixel_angle_screen_space_x), ft_rad_to_degr(pixel_angle_screen_space_y));
 
-			float pixel_camara_x = pixel_screen_x * tanf(pixel_angle_screen_space_x);
-			float pixel_camara_y = pixel_screen_y * tanf(pixel_angle_screen_space_y);
-
-
+			// float pixel_camara_x = pixel_screen_x * tanf(pixel_angle_screen_space_x);
+			// float pixel_camara_y = pixel_screen_y * tanf(pixel_angle_screen_space_y);
 
 			t_vec4f	rota_horiz[3];
 			t_vec4f	rota_vert[3];
 			t_vec4f	comp[3];
 			t_vec4f	comp2[3];
 			t_vec4f	comp3[3];
-
-			init_t_around_z(rota_horiz, pixel_angle_screen_space_x);
-			rota_horiz[0] += scene->camera.rotation_around_z[0];
-			rota_horiz[1] += scene->camera.rotation_around_z[1];
-			rota_horiz[2] += scene->camera.rotation_around_z[2];
-			init_t_around_y(rota_vert, pixel_angle_screen_space_y);
-			init_comp_m(comp);
-			compilation_matrix(comp, rota_horiz, rota_vert);
+			// if (PRINT_DEBUG) printf("angles horizontal, vertical: %f\t%f\n", ft_rad_to_degr(pixel_angle_screen_space_x), ft_rad_to_degr(pixel_angle_screen_space_y));
 			
-			init_t_around_z(rota_horiz, DEGR_10_IN_RAD * 5);
-			init_t_around_y(rota_vert, 0);
-			init_comp_m(comp2);
-			compilation_matrix(comp2, rota_horiz, rota_vert);
+			init_t_around_z(rota_horiz, DEGR_10_IN_RAD * 4);
 
-			init_comp_m(comp3);
+			// init_t_around_z(rota_horiz, pixel_angle_screen_space_x);
+			// rota_horiz[0] += scene->camera.rotation_around_z[0];
+			// rota_horiz[1] += scene->camera.rotation_around_z[1];
+			// rota_horiz[2] += scene->camera.rotation_around_z[2];
+			// init_t_around_y(rota_vert, pixel_angle_screen_space_y);
 
-			matrix_multiply_3x3_3x3(comp2, comp, comp3);
+			matrix_multiply_3x3_3x3(rota_horiz, rota_vert, comp);
+
+			matrix_multiply_3x3_3x3(scene->camera.rotation_comp, comp, comp2); // rota_comp either be identity(no change), or adjusted by hook
+
+			// if (PRINT_DEBUG && r_t.pixel_x == 0 && r_t.pixel_y == WINDOW_HEIGHT / 2) print_matrix_3_3(comp);
+			
+			// if (PRINT_DEBUG && r_t.pixel_x == 0 && r_t.pixel_y == WINDOW_HEIGHT / 2) printf("VERSCHIL\n");
+
+			// if (PRINT_DEBUG && r_t.pixel_x == 0 && r_t.pixel_y == WINDOW_HEIGHT / 2) print_matrix_3_3(comp2);
+
+			// exit(0);
+			// init_t_around_z(rota_horiz, DEGR_10_IN_RAD * 5);
+			// init_t_around_y(rota_vert, 0);
+			// init_identy_matrix(comp2);
+			// matrix_multiply_3x3_3x3(comp2, rota_horiz, rota_vert);
+
+			// init_identy_matrix(comp3);
+
+			// matrix_multiply_3x3_3x3(comp2, comp, comp3);
 
 			// if (PRINT_DEBUG) printf("angles horizontal, vertical: %f\t%f\n", ft_rad_to_degr(angle_horiz), ft_rad_to_degr(angle_vert));
 			// if (PRINT_DEBUG) printf("_________________\n");
@@ -346,18 +355,17 @@ void send_rays(t_scene_data *scene)
 			// if (PRINT_DEBUG) print_matrix_1_3(scene->camera.orientation);
 
 			// init_result(&data->ray.normalized_vec);
-<<<<<<< HEAD
 			// t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_screen_y, pixel_screen_x * -1);
 			scene->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
 
-			matrix_multiply_1x3_3x3(&scene->camera.orientation, comp, &scene->ray.normalized_vec);
+			// matrix_multiply_1x3_3x3(&scene->camera.orientation, comp2, &scene->ray.normalized_vec);
 
-			if (PRINT_DEBUG) print_matrix_1_3(scene->ray.normalized_vec);
+			// if (PRINT_DEBUG) print_matrix_1_3(scene->ray.normalized_vec);
 
-=======
-			t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_camara_x, pixel_camara_y * -1);
+			t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_screen_x, pixel_screen_y * -1);
 			// scene->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
-			scene->ray.normalized_vec = camara_space_vec;
+			// scene->ray.normalized_vec = camara_space_vec;
+			matrix_multiply_1x3_3x3(&camara_space_vec, rota_horiz, &scene->ray.normalized_vec);
 
 			// matrix_multiply_1x3_3x3(&scene->camera.orientation, comp3, &scene->ray.normalized_vec);
 
@@ -365,11 +373,10 @@ void send_rays(t_scene_data *scene)
 			// scene->ray.normalized_vec[1] /= 2;
 			// scene->ray.normalized_vec[2] += 1;
 			// scene->ray.normalized_vec[2] /= 2;
-			int test_pixel_x = (int)((float)scene->ray.normalized_vec[1] * (float)WINDOW_WIDTH);
-			int test_pixel_y = (int)((float)scene->ray.normalized_vec[2] * (float)WINDOW_HEIGHT);
+			// int test_pixel_x = (int)((float)scene->ray.normalized_vec[1] * (float)WINDOW_WIDTH);
+			// int test_pixel_y = (int)((float)scene->ray.normalized_vec[2] * (float)WINDOW_HEIGHT);
 
 			// put_pixel_img(scene->image, test_pixel_x, test_pixel_y, BLUE);
->>>>>>> origin/different_adding_of_angles
 
 			// printf("camera space(3d) x y z %f\t%f\t%f\n\n", ray.normalized_vec[0], ray.normalized_vec[1], ray.normalized_vec[2]);
 			// sleep(1);

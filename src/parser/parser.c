@@ -6,9 +6,8 @@ int	intersect_sphere(void *object, t_vec4f obj_to_ray_vec)
 	t_sphere *sphere = (t_sphere *)object;
 
 	const float squared = powf(obj_to_ray_vec[0], 2) + powf(obj_to_ray_vec[1], 2) + powf(obj_to_ray_vec[2], 2);
-	
 	// printf("hoi sphere:  %f, squared_root %f, color %d\n", sphere->radius, sqrtf(squared), sphere->color.color_code);
-	if (sqrtf(squared) <= sphere->radius)
+	if (squared <=  powf(sphere->radius, 2))
 		return (TRUE);
 	else
 		return (FALSE);

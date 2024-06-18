@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   matrix_tools.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/17 18:57:34 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/18 13:54:04 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	compilation_matrix(t_vec4f comp[3], t_vec4f R[3], t_vec4f R3[3])
 	int	k;
 
 	i = 0;
-	init_comp_m(comp);
+	init_identy_matrix(comp);
 	while (i < 3)
 	{
 		j = 0;

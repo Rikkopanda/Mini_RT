@@ -20,8 +20,8 @@
 
 typedef struct s_ray	t_ray;
 
-# define WINDOW_HEIGHT 300
-# define WINDOW_WIDTH 700
+# define WINDOW_HEIGHT 500
+# define WINDOW_WIDTH 500
 
 typedef struct s_scene_data t_scene_data;
 
@@ -166,6 +166,7 @@ int		create_color(int r, int g, int b);
 void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);
 void	matrix_multiply_3x3_3x3(t_vec4f a[3], t_vec4f b[3], t_vec4f result_m[3]);
+void	init_identy_matrix(t_vec4f m[3]);
 
 int		handle_input(int keysym, t_scene_data *data);
 
