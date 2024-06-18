@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/17 09:04:21 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/17 19:09:43 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,10 @@ int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
 		// current->print_object_data(current->object);
 		*obj_to_ray_vec = points_derived_vector(current->get_location(current->object), ray->world_pos_of_scaled_vec);
 		if (current->intersect(current->object, *obj_to_ray_vec) == TRUE)
+		{
+			// printf("magnitude: %f\n", get_magnitude(ray->scaled_vec));
 			return (current->get_color(current->object));
+		}
 		current = current->next;
 	}
 	return ((int)NADA);
@@ -270,6 +273,13 @@ void send_rays(t_scene_data *scene)
 	int					color;
 	const float aspect_ratio = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
 
+	for (int i = 0; i < WINDOW_HEIGHT; i++)
+	{
+		for (int j = 0; j < WINDOW_WIDTH; j++)
+		{
+			put_pixel_img(scene->image, i, j, BLACK);
+		}
+	}
 	init_ray_send_tools(&r_t, scene);
 	r_t.pixel_y = 0;
 	while (r_t.pixel_y <= WINDOW_HEIGHT)
@@ -284,6 +294,9 @@ void send_rays(t_scene_data *scene)
 
 			float pixel_screen_x = ((2 * pixelNDCx) - 1) * aspect_ratio;
 			float pixel_screen_y = 1 - (2 * pixelNDCy);
+			
+			// float pixel_screen_x =  pixelNDCx * aspect_ratio;
+			// float pixel_screen_y =  pixelNDCy;
 			// printf("angles horizontal, vertical:  %f\t%f\n", ft_rad_to_degr(r_t.angle_horiz), ft_rad_to_degr(r_t.angle_vert));
 	
 			// printf("screen space x y %f\t%f\n\n", pixel_screen_x, pixel_screen_y);
@@ -294,14 +307,27 @@ void send_rays(t_scene_data *scene)
 			float pixel_camara_x = pixel_screen_x * tanf(pixel_angle_screen_space_x);
 			float pixel_camara_y = pixel_screen_y * tanf(pixel_angle_screen_space_y);
 
+
+
 			t_vec4f	rota_horiz[3];
 			t_vec4f	rota_vert[3];
 			t_vec4f	comp[3];
+			t_vec4f	comp2[3];
+			t_vec4f	comp3[3];
 
 			init_t_around_z(rota_horiz, pixel_angle_screen_space_x);
 			init_t_around_y(rota_vert, pixel_angle_screen_space_y);
 			init_comp_m(comp);
 			compilation_matrix(comp, rota_horiz, rota_vert);
+			
+			init_t_around_z(rota_horiz, DEGR_10_IN_RAD * 5);
+			init_t_around_y(rota_vert, 0);
+			init_comp_m(comp2);
+			compilation_matrix(comp2, rota_horiz, rota_vert);
+
+			init_comp_m(comp3);
+
+			matrix_multiply_3x3_3x3(comp2, comp, comp3);
 
 			// if (PRINT_DEBUG) printf("angles horizontal, vertical: %f\t%f\n", ft_rad_to_degr(angle_horiz), ft_rad_to_degr(angle_vert));
 			// if (PRINT_DEBUG) printf("_________________\n");
@@ -311,11 +337,20 @@ void send_rays(t_scene_data *scene)
 			// if (PRINT_DEBUG) print_matrix_1_3(scene->camera.orientation);
 
 			// init_result(&data->ray.normalized_vec);
-			// t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_screen_y, pixel_screen_x * -1);
-			scene->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
-			matrix_multiply_1x3_3x3(&scene->camera.orientation, comp, &scene->ray.normalized_vec);
+			t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_camara_x, pixel_camara_y * -1);
+			// scene->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
+			scene->ray.normalized_vec = camara_space_vec;
 
-			
+			// matrix_multiply_1x3_3x3(&scene->camera.orientation, comp3, &scene->ray.normalized_vec);
+
+			// scene->ray.normalized_vec[1] += 1;
+			// scene->ray.normalized_vec[1] /= 2;
+			// scene->ray.normalized_vec[2] += 1;
+			// scene->ray.normalized_vec[2] /= 2;
+			int test_pixel_x = (int)((float)scene->ray.normalized_vec[1] * (float)WINDOW_WIDTH);
+			int test_pixel_y = (int)((float)scene->ray.normalized_vec[2] * (float)WINDOW_HEIGHT);
+
+			// put_pixel_img(scene->image, test_pixel_x, test_pixel_y, BLUE);
 
 			// printf("camera space(3d) x y z %f\t%f\t%f\n\n", ray.normalized_vec[0], ray.normalized_vec[1], ray.normalized_vec[2]);
 			// sleep(1);

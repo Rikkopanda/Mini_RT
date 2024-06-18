@@ -142,7 +142,7 @@ void	init_comp_m(t_vec4f comp[3]);
 void	normalize_vector(t_vec4f *v);
 void	vector_scaling(t_vec4f *v, float scale);
 t_vec4f t_vec4f_construct(float x, float y, float z);
-
+float	get_magnitude(t_vec4f v);
 
 int		interpolate(int color_A, int color_B, float t);
 void	init_ray_send_tools(t_ray_sending_tools *r_t, t_scene_data *scene);
@@ -165,6 +165,7 @@ int		create_color(int r, int g, int b);
 
 void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);
+void	matrix_multiply_3x3_3x3(t_vec4f a[3], t_vec4f b[3], t_vec4f result_m[3]);
 
 int		handle_input(int keysym, t_scene_data *data);
 

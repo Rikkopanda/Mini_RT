@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/16 14:26:46 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/17 18:57:34 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,31 @@ void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m)
 		i++;
 	}
 }
+void	matrix_multiply_3x3_3x3(t_vec4f a[3], t_vec4f b[3], t_vec4f result_m[3])
+{
+	int i;
+	int j;
+	int k;
+ for(i=0;i< 3;i++)
+ {
+  for(j=0;j< 3;j++)
+  {
+   result_m[i][j] = 0;
+   for(k=0;k< 3;k++)
+   {
+    result_m[i][j] = result_m[i][j] + a[i][k]*b[k][j];
+   }
+  }
+ }
+}
 
+float	get_magnitude(t_vec4f v)
+{
+	float magnitude;
 
+	magnitude = sqrt(powf(v[0], 2) + powf(v[1], 2) + powf(v[2], 2));
+	return (magnitude);
+}
 
 void	vector_scaling(t_vec4f *v, float scale)
 {
