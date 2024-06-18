@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/17 09:04:21 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/17 15:18:32 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,8 +275,10 @@ void send_rays(t_scene_data *scene)
 	while (r_t.pixel_y <= WINDOW_HEIGHT)
 	{
 		r_t.pixel_x = 0;
+		// printf("left\n");
 		while (r_t.pixel_x <= WINDOW_WIDTH)
 		{
+
 			float pixelNDCx = ((float)r_t.pixel_x + (float)0.5) / (float)WINDOW_WIDTH;
 			// + 0.5 because it has to be in the middle of the pixel(raster square, how u want to call it)
 			float pixelNDCy = ((float)r_t.pixel_y + (float)0.5) / (float)WINDOW_HEIGHT;
@@ -299,6 +301,9 @@ void send_rays(t_scene_data *scene)
 			t_vec4f	comp[3];
 
 			init_t_around_z(rota_horiz, pixel_angle_screen_space_x);
+			rota_horiz[0] += scene->camera.rotation_around_z[0];
+			rota_horiz[1] += scene->camera.rotation_around_z[1];
+			rota_horiz[2] += scene->camera.rotation_around_z[2];
 			init_t_around_y(rota_vert, pixel_angle_screen_space_y);
 			init_comp_m(comp);
 			compilation_matrix(comp, rota_horiz, rota_vert);
@@ -313,13 +318,17 @@ void send_rays(t_scene_data *scene)
 			// init_result(&data->ray.normalized_vec);
 			// t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_screen_y, pixel_screen_x * -1);
 			scene->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
+
 			matrix_multiply_1x3_3x3(&scene->camera.orientation, comp, &scene->ray.normalized_vec);
 
-			
+			if (PRINT_DEBUG) print_matrix_1_3(scene->ray.normalized_vec);
+
 
 			// printf("camera space(3d) x y z %f\t%f\t%f\n\n", ray.normalized_vec[0], ray.normalized_vec[1], ray.normalized_vec[2]);
 			// sleep(1);
-			color = hit_ray(scene);
+			color = hit_ray(scene);//0.386221	-0.837061	-0.387509
+			//0.565031	-0.599457	-0.566914	
+
 			if (color == NADA)
 			{
 				float unit_point;
@@ -329,10 +338,15 @@ void send_rays(t_scene_data *scene)
 				// put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
 			}
 			put_pixel_img(scene->image, r_t.pixel_x, r_t.pixel_y, color);
+			// printf("right\n");
+
+			// if (r_t.pixel_x == WINDOW_WIDTH && r_t.pixel_y == WINDOW_HEIGHT / 2) print_matrix_1_3(scene->ray.normalized_vec);
+
 			r_t.pixel_x++;
 		}
 		r_t.pixel_y++;
 	}
+
 	printf("done\n");
 }
 /*

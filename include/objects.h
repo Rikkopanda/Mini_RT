@@ -25,6 +25,10 @@ typedef struct s_camera
 {
 	t_vec4f	location;
 	t_vec4f	orientation;
+	t_vec4f	rotation_comp[3];
+	t_vec4f	rotation_around_z[3];
+	t_vec4f	rotation_around_y[3];
+
 	int		fov;
 }	t_camera;
 

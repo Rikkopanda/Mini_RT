@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hooks.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/16 14:44:19 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/06/17 15:19:44 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,34 +69,66 @@ int	rotate_view(int keysym, t_scene_data *data)
 {
 	t_vec4f	add_angle[3];
 	t_vec4f	original_orientation_matrix;
-
+	int rotate_bool = 0;
 	init_comp_m(add_angle);
 	original_orientation_matrix = data->camera.orientation;
 	if (keysym == UP)
 	{
+		t_vec4f	rota1[3];
+
 		init_t_around_y(add_angle, DEGR_10_IN_RAD);
+		init_t_around_y(rota1, DEGR_10_IN_RAD);
+		data->camera.rotation_around_y[0] += rota1[0];
+		data->camera.rotation_around_y[1] += rota1[1];
+		data->camera.rotation_around_y[2] += rota1[2];
+
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);	
 		return (printf("rotating up...\n"), TRUE);
 	}
 	else if (keysym == DOWN)
 	{
+		t_vec4f	rota2[3];
+
 		init_t_around_y(add_angle, -DEGR_10_IN_RAD);
+		init_t_around_y(rota2, -DEGR_10_IN_RAD);
+
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
 		return (printf("rotating down...\n"), TRUE);
 	}
 	else if (keysym == LEFT)
 	{
+		t_vec4f	rota3[3];
+
 		init_t_around_z(add_angle, DEGR_10_IN_RAD);
+		init_t_around_z(rota3, DEGR_10_IN_RAD);
+		data->camera.rotation_around_z[0] += rota3[0];
+		data->camera.rotation_around_z[1] += rota3[1];
+		data->camera.rotation_around_z[2] += rota3[2];
+		print_matrix_3_3(data->camera.rotation_around_z);
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
 		return (printf("rotating left...\n"), TRUE);
 
 	}
 	else if (keysym == RIGHT)
 	{
+		t_vec4f	rota4[3];
+		init_t_around_z(rota4, -DEGR_10_IN_RAD);
 		init_t_around_z(add_angle, -DEGR_10_IN_RAD);
+		data->camera.rotation_around_z[0] += rota4[0];
+		data->camera.rotation_around_z[1] += rota4[1];
+		data->camera.rotation_around_z[2] += rota4[2];
 		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
 		return (printf("rotating right...\n"), TRUE);
 	}
+	// t_vec4f	rota_horiz[3];
+	// t_vec4f	rota_vert[3];
+	// t_vec4f	comp[3];
+
+	// init_t_around_z(rota_horiz, pixel_angle_screen_space_x);
+	// init_t_around_y(rota_vert, pixel_angle_screen_space_y);
+	// init_comp_m(comp);
+	// compilation_matrix(comp, rota_horiz, rota_vert);
+
 	return (FALSE);
 }
 
