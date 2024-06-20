@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/20 16:43:34 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/20 17:06:59 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,39 +22,10 @@ void fit_interpolation_range(float *rgb_factor)
 	*rgb_factor *= 0.5;
 }
 
-int visualize_sphere_normals(t_scene_data *data, t_vec4f res_xyz)
-{
-	t_vec4f rgb_factor;
-	(void)data;
-	normalize_vector(&res_xyz);
-	// copy_matrix(&rgb_factor, res_xyz);
-	rgb_factor = res_xyz;
-	// fit_interpolation_range(&rgb_factor[0]);
-	// fit_interpolation_range(&rgb_factor[1]);
-	// fit_interpolation_range(&rgb_factor[2]);
-	// printf("factor\n");
-	// print_matrix_1_3(rgb_factor);
-	// printf("________________________\n");
-	// return (create_color(interpolate(BLUE, ORANGE, rgb_factor[0]) << 16, interpolate(RED, WHITE, rgb_factor[1]) << 8, interpolate(GREEN, BLACK, rgb_factor[2])));
-	int const color1 = interpolate(BLUE, (int)WHITE, rgb_factor[0]);
-	int const color2 = interpolate(RED, color1, rgb_factor[1]);
-	int const color3 = interpolate(GREEN, color2, rgb_factor[2]);
-
-	return (color3);
-	// return (interpolate(BLUE, ORANGE, rgb_factor[0]));
-	// return (create_color((int)((float)255 * rgb_factor[0]) & 0xFF, (int)((float)255 * rgb_factor[1]) & 0xFF, (int)((float)255 * rgb_factor[2]) & 0xFF));
-}
 
 /**
  * vector from point A to point B
 */
-t_vec4f	points_derived_vector(t_vec4f point_A, t_vec4f point_B)
-{
-	t_vec4f	result_vec;
-
-	result_vec = point_B - point_A;   
-	return (result_vec);
-}
 
 void moved_vector_position(t_vec4f *result, t_vec4f target_vec, t_vec4f offset)
 {
@@ -83,12 +54,28 @@ float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
 			(vec_A[1] * vec_B[2]) - (vec_B[1] * vec_A[2]));
 }
 
+int visualize_sphere_normals(const t_vec4f point, t_vec4f center)
+{
+	t_vec4f	normal;
+	int	rgb[3];
+
+	normal = point - center;
+	normalize_vector(&normal);
+	normal = normal * 0.5f + 0.5f;
+	make_rgb_with_normalized_rgb_f(rgb, normal);
+	return (create_color(rgb[0], rgb[1], rgb[2]));
+}
+
 int	object_hit_color(t_object *current, const t_vec4f point)
 {
 	while (current)
 	{
 		if (current->intersect(current->object, point - current->get_location(current->object)))
+		{
+			if (current->type == SPHERE)
+				return (visualize_sphere_normals(point, current->get_location(current->object)));
 			return (current->get_color(current->object));
+		}
 		current = current->next;	
 	}
 	return (-1);
@@ -98,7 +85,7 @@ int	color_at_ray(t_object *objects, t_ray ray)
 {
 	t_vec4f			ray_point;
 	const t_vec4f	ray_step = ray.direction;
-	const int		clipping_plane[2] = {5, 200};
+	const int		clipping_plane[2] = {1, 200};
 	int				step;
 	int				color;
 
@@ -124,7 +111,8 @@ t_ray	construct_ray(float x, float y, t_scene_data *scene, const float aspect_ra
 	ray.origin = (t_vec4f){0, 0, 0, 0};
 	pixel_camera_x = (2.0f * ((x + 0.5) / (float)scene->win_width) - 1) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f) * aspect_ratio;
 	pixel_camera_y = (1.0f - 2.0f * ((y + 0.5) / (float)scene->win_height)) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
-	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 0};
+	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -0.5, 0};
+	ray.origin += scene->camera.location;
 	return (ray);
 }
 
@@ -148,6 +136,8 @@ void send_rays(t_scene_data *scene)
 			// printf("[%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
 			if (color != -1)
 				put_pixel_img(scene->image, ray_x, ray_y, color);
+			else
+				put_pixel_img(scene->image, ray_x, ray_y, 0);
 			ray_x++;
 		}
 		ray_y++;
