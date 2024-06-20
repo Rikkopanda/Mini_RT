@@ -47,17 +47,17 @@ void	init_camera(t_scene_data *data)
 	data->camera.location[1] = 0;
 	data->camera.location[2] = 0;
 	data->camera.location[3] = 0;
-	if (PRINT_DEBUG) printf("original\n");
-	if (PRINT_DEBUG) print_matrix_1_3(data->camera.orientation);
+	// if (PRINT_DEBUG) printf("original\n");
+	// if (PRINT_DEBUG) print_matrix_1_3(data->camera.orientation);
 }
 
 int render_scene(t_scene_data *data)
 {
 
-	data->mlx = new_window(WINDOW_WIDTH, WINDOW_HEIGHT, "My first window");
+	data->mlx = new_window(data->win_width, data->win_height, "My first window");
 	if (!data->mlx.win_ptr)
 		return (1);
-	data->image = new_img(WINDOW_WIDTH, WINDOW_HEIGHT, data->mlx);
+	data->image = new_img(data->win_width, data->win_height, data->mlx);
 
 	mlx_key_hook(data->mlx.win_ptr, handle_input, data);
 

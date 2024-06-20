@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/13 17:08:15 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/20 16:30:08 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,265 +83,71 @@ float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
 			(vec_A[1] * vec_B[2]) - (vec_B[1] * vec_A[2]));
 }
 
-/**
- * @note not declaring and initializing new vectors faster??
-*/
-int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
+int	object_hit_color(t_object *current, const t_vec4f point)
 {
-	// printf("check if hit _____________________\n");
-
-	t_object *current;
-
-	// printf("sphere.location\n");
-	// print_matrix_1_3(data->sphere.location);
-	moved_vector_position(&ray->world_pos_of_scaled_vec, ray->scaled_vec, data->camera.location);
-
-	// printf("world_pos_of_scaled_vec\n");
-	// print_matrix_1_3(ray->world_pos_of_scaled_vec);
-	// printf("sphere.location\n");
-	// print_matrix_1_3(data->sphere.location);
-
-
-	// printf("ray scaled\n"); 
-	// print_matrix_1_3(ray->scaled_vec);
-
-	// sleep(1);
-	// while ()
-
-	current = data->objects;
-	while (current != NULL)
+	while (current)
 	{
-		// print_camera_data(data->camera);
-		// printf("data camera: x, y, z %f %f %f\n", data->camera.location[0], data->camera.location[1], data->camera.location[2]);
-
-		// printf("hallo\n");
-		// current->print_object_data(current->object);
-		if (current->type == SPHERE)
-		{
-			// t_sphere *object_ptr;
-			// object_ptr = current->object;
-			// printf("color %d\n", object_ptr->color.color_code);
-			*obj_to_ray_vec = points_derived_vector(current->get_location(current->object), ray->world_pos_of_scaled_vec);
-			// printf("sphere.location\n");
-			// print_matrix_1_3(current->get_location(current->object));
-			// printf("obj to ray vec\n");
-			// print_matrix_1_3(*obj_to_ray_vec);
-			// return (object_ptr->color.color_code);
-		}
-		if (current->intersect(current->object, *obj_to_ray_vec) == TRUE)
-		{
-			if (current->type == SPHERE)
-			{
-				t_sphere *object_ptr;
-				object_ptr = current->object;
-				// printf("color %d\n", object_ptr->color.color_code);
-				return (object_ptr->color.color_code);
-			}
-			// if (current->type == PLANE)
-			// {
-			// 	t_plane *object_ptr;
-			// 	object_ptr = current->object;
-			// 	return (object_ptr->color.color_code);
-			// }
-			// if (current->type == CYLINDER)
-			// {
-			// 	t_cylinder *object_ptr;
-			// 	object_ptr = current->object;
-			// 	return (object_ptr->color.color_code);
-			// }
-		}
-		current = current->next;
+		if (current->intersect(current->object, point - current->get_location(current->object)))
+			return (current->get_color(current->object));
+		current = current->next;	
 	}
-	return ((int)NADA);
-	// usleep(5000);
-	// printf("result xyz %f %f %f\n", res_xyz[0], res_xyz[1], res_xyz[2]);
-	// printf("sqrt(squared) %f\n", sqrt(squared));
-	// printf("radius %f\n",  data->sphere.radius);
-	// sleep(1);
+	return (-1);
 }
 
-int	shadow_ray_to_light(t_scene_data *data)
+int	color_at_ray(t_object *objects, t_ray ray)
 {
+	t_vec4f			ray_point;
+	const t_vec4f	ray_step = ray.direction;
+	const int		clipping_plane[2] = {5, 200};
+	int				step;
+	int				color;
 
-	// t_vec4f	position[3];
-	// t_vec4f	light_ray[3];
-	(void)data;
-// 	int steps = 0;
-
-// 	position[0] = surface_point[0] + light_ray[0];
-// 	position[1] = surface_point[1] + light_ray[1];
-// 	position[2] = surface_point[2] + light_ray[2];
-// 	while (steps < 200) // ray in object? = shadow
-// 	{
-// 		position[0] += light_ray[0];
-// 		position[1] += light_ray[1];
-// 		position[2] += light_ray[2];
-// 		// if (PRINT_DEBUG) print_matrix_1_3(position);
-// 		if (check_if_hit(data, position))
-// 			return (FALSE);
-// 		steps++;
-// 	}
-	return (TRUE);
-}
-
-void	increment_vec4f(t_vec4f *scaled_vector, t_vec4f *normalize_vector)
-{
-	(*scaled_vector) += (*normalize_vector);
-}
-
-// float	*int_1x3_to_float_1x3(int i_arr[3])
-// {
-// 	float	f_arr[3];
-// 	int		i;
-
-// 	i = 0;	
-// 	while (i < 3)
-// 	{
-// 		f_arr[i] = i_arr[i];
-// 		i++;
-// 	}
-// 	return (f_arr);
-// }
-
-
-int	hit_ray(t_scene_data *data, float angle_horiz, float angle_vert)
-{
-	t_vec4f	rota_horiz[3];
-	t_vec4f	rota_vert[3];
-	t_vec4f	comp[3];
-
-	init_t_around_z(rota_horiz, angle_horiz);
-	init_t_around_y(rota_vert, angle_vert);
-	init_comp_m(comp);
-	compilation_matrix(comp, rota_horiz, rota_vert);
-
-	// if (PRINT_DEBUG) printf("angles horizontal, vertical: %f\t%f\n", ft_rad_to_degr(angle_horiz), ft_rad_to_degr(angle_vert));
-	// if (PRINT_DEBUG) printf("_________________\n");
-	// if (PRINT_DEBUG) printf("rotation\n");
-	// if (PRINT_DEBUG) print_matrix_3_3(comp);
-	// if (PRINT_DEBUG) printf("original\n");
-	// if (PRINT_DEBUG) print_matrix_1_3(data->camera.orientation);
-
-	// init_result(&data->ray.normalized_vec);
-	data->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
-	matrix_multiply_1x3_3x3(&data->camera.orientation, comp, &data->ray.normalized_vec);
-
-	// if (PRINT_DEBUG) printf("result:\n");
-	// if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
-	// if (PRINT_DEBUG) printf("_________________\n\n");
-	// sleep(2);
-	data->ray.step = 1;
-	// init_result(&data->ray.scaled_vec);
-	data->ray.scaled_vec = (t_vec4f){0, 0, 0, 0};
-	
-	while (data->ray.step < 200)
+	step = clipping_plane[0];
+	ray_point = ray.origin + (float)step * ray_step;
+	while (step <= clipping_plane[1])
 	{
-		// int		resulting_color;
-		t_vec4f	obj_to_ray_vec;
-		t_color	color;
-
-		increment_vec4f(&data->ray.scaled_vec, &data->ray.normalized_vec);
-		init_result(&obj_to_ray_vec);
-		init_result(&color.rgb_f);
-		color.color_code = check_if_hit(data, &data->ray, &obj_to_ray_vec);
-		
-		// printf("ptr:1 %p\n", &obj_to_ray_vec);
-		// printf("color code: %d\n", color.color_code);
-		if (color.color_code != NADA)
-		{
-			t_vec4f surface_normal;
-			// printf("color code: %d\n", color.color_code);
-
-			surface_normal = obj_to_ray_vec;
-			// printf("____________________\n scaled HIT: ");
-			// if (PRINT_DEBUG) print_matrix_1_3(data->ray.scaled_vec);
-			// print_matrix_1_3(surface_normal);
-			normalize_vector(&surface_normal);
-			// t_vec4f	*surface_point = &data->ray.scaled_vec;// must be actual surface point, not in the object! like now
-			// printf("color code: %d\n", color.color_code);
-
-			t_vec4f surface_to_light_ray = points_derived_vector(data->ray.scaled_vec, data->light.location);
-			// printf(" DEZE color code: %d\n", color.color_code);
-			normalize_vector(&surface_to_light_ray);
-			// printf(" DIE color code: %d\n", color.color_code);
-			float rgb_factor = dot_product_3d(surface_normal, surface_to_light_ray);
-			// printf("%f\n", rgb_factor);
-
-			if (rgb_factor <= 0)
-			{
-				// if (PRINT_DEBUG) printf("___________\nnormalized:\n");
-				// if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
-				// printf("surface to light:\n");
-				// if (rgb_factor > 0.2)
-				// 	printf("black: %f\n", rgb_factor);
-				// print_matrix_1_3(surface_to_light_ray);
-				return (BLACK);
-			}
-			// if (rgb_factor > 0.2)
-			// 	printf("black after: %f\n", rgb_factor);
-			// printf("color code: %d\n", color.color_code);
-
-			init_rgb(&color, color.color_code);
-			// printf("bug gespot: %d -> %d %d %d\n", color.color_code, color.rgb[0], color.rgb[1], color.rgb[2]);
-			init_rgb_f(&color.rgb_f, color.rgb);
-			normalize_vector(&color.rgb_f);
-			vector_scaling(&color.rgb_f, rgb_factor);
-			make_rgb_with_normalized_rgb_f(color.rgb, color.rgb_f);
-			color.color_code = create_color(color.rgb[0], color.rgb[1], color.rgb[2]);
-			return (color.color_code);
-		}
-		data->ray.step += 1;
+		color = object_hit_color(objects, ray_point);
+		if (color != -1)
+			return (color);
+		ray_point += ray_step;
+		step++;
 	}
-	// if (angle_horiz > 0 && angle_horiz < 0.09)
-	// 	printf("%f\n", data->ray.direction_abc[2]);
-	return (NADA);
+	return (-1);
 }
-/*
-		print_matrix_1_3(data->ray.scaled_vec);
 
-		printf("dot product %f\n", dot_product_3d(surface_normal, surface_to_light_ray));
-		// print_matrix_1_3(data->ray.scaled_vec);
-		// print_matrix_1_3(data->light.position);
+t_ray	construct_ray(float x, float y, t_scene_data *scene, const float aspect_ratio)
+{
+	t_ray	ray;
+	float	pixel_camera_x;
+	float	pixel_camera_y;
 
-	printf("surface normal:\n");
-	print_matrix_1_3(surface_normal);
-	printf(" ______:\n");
-	sleep(1);
-	float one[3] = {-200, -200, -100};
-	float two[3] = {-100, -100, -100};
-
-	normalize_vector(one);
-	normalize_vector(two);
-
-	printf("dot product %f\n_______\n", dot_product_3d(one, two));
-
-*/
-
-// int	world_horizon_opposed_to_ray(t_scene_data *data)
-// {
-// }
+	ray.origin = (t_vec4f){0, 0, 0, 0};
+	pixel_camera_x = (2.0f * ((x + 0.5) / (float)scene->win_width) - 1) * tanf(ft_degr_to_rad(scene->camera.fov) / 2) * aspect_ratio;
+	pixel_camera_y = (1.0f - 2.0f * ((y + 0.5) / (float)scene->win_height)) * tanf(ft_degr_to_rad(scene->camera.fov) / 2);
+	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 0};
+	return (ray);
+}
 
 void send_rays(t_scene_data *scene)
 {
 	int		ray_x;
 	int		ray_y;
-	float	pixel_camera_x;
-	float	pixel_camera_y;
 	t_ray	ray;
-	const float	aspect_ratio = WINDOW_WIDTH / WINDOW_HEIGHT;
+	int 	color;
+	const float	aspect_ratio = scene->win_width / scene->win_height;
 
-	ray_x = 0;
 	ray_y = 0;
-	while (ray_y < WINDOW_HEIGHT)
+	while (ray_y < scene->win_height)
 	{
-		while (ray_x < WINDOW_WIDTH)
+		ray_x = 0;
+		while (ray_x < scene->win_width)
 		{
-			pixel_camera_x = (2 * ((ray_x + 0.5) / WINDOW_WIDTH) - 1) * aspect_ratio * tanf(ft_degr_to_rad(scene->camera.fov) / 2);
-			pixel_camera_y = 1 - (2 * ((ray_y + 0.5) / WINDOW_HEIGHT)) * tanf(ft_degr_to_rad(scene->camera.fov) / 2);
-			ray.origin = (t_vec4f){0, 0, 0, 0};
-			ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 0};
-			normalize_vector(&ray.direction);
-			
+			color = -1;
+			ray = construct_ray((float)ray_x, (float)ray_y, scene, aspect_ratio);
+			color = color_at_ray(scene->objects, ray);
+			// printf("[%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
+			if (color != -1)
+				put_pixel_img(scene->image, ray_x, ray_y, color);
 			ray_x++;
 		}
 		ray_y++;

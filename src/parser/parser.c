@@ -42,6 +42,12 @@ t_vec4f t_get_location_sphere(void *object)
 	return sphere->location;
 }
 
+int	t_get_color_sphere(void *object)
+{
+	t_sphere *sphere = (t_sphere *)object;
+
+	return (sphere->color.color_code);
+}
 
 void	assign_intersect_functions(t_object *current)
 {
@@ -69,11 +75,20 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 	};
+	const t_get_color	color_getters[OBJ_TYPE_COUNT] = {
+		NULL,
+		NULL,
+		NULL,
+		t_get_color_sphere,
+		NULL,
+		NULL,
+	};
 	while (current)
 	{
 		current->intersect = (intersect_ptr)function_pointer[current->type];
 		current->print_object_data = (print_data)function_pointer_data[current->type];
 		current->get_location = (t_get_location)location_getters[current->type];
+		current->get_color = (t_get_color)color_getters[current->type];
 		current = current->next;
 	}
 }

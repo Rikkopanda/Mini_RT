@@ -19,8 +19,8 @@
 
 typedef struct s_ray	t_ray;
 
-# define WINDOW_HEIGHT 60
-# define WINDOW_WIDTH 60
+# define WINDOW_HEIGHT 200
+# define WINDOW_WIDTH 200
 
 typedef struct s_scene_data t_scene_data;
 
@@ -129,6 +129,8 @@ typedef struct s_scene_data
 	t_object	*objects;
 	t_win		mlx;
 	t_img		image;
+	int			win_width;	
+	int			win_height;	
 }	t_scene_data;
 
 
