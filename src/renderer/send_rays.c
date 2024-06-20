@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/20 16:30:08 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/20 16:43:34 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,8 +122,8 @@ t_ray	construct_ray(float x, float y, t_scene_data *scene, const float aspect_ra
 	float	pixel_camera_y;
 
 	ray.origin = (t_vec4f){0, 0, 0, 0};
-	pixel_camera_x = (2.0f * ((x + 0.5) / (float)scene->win_width) - 1) * tanf(ft_degr_to_rad(scene->camera.fov) / 2) * aspect_ratio;
-	pixel_camera_y = (1.0f - 2.0f * ((y + 0.5) / (float)scene->win_height)) * tanf(ft_degr_to_rad(scene->camera.fov) / 2);
+	pixel_camera_x = (2.0f * ((x + 0.5) / (float)scene->win_width) - 1) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f) * aspect_ratio;
+	pixel_camera_y = (1.0f - 2.0f * ((y + 0.5) / (float)scene->win_height)) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
 	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 0};
 	return (ray);
 }
@@ -134,7 +134,7 @@ void send_rays(t_scene_data *scene)
 	int		ray_y;
 	t_ray	ray;
 	int 	color;
-	const float	aspect_ratio = scene->win_width / scene->win_height;
+	const float	aspect_ratio = (float)scene->win_width / (float)scene->win_height;
 
 	ray_y = 0;
 	while (ray_y < scene->win_height)
