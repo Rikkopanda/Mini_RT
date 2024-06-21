@@ -62,7 +62,7 @@ int render_scene(t_scene_data *data)
 	mlx_key_hook(data->mlx.win_ptr, handle_input, data);
 
 	// init_camera(data);
-	init_light_source(data);
+	// init_light_source(data);
 	// init_sphere(data);
 	// printf("data object: x, y, z %d %d %d\n", );
 	send_rays(data);

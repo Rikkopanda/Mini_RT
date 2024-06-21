@@ -10,4 +10,8 @@ typedef struct s_color
 	t_vec4f	rgb_f;
 } t_color;
 
+int	get_r(int color);
+int	get_g(int color);
+int	get_b(int color);
+
 #endif
