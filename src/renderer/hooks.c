@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/27 09:26:30 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/06/20 12:53:13 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/22 14:53:08 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,36 +24,38 @@ int	extra_keys(int keysym, t_scene_data *data)
 
 int	left_up_right_down_forward_backward(int keysym, t_scene_data *data)
 {
-	if (keysym == 'w')
-		return (printf("move camara x+...\n"), data->camera.location[0] += 10, 1);
-	else if (keysym == 's')
-		return (printf("move camara x-...\n"), data->camera.location[0] -= 10, 1);	
+	const int dist = 10;
+	if (keysym == 'd')
+		return (printf("move camara x+...\n"), data->camera.location[0] += dist, 1);
 	else if (keysym == 'a')
-		return (printf("move camara y+...\n"), data->camera.location[1] += 10, 1);	
-	else if (keysym == 'd')
-		return (printf("move camara y-...\n"), data->camera.location[1] -= 10, 1);	
+		return (printf("move camara x-...\n"), data->camera.location[0] -= dist, 1);	
 	else if (keysym == 'r')
-		return (printf("move camara z+...\n"), data->camera.location[2] += 10, 1);	
+		return (printf("move camara y+...\n"), data->camera.location[1] += dist, 1);	
 	else if (keysym == 'f')
-		return (printf("move camara z-...\n"), data->camera.location[2] -= 10, 1);
+		return (printf("move camara y-...\n"), data->camera.location[1] -= dist, 1);	
+	else if (keysym == 's')
+		return (printf("move camara z+...\n"), data->camera.location[2] += dist, 1);	
+	else if (keysym == 'w')
+		return (printf("move camara z-...\n"), data->camera.location[2] -= dist, 1);
 	else
 		return (0);
 }
 
 int move_lighting(int keysym, t_scene_data *data)
 {
-	if (keysym == 'i')
-		return (printf("move lighting x+...\n"), data->light.location[0] += 50, 1);
-	else if (keysym == 'k')
-		return (printf("move lighting x-...\n"), data->light.location[0] -= 50, 1);	
+	const int dist = 10;
+	if (keysym == 'l')
+		return (printf("move lighting x+...\n"), data->light.location[0] += dist, 1);
 	else if (keysym == 'j')
-		return (printf("move lighting y+...\n"), data->light.location[1] += 50, 1);	
-	else if (keysym == 'l')
-		return (printf("move lighting y-...\n"), data->light.location[1] -= 50, 1);	
-	else if (keysym == 'o')
-		return (printf("move lighting z+...\n"), data->light.location[2] += 50, 1);	
+		return (printf("move lighting x-...\n"), data->light.location[0] -= dist, 1);	
 	else if (keysym == 'p')
-		return (printf("move lighting z-...\n"), data->light.location[2] -= 50, 1);
+		return (printf("move lighting y+...\n"), data->light.location[1] += dist, 1);	
+	else if (keysym == ';')
+		return (printf("move lighting y-...\n"), data->light.location[1] -= dist, 1);	
+	else if (keysym == 'k')
+		return (printf("move lighting z+...\n"), data->light.location[2] += dist, 1);	
+	else if (keysym == 'i')
+		return (printf("move lighting z-...\n"), data->light.location[2] -= dist, 1);
 	else
 		return (0);
 }
@@ -116,6 +118,6 @@ int handle_input(int keysym, t_scene_data *data)
 		return (0);
 	send_rays(data);
 	mlx_put_image_to_window(data->mlx.mlx_ptr, data->mlx.win_ptr, data->image.img_ptr, 0, 0);
-	printf("%d key\n", keysym);
+	// printf("%d key\n", keysym);
     return (0);
 }

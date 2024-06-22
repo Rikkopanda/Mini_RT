@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/21 17:36:29 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/22 15:37:34 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ t_vec4f	generate_random_vec4f(void)
 
 	vec4f = (t_vec4f){knuth_hash(), knuth_hash(), knuth_hash(), 0};
 	normalize_vector(&vec4f);
-	return (vec4f * 2 - 1);
+	return (vec4f);
 }
 
 int visualize_sphere_normals(const t_vec4f point, t_vec4f center)
@@ -95,7 +95,7 @@ float	vector_length(t_vec4f v)
 int	point_is_on_ray(const t_vec4f point, t_ray ray)
 {
 	const t_vec4f	t = (point - ray.origin) / ray.direction;
-	const float		epsilon = 300.0f;
+	const float		epsilon = 10.0f;
 
 	// printf("point [%.4f, %.4f, %.4f]\n", point[0], point[1], point[2]);
 	// printf("ray origin [%.4f, %.4f, %.4f]\n", ray.origin[0], ray.origin[1], ray.origin[2]);
@@ -103,7 +103,8 @@ int	point_is_on_ray(const t_vec4f point, t_ray ray)
 	// printf("t = [%.4f, %.4f, %.4f]\n", t[0], t[1], t[2]);
 
 	// printf("%.4f | %.4f\n", fabs(t[0] - t[1]), fabs(t[0] - t[2]));
-	if (fabs(t[0] - t[1]) < epsilon && fabs(t[0] - t[2]) < epsilon)
+	if (fabs(t[0] - t[1]) < epsilon && \
+		fabs(t[0] - t[2]) < epsilon)
 	{
 		// printf("RAY HIT\n");
 		return (TRUE);
@@ -129,18 +130,19 @@ int	vec4rgb_to_int(t_vec4f vec)
 int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec4f point, const t_vec4f normal)
 {
 	const float	strength = calculate_light_strength(scene->light, vector_length(scene->light.location - point), 1000);
+	int			samples;
 	t_ray		ray;
 	t_vec4f		random;
-	int			samples;
 	t_vec4f		rgb;
 
-	samples = 64;
+	samples = 32;
 	ray.origin = point;
 	// printf("strength %.4f\n", strength);
 	while (samples > 0)
 	{
 		ray.direction = generate_random_vec4f();
-		if (dot_product_3d(ray.direction, normal) < 0)
+		// print_vec3(ray.direction, "ray direction");
+		if (dot_product_3d(ray.direction + ray.origin, -normal) < 0)
 			ray.direction = -ray.direction;
 		// printf("[%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
 		if (point_is_on_ray(scene->light.location, ray))
@@ -169,7 +171,7 @@ int	object_hit_color(t_scene_data *scene, const t_vec4f point)
 		{
 			// if (current->type == SPHERE)
 			// 	return (visualize_sphere_normals(point, current->get_location(current->object)));
-			return (calculate_direct_light_intensity(scene, current->get_color(current->object), point, -(point - current->get_location(current->object))));
+			return (calculate_direct_light_intensity(scene, current->get_color(current->object), point, point - current->get_location(current->object)));
 		}
 		current = current->next;	
 	}
@@ -214,6 +216,25 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 	return (ray);
 }
 
+void	visualise_light_location(t_object *current, t_light light)
+{
+	t_sphere	*sphere;
+
+	sphere = NULL;
+	while (current)
+	{
+		if (current->type != SPHERE)
+			current = current->next;
+		else
+			sphere = (t_sphere *)current->object;
+		if (sphere != NULL && sphere->diameter == 1)
+		{
+			sphere->location = light.location;
+			break ;
+		}
+	}
+}
+
 void send_rays(t_scene_data *scene)
 {
 	const float	aspect_ratio = (float)scene->win_width / (float)scene->win_height;
@@ -222,6 +243,7 @@ void send_rays(t_scene_data *scene)
 	t_ray	ray;
 	int 	color;
 
+	visualise_light_location(scene->objects, scene->light);
 	ray_y = 0;
 	while (ray_y < scene->win_height)
 	{
@@ -241,6 +263,7 @@ void send_rays(t_scene_data *scene)
 		ray_y++;
 	}
 	printf("done\n");
+	print_vec3(scene->light.location, "light");
 }
 /*
 clock_t				t;
