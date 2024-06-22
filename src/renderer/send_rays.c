@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/22 23:00:16 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/22 23:38:27 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,6 @@ float	vector_length(t_vec4f v)
 	return (sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]));
 }
 
-int	ray_intersects_light(const t_ray ray, t_light light)
-
 int	point_is_on_ray(const t_vec4f point, const t_ray ray)
 {
 	const t_vec4f	t = (point - ray.origin) / ray.direction;
@@ -138,7 +136,7 @@ int	vec4rgb_to_int(t_vec4f vec)
 	return ((int)vec[0] << 16 | (int)vec[1] << 8 | (int)vec[2]);
 }
 
-int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec4f point, const t_vec4f normal)
+int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec4f point, t_vec4f normal)
 {
 	const float	strength = calculate_light_strength(scene->light, vector_length(scene->light.location - point), 1200);
 	int			samples;
@@ -146,14 +144,16 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 	t_vec4f		random;
 	t_vec4f		rgb;
 
-	samples = 1200;
+	samples = 600;
 	ray.origin = point;
 	// printf("strength %.4f\n", strength);
 	// print_vec3(point, "point");
+	normalize_vector(&normal);
 	while (samples > 0)
 	{
-		ray.direction = generate_random_vec4f();
-		if (dot_product_3d(ray.direction + point, -normal) < 0)
+		ray.direction = point + generate_random_vec4f();
+		// print_vec3(normal, "normal");
+		if (dot_product_3d(-normal, ray.direction) < 0)
 			ray.direction = -ray.direction;
 		// print_vec3(ray.origin, "ray origin");
 		// print_vec3(ray.direction, "ray direction");
@@ -190,6 +190,13 @@ int	object_hit_color(t_scene_data *scene, const t_vec4f point)
 	{
 		if (current->intersect(current->object, point - current->get_location(current->object)))
 		{
+			if (current->type == SPHERE)
+			{
+				t_sphere *sphere;
+				sphere = current->object;
+				if (sphere->diameter == 1)
+					return (0xFFFFFF);
+			}
 			// if (current->type == SPHERE)
 			// 	return (visualize_sphere_normals(point, current->get_location(current->object)));
 			return (calculate_direct_light_intensity(scene, current->get_color(current->object), point, point - current->get_location(current->object)));
@@ -202,7 +209,7 @@ int	object_hit_color(t_scene_data *scene, const t_vec4f point)
 int	color_at_ray(t_scene_data *scene, t_ray ray)
 {
 	t_vec4f			ray_point;
-	const int		clipping_plane[2] = {10, 200};
+	const int		clipping_plane[2] = {5, 200};
 	int				step;
 	int				color;
 
