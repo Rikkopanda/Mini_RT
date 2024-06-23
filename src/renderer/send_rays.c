@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/22 23:38:27 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/23 16:41:33 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ t_vec4f	generate_random_vec4f(void)
 	static int	seed = 0;
 	t_vec4f	vec4f;
 
-	vec4f = (t_vec4f){knuth_hash(&seed), knuth_hash(&seed), knuth_hash(&seed), 0};
+	vec4f = (t_vec4f){knuth_hash(&seed), knuth_hash(&seed), knuth_hash(&seed), 1};
 	normalize_vector(&vec4f);
 	return (vec4f);
 }
@@ -104,10 +104,10 @@ int	point_is_on_ray(const t_vec4f point, const t_ray ray)
 	const t_vec4f	t = (point - ray.origin) / ray.direction;
 	const float		epsilon = 1.0f;
 
-	// printf("point [%.4f, %.4f, %.4f]\n", point[0], point[1], point[2]);
-	// printf("ray origin [%.4f, %.4f, %.4f]\n", ray.origin[0], ray.origin[1], ray.origin[2]);
-	// printf("ray direction [%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
-	// printf("t = [%.4f, %.4f, %.4f]\n", t[0], t[1], t[2]);
+	printf("point [%.4f, %.4f, %.4f]\n", point[0], point[1], point[2]);
+	printf("ray origin [%.4f, %.4f, %.4f]\n", ray.origin[0], ray.origin[1], ray.origin[2]);
+	printf("ray direction [%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
+	printf("t = [%.4f, %.4f, %.4f]\n", t[0], t[1], t[2]);
 
 	if (fabsf(t[0] - t[1]) < epsilon && \
 		fabsf(t[0] - t[2]) < epsilon)
@@ -151,7 +151,7 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 	normalize_vector(&normal);
 	while (samples > 0)
 	{
-		ray.direction = point + generate_random_vec4f();
+		ray.direction = generate_random_vec4f();
 		// print_vec3(normal, "normal");
 		if (dot_product_3d(-normal, ray.direction) < 0)
 			ray.direction = -ray.direction;
@@ -236,7 +236,7 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 	ray.origin = scene->camera.location;
 	pixel_camera_x = (2.0f * ((x + 0.5) / (float)scene->win_width) - 1) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f) * aspect_ratio;
 	pixel_camera_y = (1.0f - 2.0f * ((y + 0.5) / (float)scene->win_height)) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
-	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 0};
+	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 1};
 	// printf("before [%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
 	normalize_vector(&ray.direction);
 	ray.direction *= precision;
