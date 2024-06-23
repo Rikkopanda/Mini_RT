@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/23 16:41:33 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/23 18:10:56 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,10 @@ t_vec4f	generate_random_vec4f(void)
 	static int	seed = 0;
 	t_vec4f	vec4f;
 
+	// vec4f = (t_vec4f){knuth_hash(&seed), knuth_hash(&seed), knuth_hash(&seed), 1};
 	vec4f = (t_vec4f){knuth_hash(&seed), knuth_hash(&seed), knuth_hash(&seed), 1};
 	normalize_vector(&vec4f);
+	// print_vec3(vec4f, "random_vec");
 	return (vec4f);
 }
 
@@ -104,10 +106,10 @@ int	point_is_on_ray(const t_vec4f point, const t_ray ray)
 	const t_vec4f	t = (point - ray.origin) / ray.direction;
 	const float		epsilon = 1.0f;
 
-	printf("point [%.4f, %.4f, %.4f]\n", point[0], point[1], point[2]);
-	printf("ray origin [%.4f, %.4f, %.4f]\n", ray.origin[0], ray.origin[1], ray.origin[2]);
-	printf("ray direction [%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
-	printf("t = [%.4f, %.4f, %.4f]\n", t[0], t[1], t[2]);
+	// printf("point [%.4f, %.4f, %.4f]\n", point[0], point[1], point[2]);
+	// printf("ray origin [%.4f, %.4f, %.4f]\n", ray.origin[0], ray.origin[1], ray.origin[2]);
+	// printf("ray direction [%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
+	// printf("t = [%.4f, %.4f, %.4f]\n", t[0], t[1], t[2]);
 
 	if (fabsf(t[0] - t[1]) < epsilon && \
 		fabsf(t[0] - t[2]) < epsilon)
@@ -144,7 +146,7 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 	t_vec4f		random;
 	t_vec4f		rgb;
 
-	samples = 600;
+	samples = 1;
 	ray.origin = point;
 	// printf("strength %.4f\n", strength);
 	// print_vec3(point, "point");
@@ -153,7 +155,7 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 	{
 		ray.direction = generate_random_vec4f();
 		// print_vec3(normal, "normal");
-		if (dot_product_3d(-normal, ray.direction) < 0)
+		if (dot_product_3d(normal, ray.direction) < 0)
 			ray.direction = -ray.direction;
 		// print_vec3(ray.origin, "ray origin");
 		// print_vec3(ray.direction, "ray direction");
@@ -175,8 +177,8 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 	// print_vec3(ray.direction, "ray direction");
 	// if (point[1] < 0)
 	// {
-	// 	t_vec4f not_hit = (t_vec4f){255, 255, 255, 0};
-	// 	return (vec4rgb_to_int(not_hit * fabsf(point[1] / 15)));
+		// t_vec4f not_hit = (t_vec4f){255, 255, 255, 0};
+		// return (vec4rgb_to_int(not_hit * fabsf(point[1] / 15)));
 	// }
 	return (0);
 }
