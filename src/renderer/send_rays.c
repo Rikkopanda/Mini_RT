@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/24 16:50:46 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/24 17:06:39 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 	const t_vec4f	surface_to_light = scene->light.location - point;
 	const float		distance_to_light = vector_length(surface_to_light);
 	const float	strength = calculate_light_strength(scene->light.ratio, \
-							distance_to_light, 60.0f);
+							distance_to_light, 5.0f);
 	int			samples;
 	t_ray		ray;
 	t_vec4f		random;
@@ -161,20 +161,21 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 		if (dot_product_3d(ray.direction, surface_to_light) >= 0.0f)
 		{
 			float cos_theta = dot_product_3d(surface_to_light, normal) / distance_to_light;
-			float attenuation = 1.0f / (1.0f + 0.1f * distance_to_light * distance_to_light);
+			// float attenuation = 1.0f / (1.0f + 0.1f * distance_to_light * distance_to_light);
 			cos_theta = ft_maxf(cos_theta, 0.0f);
 			// print_vec3(ray.direction, "ray direction");
 			// printf("strength %.4f\n", strength);
 			rgb = int_to_vec4rgb(color);
 			// print_vec3(rgb, "rgb before");
-			rgb = rgb * strength * cos_theta * attenuation + (rgb * scene->ambient.ratio);
+			rgb = rgb * strength * cos_theta + (rgb * scene->ambient.ratio);
 			// rgb *= strength * cos_theta;
 			// print_vec3(rgb, "rgb after strength");
 			// rgb *= strength;
-			rgb[0] = ft_min(ceilf(rgb[0]), 255);
-			rgb[1] = ft_min(ceilf(rgb[1]), 255);
-			rgb[2] = ft_min(ceilf(rgb[2]), 255);
-			// print_vec3(rgb, "rgb after clamp");
+			rgb[0] = ft_min(rgb[0], 255);
+			rgb[1] = ft_min(rgb[1], 255);
+			rgb[2] = ft_min(rgb[2], 255);
+			if (point[0] >= -0.5f && point[0] <= 0.5f)
+				print_vec3(rgb, "rgb after clamp");
 			return (vec4rgb_to_int(rgb));
 		}
 		samples--;
@@ -200,13 +201,13 @@ int	object_hit_color(t_scene_data *scene, const t_vec4f point)
 	{
 		if (current->intersect(current->object, point - current->get_location(current->object)))
 		{
-			if (current->type == SPHERE)
-			{
-				t_sphere *sphere;
-				sphere = current->object;
-				if (sphere->diameter == 1)
-					return (0xFFFFFF);
-			}
+			// if (current->type == SPHERE)
+			// {
+			// 	t_sphere *sphere;
+			// 	sphere = current->object;
+			// 	if (sphere->diameter == 1)
+			// 		return (0xFFFFFF);
+			// }
 			if (current->intersect(current->object, scene->light.location - current->get_location(current->object)))
 				return (0);
 			// if (current->type == SPHERE)
@@ -221,7 +222,7 @@ int	object_hit_color(t_scene_data *scene, const t_vec4f point)
 int	color_at_ray(t_scene_data *scene, t_ray ray)
 {
 	t_vec4f			ray_point;
-	const int		clipping_plane[2] = {5, 200};
+	const int		clipping_plane[2] = {20, 300};
 	int				step;
 	int				color;
 
@@ -243,7 +244,7 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 	t_ray		ray;
 	float		pixel_camera_x;
 	float		pixel_camera_y;
-	const float	precision = 0.1f;
+	const float	precision = 0.2f;
 
 	ray.origin = scene->camera.location;
 	pixel_camera_x = (2.0f * ((x + 0.5) / (float)scene->win_width) - 1) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f) * aspect_ratio;
@@ -283,7 +284,7 @@ void send_rays(t_scene_data *scene)
 	t_ray	ray;
 	int 	color;
 
-	visualise_light_location(scene->objects, scene->light);
+	// visualise_light_location(scene->objects, scene->light);
 	ray_y = 0;
 	while (ray_y < scene->win_height)
 	{
