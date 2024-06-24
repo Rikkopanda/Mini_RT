@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/23 18:10:56 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/24 14:17:04 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,31 +101,9 @@ float	vector_length(t_vec4f v)
 	return (sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]));
 }
 
-int	point_is_on_ray(const t_vec4f point, const t_ray ray)
+float	calculate_light_strength(float light_ratio, float distance, float light_strength)
 {
-	const t_vec4f	t = (point - ray.origin) / ray.direction;
-	const float		epsilon = 1.0f;
-
-	// printf("point [%.4f, %.4f, %.4f]\n", point[0], point[1], point[2]);
-	// printf("ray origin [%.4f, %.4f, %.4f]\n", ray.origin[0], ray.origin[1], ray.origin[2]);
-	// printf("ray direction [%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
-	// printf("t = [%.4f, %.4f, %.4f]\n", t[0], t[1], t[2]);
-
-	if (fabsf(t[0] - t[1]) < epsilon && \
-		fabsf(t[0] - t[2]) < epsilon)
-	{
-		// printf("RAY HIT\n");
-		return (TRUE);
-	}
-	// printf("ray origin [%.4f, %.4f, %.4f]\n", ray.origin[0], ray.origin[1], ray.origin[2]);
-	// printf("ray direction [%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
-	// printf("%.4f | %.4f\n", fabs(t[0] - t[1]), fabs(t[0] - t[2]));
-	return (FALSE);
-}
-
-float	calculate_light_strength(t_light light, float distance, float max_falloff)
-{
-	return ((distance / (max_falloff * light.ratio)) * 0.5f + 0.5f);
+	return (light_ratio / distance * light_strength);
 }
 
 t_vec4f	int_to_vec4rgb(int color)
@@ -140,7 +118,8 @@ int	vec4rgb_to_int(t_vec4f vec)
 
 int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec4f point, t_vec4f normal)
 {
-	const float	strength = calculate_light_strength(scene->light, vector_length(scene->light.location - point), 1200);
+	const t_vec4f	surface_to_light = scene->light.location - point;
+	const float	strength = calculate_light_strength(scene->light.ratio, vector_length(surface_to_light), 2.0f) * (1.0f + scene->ambient.ratio);
 	int			samples;
 	t_ray		ray;
 	t_vec4f		random;
@@ -148,27 +127,29 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 
 	samples = 1;
 	ray.origin = point;
-	// printf("strength %.4f\n", strength);
 	// print_vec3(point, "point");
 	normalize_vector(&normal);
 	while (samples > 0)
 	{
 		ray.direction = generate_random_vec4f();
 		// print_vec3(normal, "normal");
-		if (dot_product_3d(normal, ray.direction) < 0)
-			ray.direction = -ray.direction;
 		// print_vec3(ray.origin, "ray origin");
 		// print_vec3(ray.direction, "ray direction");
 		// printf("[%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
-		if (point_is_on_ray(scene->light.location, ray))
+		if (dot_product_3d(normal, ray.direction) < 0)
+			ray.direction = -ray.direction;
+		if (dot_product_3d(ray.direction, surface_to_light) > 0.0f)
 		{
+			// printf("strength %.4f\n", strength);
 			rgb = int_to_vec4rgb(color);
+			// print_vec3(rgb, "rgb before");
 			rgb *= strength;
+			// print_vec3(rgb, "rgb after strength");
 			// rgb *= strength;
-			rgb[0] = ft_min(rgb[0], 255);
-			rgb[1] = ft_min(rgb[1], 255);
-			rgb[2] = ft_min(rgb[2], 255);
-			// print_vec3(rgb, "rgb");
+			rgb[0] = ft_min(ceilf(rgb[0]), 255);
+			rgb[1] = ft_min(ceilf(rgb[1]), 255);
+			rgb[2] = ft_min(ceilf(rgb[2]), 255);
+			// print_vec3(rgb, "rgb after clamp");
 			return (vec4rgb_to_int(rgb));
 		}
 		samples--;
@@ -233,7 +214,7 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 	t_ray		ray;
 	float		pixel_camera_x;
 	float		pixel_camera_y;
-	const float	precision = 0.5f;
+	const float	precision = 0.2f;
 
 	ray.origin = scene->camera.location;
 	pixel_camera_x = (2.0f * ((x + 0.5) / (float)scene->win_width) - 1) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f) * aspect_ratio;
