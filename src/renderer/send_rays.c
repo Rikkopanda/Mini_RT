@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/24 15:49:28 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/24 16:23:57 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,19 +122,29 @@ int	color_strength(int color, float strength)
 
 	rgb = int_to_vec4rgb(color);
 	rgb *= strength;
+	rgb[0] = ft_min(ceilf(rgb[0]), 255);
+	rgb[1] = ft_min(ceilf(rgb[1]), 255);
+	rgb[2] = ft_min(ceilf(rgb[2]), 255);
 	return (vec4rgb_to_int(rgb));
+}
+
+float	ft_maxf(float a, float b)
+{
+	if (a > b)
+		return (a);
+	return (b);
 }
 
 int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec4f point, t_vec4f normal)
 {
 	const t_vec4f	surface_to_light = scene->light.location - point;
-	const float	strength = calculate_light_strength(scene->light.ratio, vector_length(surface_to_light), 2.0f);
+	const float	strength = calculate_light_strength(scene->light.ratio, vector_length(surface_to_light), 30.0f);
 	int			samples;
 	t_ray		ray;
 	t_vec4f		random;
 	t_vec4f		rgb;
 
-	samples = 32;
+	samples = 600;
 	ray.origin = point;
 	// print_vec3(point, "point");
 	normalize_vector(&normal);
@@ -143,17 +153,19 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 		ray.direction = generate_random_vec4f();
 		// print_vec3(normal, "normal");
 		// print_vec3(ray.origin, "ray origin");
-		// print_vec3(ray.direction, "ray direction");
 		// printf("[%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
 		if (dot_product_3d(normal, ray.direction) < 0.0f)
 			ray.direction = -ray.direction;
 		if (dot_product_3d(ray.direction, surface_to_light) >= 0.0f)
 		{
+			float cos_theta = dot_product_3d(surface_to_light, normal) / vector_length(surface_to_light);
+			cos_theta = ft_maxf(cos_theta, 0.0f);
+			// print_vec3(ray.direction, "ray direction");
 			// printf("strength %.4f\n", strength);
 			rgb = int_to_vec4rgb(color);
 			// print_vec3(rgb, "rgb before");
-			rgb *= strength;
-			rgb += scene->ambient.ratio;
+			rgb = rgb * strength * cos_theta + (rgb * scene->ambient.ratio);
+			// rgb *= strength * cos_theta;
 			// print_vec3(rgb, "rgb after strength");
 			// rgb *= strength;
 			rgb[0] = ft_min(ceilf(rgb[0]), 255);
@@ -171,7 +183,9 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 		// t_vec4f not_hit = (t_vec4f){255, 255, 255, 0};
 		// return (vec4rgb_to_int(not_hit * fabsf(point[1] / 15)));
 	// }
-	return (color_strength(color, scene->ambient.ratio));
+	int shadow_color = color_strength(color, scene->ambient.ratio);
+	// printf("shadow color %X\n", shadow_color);
+	return (shadow_color);
 }
 
 int	object_hit_color(t_scene_data *scene, const t_vec4f point)
