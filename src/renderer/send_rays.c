@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/24 17:06:39 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/24 23:00:43 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,9 +122,9 @@ int	color_strength(int color, float strength)
 
 	rgb = int_to_vec4rgb(color);
 	rgb *= strength;
-	rgb[0] = ft_min(ceilf(rgb[0]), 255);
-	rgb[1] = ft_min(ceilf(rgb[1]), 255);
-	rgb[2] = ft_min(ceilf(rgb[2]), 255);
+	rgb[0] = ft_min(rgb[0], 255);
+	rgb[1] = ft_min(rgb[1], 255);
+	rgb[2] = ft_min(rgb[2], 255);
 	return (vec4rgb_to_int(rgb));
 }
 
@@ -135,21 +135,35 @@ float	ft_maxf(float a, float b)
 	return (b);
 }
 
+t_vec4f	specular_highlight(t_vec4f color, float cos_theta, float light_strength)
+{
+	const t_vec4f	white = (t_vec4f){255, 255, 255, 1};
+
+	color = light_strength * white * cos_theta;
+	color[0] = ft_min(color[0], 255);
+	color[1] = ft_min(color[1], 255);
+	color[2] = ft_min(color[2], 255);
+	return (color);
+}
+
 int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec4f point, t_vec4f normal)
 {
 	const t_vec4f	surface_to_light = scene->light.location - point;
 	const float		distance_to_light = vector_length(surface_to_light);
 	const float	strength = calculate_light_strength(scene->light.ratio, \
-							distance_to_light, 5.0f);
+							distance_to_light, 8.0f);
 	int			samples;
 	t_ray		ray;
 	t_vec4f		random;
 	t_vec4f		rgb;
+	const int	max = 25;
 
 	samples = 600;
 	ray.origin = point;
 	// print_vec3(point, "point");
 	normalize_vector(&normal);
+	// if (strength >= 1.0f)
+	// 	printf("%.4f\n", strength);
 	while (samples > 0)
 	{
 		ray.direction = generate_random_vec4f();
@@ -158,7 +172,7 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 		// printf("[%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
 		if (dot_product_3d(normal, ray.direction) < 0.0f)
 			ray.direction = -ray.direction;
-		if (dot_product_3d(ray.direction, surface_to_light) >= 0.0f)
+		if (dot_product_3d(ray.direction, surface_to_light) > 0.0f)
 		{
 			float cos_theta = dot_product_3d(surface_to_light, normal) / distance_to_light;
 			// float attenuation = 1.0f / (1.0f + 0.1f * distance_to_light * distance_to_light);
@@ -167,15 +181,18 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 			// printf("strength %.4f\n", strength);
 			rgb = int_to_vec4rgb(color);
 			// print_vec3(rgb, "rgb before");
-			rgb = rgb * strength * cos_theta + (rgb * scene->ambient.ratio);
+			// printf("cos_theta %.4f\n", cos_theta);
+			// printf("ambient %.4f\n", scene->ambient.ratio);
+			rgb = (rgb * strength) * cos_theta + (rgb * scene->ambient.ratio);
 			// rgb *= strength * cos_theta;
 			// print_vec3(rgb, "rgb after strength");
 			// rgb *= strength;
 			rgb[0] = ft_min(rgb[0], 255);
 			rgb[1] = ft_min(rgb[1], 255);
 			rgb[2] = ft_min(rgb[2], 255);
-			if (point[0] >= -0.5f && point[0] <= 0.5f)
-				print_vec3(rgb, "rgb after clamp");
+			rgb = specular_highlight(rgb, cos_theta, strength);
+			// if (point[0] >= -0.5f && point[0] <= 0.5f)
+			// 	print_vec3(rgb, "rgb after clamp");
 			return (vec4rgb_to_int(rgb));
 		}
 		samples--;
