@@ -73,7 +73,7 @@ typedef enum e_objectid
 
 typedef void (*print_data)(void *object);
 
-typedef int (*intersect_ptr)(void *object, t_vec4f v);
+typedef t_vec4f (*intersect_ptr)(void *object, t_ray ray);
 
 typedef t_vec4f (*t_get_location)(void *object);
 

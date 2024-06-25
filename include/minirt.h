@@ -166,6 +166,10 @@ int		create_color(int r, int g, int b);
 void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);
 
+float	vector_length(t_vec4f v);
+float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B);
+float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B);
+
 int		handle_input(int keysym, t_scene_data *data);
 
 t_win	new_window(int w, int h, char *str);

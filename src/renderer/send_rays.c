@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/25 12:57:43 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/25 17:51:40 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,18 +46,6 @@ void moved_vector_position(t_vec4f *result, t_vec4f target_vec, t_vec4f offset)
 // 		return (FALSE);
 // }
 
-float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B)
-{
-	return ((vec_A[0] * vec_B[0]) + (vec_A[1] * vec_B[1]) + (vec_A[2] * vec_B[2]));
-}
-
-float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
-{
-	return ((vec_A[2] * vec_B[3]) - (vec_B[2] * vec_A[3]) +
-			(vec_A[3] * vec_B[1]) - (vec_B[3] * vec_A[1]) +
-			(vec_A[1] * vec_B[2]) - (vec_B[1] * vec_A[2]));
-}
-
 // int	knuth_hash(void)
 // {
 // 	static int	seed;
@@ -94,11 +82,6 @@ int visualize_sphere_normals(const t_vec4f point, t_vec4f center)
 	normal = normal * 0.5f + 0.5f;
 	make_rgb_with_normalized_rgb_f(rgb, normal);
 	return (create_color(rgb[0], rgb[1], rgb[2]));
-}
-
-float	vector_length(t_vec4f v)
-{
-	return (sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]));
 }
 
 float	calculate_light_strength(float light_ratio, float distance, float light_strength)
@@ -218,50 +201,47 @@ int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec
 	return (shadow_color);
 }
 
-int	object_hit_color(t_scene_data *scene, const t_vec4f point)
+int	object_hit_color(t_scene_data *scene, t_ray ray)
 {
 	t_object	*current;
+	t_vec4f		hit_location;
+	t_vec4f		closest_hit;
+	t_object	*closest_object;
+	float		closest_length;
+	float		current_length;
 
 	current = scene->objects;
+	closest_hit = (t_vec4f){0, 0, 0, -1};
+	closest_length = 200;
 	while (current)
 	{
-		if (current->intersect(current->object, point - current->get_location(current->object)))
+		hit_location = current->intersect(current->object, ray);
+		if (hit_location[3] != -1)
 		{
-			// if (current->type == SPHERE)
-			// {
-			// 	t_sphere *sphere;
-			// 	sphere = current->object;
-			// 	if (sphere->diameter == 1)
-			// 		return (0xFFFFFF);
-			// }
-			if (current->intersect(current->object, scene->light.location - current->get_location(current->object)))
-				return (0);
-			// if (current->type == SPHERE)
-			// 	return (visualize_sphere_normals(point, current->get_location(current->object)));
-			return (calculate_direct_light_intensity(scene, current->get_color(current->object), point, point - current->get_location(current->object)));
+			current_length = fabsf(vector_length(hit_location - scene->camera.location));
+			if (current_length <= closest_length)
+			{
+				closest_length = current_length;
+				closest_hit = hit_location;
+				closest_object = current;
+			}
 		}
 		current = current->next;
 	}
-	return (-1);
+	if (closest_hit[3] == -1)
+		return (-1);
+	return (calculate_direct_light_intensity(scene, closest_object->get_color(closest_object->object), \
+			closest_hit, closest_hit - closest_object->get_location(closest_object->object)));
+	
 }
 
 int	color_at_ray(t_scene_data *scene, t_ray ray)
 {
-	t_vec4f			ray_point;
-	const int		clipping_plane[2] = {20, 300};
-	int				step;
 	int				color;
 
-	step = clipping_plane[0];
-	ray_point = ray.origin + (float)step * ray.direction;
-	while (step <= clipping_plane[1])
-	{
-		color = object_hit_color(scene, ray_point);
-		if (color != -1)
-			return (color);
-		ray_point += ray.direction;
-		step++;
-	}
+	color = object_hit_color(scene, ray);
+	if (color != -1)
+		return (color);
 	return (-1);
 }
 
@@ -270,16 +250,12 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 	t_ray		ray;
 	float		pixel_camera_x;
 	float		pixel_camera_y;
-	const float	precision = 0.2f;
 
 	ray.origin = scene->camera.location;
 	pixel_camera_x = (2.0f * ((x + 0.5) / (float)scene->win_width) - 1) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f) * aspect_ratio;
 	pixel_camera_y = (1.0f - 2.0f * ((y + 0.5) / (float)scene->win_height)) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
 	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 1};
-	// printf("before [%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
 	normalize_vector(&ray.direction);
-	ray.direction *= precision;
-	// printf("after [%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
 	return (ray);
 }
 
@@ -324,7 +300,7 @@ void send_rays(t_scene_data *scene)
 			if (color != -1)
 				put_pixel_img(scene->image, ray_x, ray_y, color);
 			else
-				put_pixel_img(scene->image, ray_x, ray_y, 0);
+				put_pixel_img(scene->image, ray_x, ray_y, vec4rgb_to_int(scene->ambient.ratio * (t_vec4f){scene->ambient.color.rgb[0], scene->ambient.color.rgb[1], scene->ambient.color.rgb[2], 1}));
 			ray_x++;
 		}
 		ray_y++;
