@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/26 20:47:12 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/26 21:55:26 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,9 @@ t_vec4f	generate_random_vec4f(void)
 	return (vec4f);
 }
 
-float	calculate_light_strength(float light_ratio, float distance, float light_strength)
+float	calculate_light_strength(float ratio, float distance, float strength)
 {
-	return (light_ratio / distance * light_strength);
+	return (ratio / distance * strength);
 }
 
 int	color_strength(int color, float strength)
@@ -85,7 +85,7 @@ float	ft_maxf(float a, float b)
 	return (b);
 }
 
-typedef struct	s_hit_info
+typedef struct s_hit_info
 {
 	t_object	*object;
 	t_vec4f		hit_location;
@@ -100,8 +100,7 @@ int	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 	const t_vec4f	surface_to_cam = scene->camera.location - surface.hit_location;
 	const float		distance_to_light = vector_length(surface_to_light);
 	const float		distance_to_cam = vector_length(surface_to_cam);
-	const float		strength = calculate_light_strength(scene->light.ratio, \
-								distance_to_light, 150.0f);
+	const float		strength = scene->light.ratio / distance_to_light * 50.0f;
 	t_vec4f			halfway_vec = (surface_to_light + surface_to_cam) / (distance_to_light + distance_to_cam);
 	t_vec4f			diffuse;
 	t_vec4f			specular;
@@ -109,11 +108,11 @@ int	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 	const int		fac = 128;
 
 	normalize_vector(&halfway_vec);
-	ambient = scene->ambient.ratio * scene->ambient.color.rgb_f;
+	ambient = (scene->ambient.ratio * scene->ambient.color.rgb_f + scene->ambient.ratio * surface.color) / 2;
 	diffuse = ft_maxf(dot_product_3d(surface_to_light, surface.normal) / distance_to_light, 0.0f) * surface.color;
 	const float spec_strength = 0.5f;
 	specular = powf(ft_maxf(dot_product_3d(halfway_vec, surface.normal), 0.0f), fac) * scene->light.color.rgb_f * spec_strength;
-	surface.color = (diffuse + specular) * strength / (distance_to_light * 0.03f) + ambient;
+	surface.color = (diffuse + specular) * strength + ambient;
 	surface.color[0] = ft_min(surface.color[0], 255);
 	surface.color[1] = ft_min(surface.color[1], 255);
 	surface.color[2] = ft_min(surface.color[2], 255);
@@ -138,6 +137,7 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 	t_hit_info	closest_hit;
 	t_vec4f		hit;
 	float		length;
+	const float	bg_strength = 0.2f;
 
 	current = scene->objects;
 	closest_hit.hit_location = (t_vec4f){0, 0, 0, -1};
@@ -154,7 +154,8 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 		current = current->next;
 	}
 	if (closest_hit.hit_location[3] == -1)
-		return (vec4rgb_to_int(scene->ambient.ratio * scene->ambient.color.rgb_f));
+		return (vec4rgb_to_int(scene->ambient.ratio * \
+				scene->ambient.color.rgb_f * bg_strength));
 	return (blinn_phong_shading(scene, closest_hit));
 	
 }
@@ -173,27 +174,29 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 	return (ray);
 }
 
-t_vec4f	sample_area(t_scene_data *scene, float ray_x, float ray_y, const float aspect_ratio)
+t_vec4f	sample_area(t_scene_data *scene, const float rayf[2], \
+					const float aspect_ratio, const float samples)
 {
-	const float	threshold = 0.6;
-	const float	offset[2][5] = {
-		{0, threshold, 0, -threshold, 0},
-		{0, 0, threshold, 0, -threshold},
-	};
 	t_ray		ray;
 	t_vec4f		color;
 	int			i;
+	float		angle = 0.0;
+	const float	inc = 2 * M_PI / samples;
 
 	i = 0;
 	color = (t_vec4f){0, 0, 0, -1};
-	while (i < SAMPLES + 1)
+	color += int_to_vec4rgb(object_hit_color(scene, \
+							construct_camera_ray(rayf[0], rayf[1], \
+							scene, aspect_ratio)));
+	while (i < samples)
 	{
-		ray = construct_camera_ray(ray_x + offset[0][i], ray_y + offset[1][i], \
-									scene, aspect_ratio);
+		ray = construct_camera_ray(rayf[0] + RADIUS * cos(angle), \
+				rayf[1] + RADIUS * sin(angle), scene, aspect_ratio);
 		color += int_to_vec4rgb(object_hit_color(scene, ray));
+		angle += inc;
 		i++;
 	}
-	return (color / (SAMPLES + 1));
+	return (color / (samples + 1));
 }
 
 void	visualise_light_location(t_object *current, t_light light)
@@ -220,7 +223,7 @@ void send_rays(t_scene_data *scene)
 	int			ray_y;
 	t_vec4f 	color;
 	const float	aspect_ratio = (float)scene->win_width / scene->win_height;
-	const int	samples = 4;
+	const int	samples = 16;
 
 	// visualise_light_location(scene->objects, scene->light);
 	ray_y = 0;
@@ -229,7 +232,8 @@ void send_rays(t_scene_data *scene)
 		ray_x = 0;
 		while (ray_x < scene->win_width)
 		{
-			color = sample_area(scene, (float)ray_x, (float)ray_y, aspect_ratio);
+			color = sample_area(scene, (float[2]){ray_x, ray_y}, \
+								aspect_ratio, samples);
 			put_pixel_img(scene->image, ray_x, ray_y, vec4rgb_to_int(color));
 			ray_x++;
 		}
