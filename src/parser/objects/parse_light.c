@@ -23,6 +23,7 @@ out of range [0.0, 1.0]\n", light->ratio);
 		return (free(light), 0);
 	}
 	light->color.color_code = 0xFFFFFF;
+	light->color.rgb_f = int_to_vec4rgb(light->color.color_code);
 	new = new_object(LIGHT, light);
 	if (!new)
 		return (perror("malloc error"), free(light), 0);

@@ -27,6 +27,7 @@ cannot be 0 or lower.\n", sphere->diameter);
 	}
 	sphere->radius = sphere->diameter / 2;
 	sphere->color.color_code = ft_atohex(format[2]);
+	sphere->color.rgb_f = int_to_vec4rgb(sphere->color.color_code);
 	new = new_object(SPHERE, sphere);
 	if (!new)
 		return (perror("malloc error"), free(sphere), 0);

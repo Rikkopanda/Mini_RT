@@ -77,7 +77,7 @@ typedef t_vec4f (*intersect_ptr)(void *object, t_ray ray);
 
 typedef t_vec4f (*t_get_location)(void *object);
 
-typedef int (*t_get_color)(void *object);
+typedef t_vec4f (*t_get_color)(void *object);
 
 
 typedef struct s_object

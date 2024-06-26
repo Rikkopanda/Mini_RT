@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/25 17:51:40 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/26 10:08:24 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,16 +89,6 @@ float	calculate_light_strength(float light_ratio, float distance, float light_st
 	return (light_ratio / distance * light_strength);
 }
 
-t_vec4f	int_to_vec4rgb(int color)
-{
-	return ((t_vec4f){get_r(color), get_g(color), get_b(color), 0});
-}
-
-int	vec4rgb_to_int(t_vec4f vec)
-{
-	return ((int)vec[0] << 16 | (int)vec[1] << 8 | (int)vec[2]);
-}
-
 int	color_strength(int color, float strength)
 {
 	t_vec4f	rgb;
@@ -118,87 +108,36 @@ float	ft_maxf(float a, float b)
 	return (b);
 }
 
-t_vec4f	specular_highlight(t_vec4f color, float cos_theta, float light_strength)
+int	calculate_direct_light_intensity(t_scene_data *scene, t_vec4f color, const t_vec4f point, t_vec4f normal)
 {
-	const t_vec4f	white = (t_vec4f){255, 255, 255, 1};
+	const t_vec4f	surface_to_light = scene->light.location - point;
+	const t_vec4f	surface_to_cam = scene->camera.location - point;
+	const float		distance_to_light = vector_length(surface_to_light);
+	const float		distance_to_cam = vector_length(surface_to_cam);
+	const float		strength = calculate_light_strength(scene->light.ratio, \
+								distance_to_light, 150.0f);
+	t_vec4f			halfway_vec = (surface_to_light + surface_to_cam) / (distance_to_light + distance_to_cam);
+	t_vec4f			diffuse;
+	t_vec4f			specular;
+	t_vec4f			ambient;
+	const int		fac = 128;
 
-	color = light_strength * white * cos_theta;
+	normalize_vector(&normal);
+	normalize_vector(&halfway_vec);
+	ambient = scene->ambient.ratio * scene->ambient.color.rgb_f * 0;
+	// printf("strength %.4f\n", strength);
+	// print_vec3(ambient, "ambient");
+	diffuse = ft_maxf(dot_product_3d(surface_to_light, normal) / distance_to_light, 0.0f) * color;
+	// print_vec3(diffuse, "diffuse");
+	const float spec_strength = 0.5f;
+	specular = powf(ft_maxf(dot_product_3d(halfway_vec, normal), 0.0f), fac) * scene->light.color.rgb_f * spec_strength;
+	// print_vec3(specular, "specular");
+	color = (diffuse + specular + ambient) * strength / (distance_to_light * 0.03f);
+	// print_vec3(color, "color");
 	color[0] = ft_min(color[0], 255);
 	color[1] = ft_min(color[1], 255);
 	color[2] = ft_min(color[2], 255);
-	return (color);
-}
-
-int	calculate_direct_light_intensity(t_scene_data *scene, int color, const t_vec4f point, t_vec4f normal)
-{
-	const t_vec4f	surface_to_light = scene->light.location - point;
-	const float		distance_to_light = vector_length(surface_to_light);
-	const float	strength = calculate_light_strength(scene->light.ratio, \
-							distance_to_light, 50.0f);
-	int			samples;
-	t_ray		ray;
-	t_vec4f		random;
-	t_vec4f		rgb;
-	const int	max = 25;
-
-	samples = 600;
-	ray.origin = point;
-	// print_vec3(point, "point");
-	normalize_vector(&normal);
-	// if (strength >= 1.0f)
-	// 	printf("%.4f\n", strength);
-	while (samples > 0)
-	{
-		// ray.direction = generate_random_vec4f();
-		// // print_vec3(normal, "normal");
-		// // print_vec3(ray.origin, "ray origin");
-		// // printf("[%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
-		// if (dot_product_3d(normal, ray.direction) < 0.0f)
-		// 	ray.direction = -ray.direction;
-		if (dot_product_3d(normal, surface_to_light) > 0.0f)
-		{
-			float	cos_theta = dot_product_3d(surface_to_light, normal) / distance_to_light;
-			// float attenuation = 1.0f / (1.0f + 0.1f * distance_to_light * distance_to_light);
-			cos_theta = ft_maxf(cos_theta, 0.0f);
-			t_vec4f	surface_to_cam = scene->camera.location - point;
-			float	distance_to_cam = vector_length(surface_to_cam);
-			t_vec4f	halfway_vec = (surface_to_light + surface_to_cam) / (distance_to_light + distance_to_cam);
-			normalize_vector(&halfway_vec);
-			float	specular = ft_maxf(dot_product_3d(halfway_vec, normal), 0.0f);
-			// print_vec3(ray.direction, "ray direction");
-			// printf("strength %.4f\n", strength);
-			// print_vec3(rgb, "rgb before");
-			// printf("ambient %.4f\n", scene->ambient.ratio);
-			// // print_vec3(rgb, "rgb after strength");
-			rgb = int_to_vec4rgb(color);
-			rgb = (rgb * strength) * cos_theta + (rgb * scene->ambient.ratio);
-			rgb[0] = ft_min(rgb[0], get_r(color));
-			rgb[1] = ft_min(rgb[1], get_g(color));
-			rgb[2] = ft_min(rgb[2], get_b(color));
-			// rgb = (t_vec4f){0, 0, 0, 1};
-			// printf("specular %.4f\n", specular);
-			// printf("cos_theta %.4f\n", cos_theta);
-			rgb = rgb + (powf((specular), 128) * 255 / (distance_to_light * 0.03f));
-			// print_vec3(rgb, "rgb after specular");
-			rgb[0] = ft_min(rgb[0], 255);
-			rgb[1] = ft_min(rgb[1], 255);
-			rgb[2] = ft_min(rgb[2], 255);
-			// if (point[0] >= -0.5f && point[0] <= 0.5f)
-			
-			return (vec4rgb_to_int(rgb));
-		}
-		samples--;
-	}
-	// print_vec3(point, "point");
-	// print_vec3(ray.direction, "ray direction");
-	// if (point[1] < 0)
-	// {
-		// t_vec4f not_hit = (t_vec4f){255, 255, 255, 0};
-		// return (vec4rgb_to_int(not_hit * fabsf(point[1] / 15)));
-	// }
-	int shadow_color = color_strength(color, scene->ambient.ratio);
-	// printf("shadow color %X\n", shadow_color);
-	return (shadow_color);
+	return (vec4rgb_to_int(color));
 }
 
 int	object_hit_color(t_scene_data *scene, t_ray ray)
@@ -218,6 +157,12 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 		hit_location = current->intersect(current->object, ray);
 		if (hit_location[3] != -1)
 		{
+			if (current->type == SPHERE)
+			{
+				t_sphere *sphere = current->object;
+				if (sphere->diameter == 1)
+					return (0xFFFFFF);
+			}
 			current_length = fabsf(vector_length(hit_location - scene->camera.location));
 			if (current_length <= closest_length)
 			{
@@ -286,7 +231,7 @@ void send_rays(t_scene_data *scene)
 	t_ray	ray;
 	int 	color;
 
-	// visualise_light_location(scene->objects, scene->light);
+	visualise_light_location(scene->objects, scene->light);
 	ray_y = 0;
 	while (ray_y < scene->win_height)
 	{

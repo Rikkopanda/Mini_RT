@@ -162,6 +162,8 @@ void	init_rgb(t_color *rgb, int color);
 void 	init_rgb_f(t_vec4f *rgb_f, int rgb[3]);
 void	make_rgb_with_normalized_rgb_f(int rgb[3], t_vec4f rgb_f);
 int		create_color(int r, int g, int b);
+t_vec4f	int_to_vec4rgb(int color);
+int		vec4rgb_to_int(t_vec4f vec);
 
 void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);

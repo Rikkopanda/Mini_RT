@@ -62,11 +62,11 @@ t_vec4f t_get_location_sphere(void *object)
 	return sphere->location;
 }
 
-int	t_get_color_sphere(void *object)
+t_vec4f	t_get_color_sphere(void *object)
 {
 	t_sphere *sphere = (t_sphere *)object;
 
-	return (sphere->color.color_code);
+	return (sphere->color.rgb_f);
 }
 
 void	assign_intersect_functions(t_object *current)
