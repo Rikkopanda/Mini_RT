@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/26 10:08:24 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/26 11:05:52 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ int	calculate_direct_light_intensity(t_scene_data *scene, t_vec4f color, const t
 
 	normalize_vector(&normal);
 	normalize_vector(&halfway_vec);
-	ambient = scene->ambient.ratio * scene->ambient.color.rgb_f * 0;
+	ambient = scene->ambient.ratio * color;
 	// printf("strength %.4f\n", strength);
 	// print_vec3(ambient, "ambient");
 	diffuse = ft_maxf(dot_product_3d(surface_to_light, normal) / distance_to_light, 0.0f) * color;
@@ -132,7 +132,7 @@ int	calculate_direct_light_intensity(t_scene_data *scene, t_vec4f color, const t
 	const float spec_strength = 0.5f;
 	specular = powf(ft_maxf(dot_product_3d(halfway_vec, normal), 0.0f), fac) * scene->light.color.rgb_f * spec_strength;
 	// print_vec3(specular, "specular");
-	color = (diffuse + specular + ambient) * strength / (distance_to_light * 0.03f);
+	color = (diffuse + specular) * strength / (distance_to_light * 0.03f) + ambient;
 	// print_vec3(color, "color");
 	color[0] = ft_min(color[0], 255);
 	color[1] = ft_min(color[1], 255);
@@ -157,12 +157,12 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 		hit_location = current->intersect(current->object, ray);
 		if (hit_location[3] != -1)
 		{
-			if (current->type == SPHERE)
-			{
-				t_sphere *sphere = current->object;
-				if (sphere->diameter == 1)
-					return (0xFFFFFF);
-			}
+			// if (current->type == SPHERE)
+			// {
+			// 	t_sphere *sphere = current->object;
+			// 	if (sphere->diameter == 1)
+			// 		return (0xFFFFFF);
+			// }
 			current_length = fabsf(vector_length(hit_location - scene->camera.location));
 			if (current_length <= closest_length)
 			{
@@ -211,15 +211,14 @@ void	visualise_light_location(t_object *current, t_light light)
 	sphere = NULL;
 	while (current)
 	{
-		if (current->type != SPHERE)
-			current = current->next;
-		else
+		if (current->type == SPHERE)
 			sphere = (t_sphere *)current->object;
 		if (sphere != NULL && sphere->diameter == 1)
 		{
 			sphere->location = light.location;
 			break ;
 		}
+		current = current->next;
 	}
 }
 
@@ -231,7 +230,7 @@ void send_rays(t_scene_data *scene)
 	t_ray	ray;
 	int 	color;
 
-	visualise_light_location(scene->objects, scene->light);
+	// visualise_light_location(scene->objects, scene->light);
 	ray_y = 0;
 	while (ray_y < scene->win_height)
 	{
