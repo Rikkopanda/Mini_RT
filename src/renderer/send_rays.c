@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/26 11:05:52 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/06/26 16:58:34 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,20 +53,31 @@ void moved_vector_position(t_vec4f *result, t_vec4f target_vec, t_vec4f offset)
 // 	seed = ((seed + 1) * 2654435761) % (1 << 27);
 // 	return (seed);
 // }
+#include <limits.h>
 
-int	knuth_hash(int *seed)
+float	knuth_hash(unsigned int *seed)
 {
 	*seed = ((*seed + 1) * 26761) % (1 << 27);
-	return (*seed);
+	return ((float)*seed / INT_MAX);
 }
+
+float	knuth_hash_normal_distribution(unsigned int *seed)
+{
+	const float	theta = 2 * M_PI * knuth_hash(seed);
+	const float	rho = sqrtf(-2 * log(knuth_hash(seed)));
+
+	// printf("theta %.4f\n", theta);
+	// printf("rho %.4f\n", rho);
+	return (rho * cos(theta));
+};
 
 t_vec4f	generate_random_vec4f(void)
 {
-	static int	seed = 0;
-	t_vec4f	vec4f;
+	t_vec4f		vec4f;
+	static unsigned int	seed = 0;
 
 	// vec4f = (t_vec4f){knuth_hash(&seed), knuth_hash(&seed), knuth_hash(&seed), 1};
-	vec4f = (t_vec4f){knuth_hash(&seed), knuth_hash(&seed), knuth_hash(&seed), 1};
+	vec4f = (t_vec4f){knuth_hash_normal_distribution(&seed), knuth_hash_normal_distribution(&seed), knuth_hash_normal_distribution(&seed), 1};
 	normalize_vector(&vec4f);
 	// print_vec3(vec4f, "random_vec");
 	return (vec4f);
@@ -140,17 +151,15 @@ int	calculate_direct_light_intensity(t_scene_data *scene, t_vec4f color, const t
 	return (vec4rgb_to_int(color));
 }
 
-int	object_hit_color(t_scene_data *scene, t_ray ray)
+int	object_hit_color(t_scene_data *scene, t_ray ray, t_vec4f *closest_hit)
 {
 	t_object	*current;
 	t_vec4f		hit_location;
-	t_vec4f		closest_hit;
 	t_object	*closest_object;
 	float		closest_length;
 	float		current_length;
 
 	current = scene->objects;
-	closest_hit = (t_vec4f){0, 0, 0, -1};
 	closest_length = 200;
 	while (current)
 	{
@@ -167,27 +176,17 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 			if (current_length <= closest_length)
 			{
 				closest_length = current_length;
-				closest_hit = hit_location;
+				*closest_hit = hit_location;
 				closest_object = current;
 			}
 		}
 		current = current->next;
 	}
-	if (closest_hit[3] == -1)
+	if ((*closest_hit)[3] == -1)
 		return (-1);
 	return (calculate_direct_light_intensity(scene, closest_object->get_color(closest_object->object), \
-			closest_hit, closest_hit - closest_object->get_location(closest_object->object)));
+			*closest_hit, *closest_hit - closest_object->get_location(closest_object->object)));
 	
-}
-
-int	color_at_ray(t_scene_data *scene, t_ray ray)
-{
-	int				color;
-
-	color = object_hit_color(scene, ray);
-	if (color != -1)
-		return (color);
-	return (-1);
 }
 
 t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float aspect_ratio)
@@ -202,6 +201,45 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 1};
 	normalize_vector(&ray.direction);
 	return (ray);
+}
+
+t_vec4f	sample_area(t_scene_data *scene, float ray_x, float ray_y, const float aspect_ratio)
+{
+	t_ray		ray;
+	t_ray		offset_ray;
+	int			center_color;
+	t_vec4f		color;
+	t_vec4f		hit_location;
+	int			sample_color;
+	int			i;
+	const float	offset = 0.5;
+	float		sample_offset[2][4] = {
+		{offset, offset, -offset, -offset},
+		{offset, -offset, offset, -offset},
+	};
+
+	i = 0;
+	color = (t_vec4f){0, 0, 0, -1};
+	ray = construct_camera_ray(ray_x, ray_y, scene, aspect_ratio);
+	hit_location = (t_vec4f){0, 0, 0, -1};
+	center_color = object_hit_color(scene, ray, &hit_location);
+	if (center_color == -1)
+		return (color);
+	while (i < SAMPLES)
+	{
+		hit_location = (t_vec4f){0, 0, 0, -1};
+		offset_ray = construct_camera_ray(ray_x + sample_offset[0][i], ray_y + sample_offset[1][i], scene, aspect_ratio);
+		// offset_ray.direction += generate_random_vec4f() * 0.001f;
+		// print_vec3(ray.direction, "original dir");
+		// print_vec3(offset_ray.direction, "offset dir");
+		sample_color = object_hit_color(scene, offset_ray, &hit_location);
+		if (sample_color == -1)
+			sample_color = vec4rgb_to_int(scene->ambient.ratio * scene->ambient.color.rgb_f);
+		color += int_to_vec4rgb(sample_color);
+		i++;
+	}
+	color += int_to_vec4rgb(center_color);
+	return (color / (SAMPLES + 1));
 }
 
 void	visualise_light_location(t_object *current, t_light light)
@@ -224,11 +262,11 @@ void	visualise_light_location(t_object *current, t_light light)
 
 void send_rays(t_scene_data *scene)
 {
-	const float	aspect_ratio = (float)scene->win_width / (float)scene->win_height;
-	int		ray_x;
-	int		ray_y;
-	t_ray	ray;
-	int 	color;
+	int			ray_x;
+	int			ray_y;
+	t_vec4f 	color;
+	const float	aspect_ratio = (float)scene->win_width / scene->win_height;
+	const int	samples = 4;
 
 	// visualise_light_location(scene->objects, scene->light);
 	ray_y = 0;
@@ -237,14 +275,13 @@ void send_rays(t_scene_data *scene)
 		ray_x = 0;
 		while (ray_x < scene->win_width)
 		{
-			color = -1;
-			ray = construct_camera_ray((float)ray_x, (float)ray_y, scene, aspect_ratio);
-			color = color_at_ray(scene, ray);
+			color = sample_area(scene, (float)ray_x, (float)ray_y, aspect_ratio);
 			// printf("[%.4f, %.4f, %.4f]\n", ray.direction[0], ray.direction[1], ray.direction[2]);
-			if (color != -1)
-				put_pixel_img(scene->image, ray_x, ray_y, color);
+			if (color[3] != -1)
+				put_pixel_img(scene->image, ray_x, ray_y, vec4rgb_to_int(color));
 			else
-				put_pixel_img(scene->image, ray_x, ray_y, vec4rgb_to_int(scene->ambient.ratio * (t_vec4f){scene->ambient.color.rgb[0], scene->ambient.color.rgb[1], scene->ambient.color.rgb[2], 1}));
+				put_pixel_img(scene->image, ray_x, ray_y, vec4rgb_to_int(scene->ambient.ratio * scene->ambient.color.rgb_f));
+			// 	put_pixel_img(scene->image, ray_x, ray_y, 0xFFFFFF);
 			ray_x++;
 		}
 		ray_y++;
