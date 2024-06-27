@@ -2,15 +2,20 @@
 
 ## Description
 
-MiniRT project for 42 School.
+MiniRT project for Codam (42 Network).
 
 ## To-Do
 
-- [ ] Fix fisheye lens distortion.
+[x] = done
+[/] = halfway
+
+- [x] Fix fisheye lens distortion.
 - [ ] Add intersection functions for plane.
 - [ ] Add intersection functions for cylinder.
-- [ ] Draw background fill before rendering objects.
-- [ ] Implement ambient lighting on entire scene.
+- [ ] Adjust camera rotation based on info in .rt map.
+- [ ] Add documentation and sources to the code.
+- [/] Implement ambient lighting on entire scene.
+- [ ] Implement bounce lighting.
 - [ ] Implement reflections.
 - [ ] Multiple camera views.
 - [ ] Multiple light sources.
