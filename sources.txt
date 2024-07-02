@@ -1,0 +1,30 @@
+
+## Sources
+
+
+
+
+
+
+
+## Tips van imisumi
+raytracing series:
+https://www.youtube.com/watch?v=gfW1Fhd9u9Q&list=PLlrATfBNZ98edc5GshdBtREv5asFW3yXl
+
+meer bits kunnen gebruiken voor kleuren
+https://en.wikipedia.org/wiki/Color_depth
+output naar een file..EXR file?
+
+tool kan je zien waar het meeste cpu-tijd besteed wordt op welke functies
+https://blog.mattjustice.com/2020/11/24/gprof-profiler/
+
+image noise, als je weinig samples bij bounce doet ofzoiets
+https://en.wikipedia.org/wiki/Image_noise
+wow cool hoe camara werkt met image noise
+https://www.pixop.com/blog/image-noise-causes
+
+
+hdri gebruiken als backdrop en belichting?
+
+
+https://github.com/imisumi/minirt
