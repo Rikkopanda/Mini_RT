@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/06/26 21:55:26 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/07/13 16:21:48 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,19 @@ void	moved_vector_position(t_vec4f *result, t_vec4f target_vec, t_vec4f offset)
 	(*result) = target_vec - offset;
 }
 
+/**
+ * @note Variation of Knuth's multiplicative method.
+ */
 float	knuth_hash(unsigned int *seed)
 {
 	*seed = ((*seed + 1) * 26761) % (1 << 27);
 	return ((float)*seed / __INT_MAX__);
 }
-
+/**
+ * @note Box-Muller transform to turn uniformly distributed random numbers 
+ * to normal distributed
+ * From: 
+ */
 float	random_normal_distribution(unsigned int *seed)
 {
 	const float	theta = 2 * M_PI * knuth_hash(seed);
@@ -45,7 +52,9 @@ float	random_normal_distribution(unsigned int *seed)
 
 	return (rho * cos(theta));
 }
-
+/**
+ * @note Unused at the moment, will be used for global illumination.
+ */
 t_vec4f	generate_random_vec4f(void)
 {
 	static unsigned int	seed = 0;
@@ -94,6 +103,13 @@ typedef struct s_hit_info
 	t_vec4f		normal;
 }	t_hit_info;
 
+/**
+ * @note Blinn-Phong shading model, different from regular Phong shading model.
+ * Instead of light reflect & surface to cam vector, uses dot product 
+ * of halfway vector & surface normal, which is cheaper to compute.
+ * From: https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model &
+ * https://www.youtube.com/watch?v=KdDdljGtfeg
+ */
 int	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 {
 	const t_vec4f	surface_to_light = scene->light.location - surface.hit_location;
@@ -119,7 +135,6 @@ int	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 	return (vec4rgb_to_int(surface.color));
 }
 
-
 void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 						float length)
 {
@@ -131,6 +146,11 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 	normalize_vector(&hit_info->normal);
 }
 
+/**
+ * @note Keeps track of closest intersection object.
+ * bg_strength is used for the effect of the ambient color strength 
+ * on the background, so it is different from the object's "shadow" color.
+ */
 int	object_hit_color(t_scene_data *scene, t_ray ray)
 {
 	t_object	*current;
@@ -160,6 +180,11 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 	
 }
 
+/**
+ * @note Constructing a normalised camera ray from 
+ * the x and y coordinates of a screen pixel.
+ * From: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays.html
+ */
 t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float aspect_ratio)
 {
 	t_ray		ray;
@@ -167,13 +192,20 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 	float		pixel_camera_y;
 
 	ray.origin = scene->camera.location;
-	pixel_camera_x = (2.0f * ((x + 0.5) / (float)scene->win_width) - 1) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f) * aspect_ratio;
-	pixel_camera_y = (1.0f - 2.0f * ((y + 0.5) / (float)scene->win_height)) * tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
+	pixel_camera_x = (2.0f * ((x + 0.5) / (float)scene->win_width) - 1) * \
+				tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f) * aspect_ratio;
+	pixel_camera_y = (1.0f - 2.0f * ((y + 0.5) / (float)scene->win_height)) * \
+				tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
 	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 1};
 	normalize_vector(&ray.direction);
 	return (ray);
 }
 
+/**
+ * @note Anti-aliasing sampling method, evenly distributes samples 
+ * in a radius around the center pixel, rayf in this case.
+ * Returns the average color of all the samples.
+ */
 t_vec4f	sample_area(t_scene_data *scene, const float rayf[2], \
 					const float aspect_ratio, const float samples)
 {
@@ -217,6 +249,10 @@ void	visualise_light_location(t_object *current, t_light light)
 	}
 }
 
+/**
+ * @note Samples are for anti-aliasing, higher = more accuracy.
+ * Radius for anti-aliasing is defined in header.
+ */
 void send_rays(t_scene_data *scene)
 {
 	int			ray_x;
