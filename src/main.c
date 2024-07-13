@@ -9,7 +9,7 @@ static int	exit_error(int code, int fd, const char *arg)
 	if (code == 0)
 	{
 		printf("Usage: %s maps/[..]/examplefile.rt\n", arg);
-		printf("Window dimensions: %s maps/[..]/examplefile.rt 1920 1080\n", arg);
+		printf("Window size: %s maps/[..]/examplefile.rt 1920 1080\n", arg);
 	}
 	else if (code == 1)
 		fprintf(stderr, "Error: %s: invalid window dimension.\n", arg);
