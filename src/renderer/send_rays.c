@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/06/18 16:36:09 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/18 14:20:58 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,6 @@ void moved_vector_position(t_vec4f *result, t_vec4f target_vec, t_vec4f offset)
 // 		return (FALSE);
 // }
 
-float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B)
-{
-	return ((vec_A[0] * vec_B[0]) + (vec_A[1] * vec_B[1]) + (vec_A[2] * vec_B[2]));
-}
-
 float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
 {
 	return ((vec_A[2] * vec_B[3]) - (vec_B[2] * vec_A[3]) +
@@ -86,15 +81,14 @@ float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
 /**
  * @note not declaring and initializing new vectors faster??
 */
-int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
+t_vec4f check_if_hit(t_scene_data *data, t_ray *ray, t_hit_data *hit_data)
 {
-	// printf("check if hit _____________________\n");
-
-	t_object *current;
+	t_object	*current;
+	t_vec4f		hit;
 
 	// printf("sphere.location\n");
 	// print_matrix_1_3(data->sphere.location);
-	moved_vector_position(&ray->world_pos_of_scaled_vec, ray->scaled_vec, data->camera.location);
+	// moved_vector_position(&ray->world_pos_of_scaled_vec, ray->scaled_vec, data->camera.location);
 
 	// printf("world_pos_of_scaled_vec\n");
 	// print_matrix_1_3(ray->world_pos_of_scaled_vec);
@@ -114,20 +108,22 @@ int check_if_hit(t_scene_data *data, t_ray *ray, t_vec4f *obj_to_ray_vec)
 
 		// printf("hallo\n");
 		// current->print_object_data(current->object);
-		*obj_to_ray_vec = points_derived_vector(current->get_location(current->object), ray->world_pos_of_scaled_vec);
-		if (current->intersect(current->object, *obj_to_ray_vec) == TRUE)
+		// *obj_to_ray_vec = points_derived_vector(current->get_location(current->object), ray->world_pos_of_scaled_vec);
+		hit = current->intersect(current->object, *ray);
+		hit_data->surface_normal = hit - current->get_location(current);
+		normalize_vector(&hit_data->surface_normal);
+		if (hit[3] != -1)
 		{
-			// printf("magnitude: %f\n", get_magnitude(ray->scaled_vec));
-			return (current->get_color(current->object));
+			// print_matrix_1_3(hit);
+			// printf("\t%f", hit[3]);
+			hit_data->color.color_code = current->get_color(current);
+			printf("\ncolor code %d \n\n", hit_data->color.color_code);
+
+			return (hit);
 		}
 		current = current->next;
 	}
-	return ((int)NADA);
-	// usleep(5000);
-	// printf("result xyz %f %f %f\n", res_xyz[0], res_xyz[1], res_xyz[2]);
-	// printf("sqrt(squared) %f\n", sqrt(squared));
-	// printf("radius %f\n",  data->sphere.radius);
-	// sleep(1);
+	return (hit);
 }
 
 int	shadow_ray_to_light(t_scene_data *data)
@@ -173,7 +169,6 @@ void	increment_vec4f(t_vec4f *scaled_vector, t_vec4f *normalize_vector)
 // 	return (f_arr);
 // }
 
-
 int	hit_ray(t_scene_data *data)
 {
 	// data->ray.normalized_vec = new_dir_method_ray_test;
@@ -182,62 +177,56 @@ int	hit_ray(t_scene_data *data)
 	// if (PRINT_DEBUG) print_matrix_1_3(data->ray.normalized_vec);
 	// if (PRINT_DEBUG) printf("_________________\n\n");
 
-	data->ray.step = 1;
-	data->ray.scaled_vec = (t_vec4f){0, 0, 0, 0};
+	// int		resulting_color;
+	t_vec4f	obj_to_ray_vec;
+	t_hit_data hit_data;
+	// increment_vec4f(&data->ray.scaled_vec, &data->ray.normalized_vec);
+	init_result(&obj_to_ray_vec);
+	init_result(&hit_data.color.rgb_f);
 
-	while (data->ray.step < 300)
+	t_vec4f hit = check_if_hit(data, &data->ray, &hit_data);
+	// printf("ptr:1 %p\n", &obj_to_ray_vec);
+	// printf("color code: %d\n", color.color_code);
+
+	if (hit[3] != NADA)
 	{
-		// int		resulting_color;
-		t_vec4f	obj_to_ray_vec;
-		t_color	color;
+		printf("color code: %d\n", hit_data.color.color_code);
 
-		increment_vec4f(&data->ray.scaled_vec, &data->ray.normalized_vec);
-		init_result(&obj_to_ray_vec);
-		init_result(&color.rgb_f);
-		color.color_code = check_if_hit(data, &data->ray, &obj_to_ray_vec);
-		
-		// printf("ptr:1 %p\n", &obj_to_ray_vec);
+
+		// printf("____________________\n scaled HIT: ");
+		// if (PRINT_DEBUG) print_matrix_1_3(data->ray.scaled_vec);
+		// print_matrix_1_3(surface_normal);
+		// normalize_vector(&surface_normal);
+		// t_vec4f	*surface_point = &data->ray.scaled_vec;// must be actual surface point, not in the object! like now
 		// printf("color code: %d\n", color.color_code);
 
-		if (color.color_code != NADA)
+		t_vec4f surface_to_light_ray = points_derived_vector(hit, data->light.location);
+		// printf(" DEZE color code: %d\n", color.color_code);
+		normalize_vector(&surface_to_light_ray);
+		// printf(" DIE color code: %d\n", color.color_code);
+		float rgb_factor = dot_product_3d(hit_data.surface_normal, surface_to_light_ray);
+		// printf("%f\n", rgb_factor);
+
+		if (rgb_factor <= 0)
 		{
-			t_vec4f surface_normal;
-			// printf("color code: %d\n", color.color_code);
-
-			surface_normal = obj_to_ray_vec;
-			// printf("____________________\n scaled HIT: ");
-			// if (PRINT_DEBUG) print_matrix_1_3(data->ray.scaled_vec);
-			// print_matrix_1_3(surface_normal);
-			normalize_vector(&surface_normal);
-			// t_vec4f	*surface_point = &data->ray.scaled_vec;// must be actual surface point, not in the object! like now
-			// printf("color code: %d\n", color.color_code);
-
-			t_vec4f surface_to_light_ray = points_derived_vector(data->ray.scaled_vec, data->light.location);
-			// printf(" DEZE color code: %d\n", color.color_code);
-			normalize_vector(&surface_to_light_ray);
-			// printf(" DIE color code: %d\n", color.color_code);
-			float rgb_factor = dot_product_3d(surface_normal, surface_to_light_ray);
-			// printf("%f\n", rgb_factor);
-
-			if (rgb_factor <= 0)
-			{
-				return (BLACK);
-			}
-			// if (rgb_factor > 0.2)
-			// 	printf("black after: %f\n", rgb_factor);
-			// printf("color code: %d\n", color.color_code);
-
-			init_rgb(&color, color.color_code);
-			// printf("bug gespot: %d -> %d %d %d\n", color.color_code, color.rgb[0], color.rgb[1], color.rgb[2]);
-			init_rgb_f(&color.rgb_f, color.rgb);
-			normalize_vector(&color.rgb_f);
-			vector_scaling(&color.rgb_f, rgb_factor);
-			make_rgb_with_normalized_rgb_f(color.rgb, color.rgb_f);
-			color.color_code = create_color(color.rgb[0], color.rgb[1], color.rgb[2]);
-			return (color.color_code);
+			return (BLACK);
 		}
-		data->ray.step += 1;
+		// if (rgb_factor > 0.2)
+		// 	printf("black after: %f\n", rgb_factor);
+		// printf("color code: %d\n", color.color_code);
+
+		init_rgb(&hit_data.color, hit_data.color.color_code);
+		
+		printf("bug gespot: %d -> %d %d %d\n", hit_data.color.color_code, hit_data.color.rgb[0], hit_data.color.rgb[1], hit_data.color.rgb[2]);
+		
+		init_rgb_f(&hit_data.color.rgb_f, hit_data.color.rgb);
+		normalize_vector(&hit_data.color.rgb_f);
+		vector_scaling(&hit_data.color.rgb_f, rgb_factor);
+		make_rgb_with_normalized_rgb_f(hit_data.color.rgb, hit_data.color.rgb_f);
+		hit_data.color.color_code = create_color(hit_data.color.rgb[0], hit_data.color.rgb[1], hit_data.color.rgb[2]);
+		return (hit_data.color.color_code);
 	}
+	
 	// if (angle_horiz > 0 && angle_horiz < 0.09)
 	// 	printf("%f\n", data->ray.direction_abc[2]);
 	return (NADA);

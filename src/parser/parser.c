@@ -1,42 +1,65 @@
 #include "parser.h"
 #include "get_next_line.h"
 
-int	intersect_sphere(void *object, t_vec4f obj_to_ray_vec)
-{
-	t_sphere *sphere = (t_sphere *)object;
+// int	intersect_sphere(void *object, t_ray ray)
+// {
+// 	t_sphere *sphere = (t_sphere *)object;
 
-	const float squared = powf(obj_to_ray_vec[0], 2) + powf(obj_to_ray_vec[1], 2) + powf(obj_to_ray_vec[2], 2);
-	// printf("hoi sphere:  %f, squared_root %f, color %d\n", sphere->radius, sqrtf(squared), sphere->color.color_code);
-	if (squared <=  powf(sphere->radius, 2))
-		return (TRUE);
-	else
-		return (FALSE);
+// 	const float squared = powf(obj_to_ray_vec[0], 2) + powf(obj_to_ray_vec[1], 2) + powf(obj_to_ray_vec[2], 2);
+// 	// printf("hoi sphere:  %f, squared_root %f, color %d\n", sphere->radius, sqrtf(squared), sphere->color.color_code);
+// 	if (squared <=  powf(sphere->radius, 2))
+// 		return (TRUE);
+// 	else
+// 		return (FALSE);
+// }
+
+t_vec4f	intersect_sphere(void *object, t_ray ray)
+{
+	t_sphere	*sphere = (t_sphere *)object;
+	t_vec4f		cam_to_obj = sphere->location - ray.origin;
+
+	float dir_projected_len = dot_product_3d(cam_to_obj, ray.normalized_vec);
+
+	if (dir_projected_len <= 0)
+		return ((t_vec4f){0,0,0,-1});
+
+	float tc = powf(dir_projected_len, 2);
+	float d2 = dot_product_3d(cam_to_obj, cam_to_obj) - tc;
+
+	if (d2 > powf(sphere->radius, 2))
+		return ((t_vec4f){0,0,0,-1});
+	float tc1 = sqrtf(powf(sphere->radius, 2) - d2);
+	t_vec4f hitpoint = (t_vec4f)(ray.origin + (ray.normalized_vec * (tc - tc1)));
+	hitpoint[3] = 1;
+	return hitpoint;
 }
 
-int	intersect_cylinder(void *object, t_vec4f obj_to_ray_vec)
-{
-	t_cylinder *cylinder = (t_cylinder *)object;
 
 
-	// print_matrix_1_3(obj_to_ray_vec);
-	float xy_plane_len = sqrtf(powf(obj_to_ray_vec[0], 2) + powf(obj_to_ray_vec[1], 2));
-	float positive_z = obj_to_ray_vec[2];
+// t_vec4f	intersect_cylinder(void *object, t_ray ray)
+// {
+// 	t_cylinder *cylinder = (t_cylinder *)object;
 
-	if (positive_z < 0)
-		positive_z = positive_z * (float)-1;
-	// printf("height %f\n0", cylinder->height);
-	// printf("pos z %f\n",positive_z);
 
-	if (xy_plane_len <= cylinder->diameter / 2 && positive_z <= cylinder->height)
-		return (TRUE);
-	else
-		return (FALSE);
-}
+// 	// print_matrix_1_3(obj_to_ray_vec);
+// 	float xy_plane_len = sqrtf(powf(obj_to_ray_vec[0], 2) + powf(obj_to_ray_vec[1], 2));
+// 	float positive_z = obj_to_ray_vec[2];
 
-int example_intersect_plane(void *object, t_vec4f obj_to_ray_vec)
-{
-	return (FALSE);
-}
+// 	if (positive_z < 0)
+// 		positive_z = positive_z * (float)-1;
+// 	// printf("height %f\n0", cylinder->height);
+// 	// printf("pos z %f\n",positive_z);
+
+// 	if (xy_plane_len <= cylinder->diameter / 2 && positive_z <= cylinder->height)
+// 		return (TRUE);
+// 	else
+// 		return (FALSE);
+// }
+
+// t_vec4f example_intersect_plane(void *object, t_ray ray)
+// {
+// 	return (FALSE);
+// }
 
 void print_sphere_data(void *object)
 {
@@ -85,8 +108,8 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 		intersect_sphere,
-		example_intersect_plane,
-		intersect_cylinder,
+		NULL,
+		NULL,
 	};
 	const print_data	function_pointer_data[OBJ_COUNT] = {
 		NULL,
@@ -117,9 +140,12 @@ void	assign_intersect_functions(t_object *current)
 		current->intersect = (intersect_ptr)function_pointer[current->type];
 		current->print_object_data = (print_data)function_pointer_data[current->type];
 		current->get_location = (t_get_location)location_getters[current->type];
-		current->get_color = (t_get_color)location_getters[current->type];
+		current->get_color = (t_get_color)color_getters[current->type];
+		printf("color code %d\n", current->get_color(current));
+
 		current = current->next;
 	}
+	exit(0);
 }
 
 static void	objects_to_scene_data(t_scene_data *scene, t_object *current)

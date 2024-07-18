@@ -34,7 +34,7 @@ int	parse_camera(t_object **objects, char **format)
 		return (perror("malloc error"), 0);
 	camera->location = atovec3f(format[0]);
 	// printf("data camara in parse_camera: x, y, z %f %f %f\n", camera->location[0], camera->location[1], camera->location[2]);
-
+	
 	init_identy_matrix(camera->rotation_comp);
 	init_identy_matrix(camera->rotation_around_y);
 	init_identy_matrix(camera->rotation_around_z);

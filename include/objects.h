@@ -12,6 +12,7 @@ typedef struct s_ray
 	t_vec4f	normalized_vec;
 	t_vec4f	scaled_vec;
 	t_vec4f	world_pos_of_scaled_vec;
+	t_vec4f origin;
 	float	step;
 } t_ray;
 
@@ -79,7 +80,7 @@ typedef enum e_objectid
 
 typedef void (*print_data)(void *object);
 
-typedef int (*intersect_ptr)(void *object, t_vec4f v);
+typedef t_vec4f (*intersect_ptr)(void *object, t_ray ray);
 
 typedef t_vec4f (*t_get_location)(void *object);
 

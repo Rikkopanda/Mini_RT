@@ -132,12 +132,18 @@ typedef struct s_scene_data
 	t_img		image;
 }	t_scene_data;
 
+typedef struct s_hit_data
+{
+	t_vec4f surface_normal;
+	t_color	color;
+} t_hit_data;
 
 void	matrix_multiplication(t_vec4f comp[3], t_ray *ray, t_vec4f camera_vector);
 void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m);
 void	compilation_matrix(t_vec4f comp[3], t_vec4f R[3], t_vec4f R3[3]);
 void	copy_matrix(t_vec4f *dst, t_vec4f src);
 void	init_comp_m(t_vec4f comp[3]);
+float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B);
 
 void	normalize_vector(t_vec4f *v);
 void	vector_scaling(t_vec4f *v, float scale);
