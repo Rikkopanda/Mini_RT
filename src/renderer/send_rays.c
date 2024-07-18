@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   send_rays.c                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/07/13 16:21:48 by kwchu         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   send_rays.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
+/*   Updated: 2024/07/17 10:46:53 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ int	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 	const float		distance_to_light = vector_length(surface_to_light);
 	const float		distance_to_cam = vector_length(surface_to_cam);
 	const float		strength = scene->light.ratio / distance_to_light * 50.0f;
-	t_vec4f			halfway_vec = (surface_to_light + surface_to_cam) / (distance_to_light + distance_to_cam);
+	t_vec4f			halfway_vec = (surface_to_light + surface_to_cam) / (distance_to_light + distance_to_cam); // wat doet de / (dist1 + dist2)  als je toch gaat normalizen?
 	t_vec4f			diffuse;
 	t_vec4f			specular;
 	t_vec4f			ambient;
@@ -128,10 +128,10 @@ int	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 	diffuse = ft_maxf(dot_product_3d(surface_to_light, surface.normal) / distance_to_light, 0.0f) * surface.color;
 	const float spec_strength = 0.5f;
 	specular = powf(ft_maxf(dot_product_3d(halfway_vec, surface.normal), 0.0f), fac) * scene->light.color.rgb_f * spec_strength;
-	surface.color = (diffuse + specular) * strength + ambient;
+	surface.color = (diffuse + specular) * strength + ambient;// hoe is de voorrang van haakjes?
 	surface.color[0] = ft_min(surface.color[0], 255);
 	surface.color[1] = ft_min(surface.color[1], 255);
-	surface.color[2] = ft_min(surface.color[2], 255);
+	surface.color[2] = ft_min(surface.color[2], 255);// kleuren tussen float 0 - 255 ?
 	return (vec4rgb_to_int(surface.color));
 }
 
@@ -145,6 +145,8 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 	hit_info->normal = hit - object->get_location(object->object);
 	normalize_vector(&hit_info->normal);
 }
+
+#define STATUS_INDEX 3
 
 /**
  * @note Keeps track of closest intersection object.
@@ -165,9 +167,9 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 	while (current)
 	{
 		hit = current->intersect(current->object, ray);
-		if (hit[3] != -1)
+		if (hit[STATUS_INDEX] != -1)
 		{
-			length = fabsf(vector_length(hit - ray.origin));
+			length = fabsf(vector_length(hit - ray.origin)); // fabs omdat we ook in de negatieve richting kunnen kijken als de camera zo staat?
 			if (length <= closest_hit.length)
 				update_hit_info(&closest_hit, hit, current, length);
 		}
@@ -177,7 +179,6 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 		return (vec4rgb_to_int(scene->ambient.ratio * \
 				scene->ambient.color.rgb_f * bg_strength));
 	return (blinn_phong_shading(scene, closest_hit));
-	
 }
 
 /**
