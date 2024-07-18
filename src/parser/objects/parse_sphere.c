@@ -37,3 +37,4 @@ cannot be 0 or lower.\n", sphere->diameter);
 	append_object(head, new);
 	return (1);
 }
+
