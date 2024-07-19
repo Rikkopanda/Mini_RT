@@ -141,11 +141,10 @@ void	assign_intersect_functions(t_object *current)
 		current->print_object_data = (print_data)function_pointer_data[current->type];
 		current->get_location = (t_get_location)location_getters[current->type];
 		current->get_color = (t_get_color)color_getters[current->type];
-		printf("color code %d\n", current->get_color(current));
 
 		current = current->next;
 	}
-	exit(0);
+	// exit(0);
 }
 
 static void	objects_to_scene_data(t_scene_data *scene, t_object *current)

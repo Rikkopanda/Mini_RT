@@ -2,9 +2,9 @@ NAME = minirt
 
 # CFLAGS = -Wall -Wextra -Werror
 #  CFLAGS := -fsanitize=address
-CFLAGS += -Ofast
+# CFLAGS += -Ofast
 # CFLAGS += -fPIE
-# CFLAGS := -g
+CFLAGS := -g
 
 CC = gcc
 

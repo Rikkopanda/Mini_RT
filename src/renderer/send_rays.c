@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/18 14:20:58 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/19 09:30:49 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,14 +110,16 @@ t_vec4f check_if_hit(t_scene_data *data, t_ray *ray, t_hit_data *hit_data)
 		// current->print_object_data(current->object);
 		// *obj_to_ray_vec = points_derived_vector(current->get_location(current->object), ray->world_pos_of_scaled_vec);
 		hit = current->intersect(current->object, *ray);
-		hit_data->surface_normal = hit - current->get_location(current);
-		normalize_vector(&hit_data->surface_normal);
 		if (hit[3] != -1)
 		{
 			// print_matrix_1_3(hit);
 			// printf("\t%f", hit[3]);
+			t_vec4f obj_location = current->get_location(current);
+			hit_data->surface_normal = hit - obj_location;
+
+			normalize_vector(&hit_data->surface_normal);
 			hit_data->color.color_code = current->get_color(current);
-			printf("\ncolor code %d \n\n", hit_data->color.color_code);
+			// printf("\ncolor code %d \n\n", hit_data->color.color_code);
 
 			return (hit);
 		}
@@ -190,7 +192,7 @@ int	hit_ray(t_scene_data *data)
 
 	if (hit[3] != NADA)
 	{
-		printf("color code: %d\n", hit_data.color.color_code);
+		// printf("color code: %d\n", hit_data.color.color_code);
 
 
 		// printf("____________________\n scaled HIT: ");
