@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   send_rays.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/17 10:46:53 by rikverhoeve      ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   send_rays.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
+/*   Updated: 2024/07/22 17:00:43 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 		}
 		current = current->next;
 	}
-	if (closest_hit.hit_location[3] == -1)
+	if (closest_hit.hit_location[STATUS_INDEX] == -1)
 		return (vec4rgb_to_int(scene->ambient.ratio * \
 				scene->ambient.color.rgb_f * bg_strength));
 	return (blinn_phong_shading(scene, closest_hit));
@@ -204,10 +204,10 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 
 /**
  * @note Anti-aliasing sampling method, evenly distributes samples 
- * in a radius around the center pixel, rayf in this case.
+ * in a radius around the center pixel, raycenter in this case.
  * Returns the average color of all the samples.
  */
-t_vec4f	sample_area(t_scene_data *scene, const float rayf[2], \
+t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], \
 					const float aspect_ratio, const float samples)
 {
 	t_ray		ray;
@@ -218,13 +218,12 @@ t_vec4f	sample_area(t_scene_data *scene, const float rayf[2], \
 
 	i = 0;
 	color = (t_vec4f){0, 0, 0, -1};
-	color += int_to_vec4rgb(object_hit_color(scene, \
-							construct_camera_ray(rayf[0], rayf[1], \
-							scene, aspect_ratio)));
+	ray = construct_camera_ray(raycenter[0], raycenter[1], scene, aspect_ratio);
+	color += int_to_vec4rgb(object_hit_color(scene, ray));
 	while (i < samples)
 	{
-		ray = construct_camera_ray(rayf[0] + RADIUS * cos(angle), \
-				rayf[1] + RADIUS * sin(angle), scene, aspect_ratio);
+		ray = construct_camera_ray(raycenter[0] + RADIUS * cos(angle), \
+				raycenter[1] + RADIUS * sin(angle), scene, aspect_ratio);
 		color += int_to_vec4rgb(object_hit_color(scene, ray));
 		angle += inc;
 		i++;
@@ -260,7 +259,7 @@ void send_rays(t_scene_data *scene)
 	int			ray_y;
 	t_vec4f 	color;
 	const float	aspect_ratio = (float)scene->win_width / scene->win_height;
-	const int	samples = 16;
+	const int	samples = 2;
 
 	// visualise_light_location(scene->objects, scene->light);
 	ray_y = 0;
