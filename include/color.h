@@ -3,6 +3,7 @@
 
 typedef float	t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
 
+typedef t_vec4f t_vec4f_color;
 typedef struct s_color
 {
 	int		rgb[3];

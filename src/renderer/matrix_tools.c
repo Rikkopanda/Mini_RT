@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/07/18 10:43:16 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/22 07:55:16 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@ void	init_comp_m(t_vec4f comp[3])
 		}
 		i++;
 	}
+}
+
+float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
+{
+	return ((vec_A[2] * vec_B[3]) - (vec_B[2] * vec_A[3]) +
+			(vec_A[3] * vec_B[1]) - (vec_B[3] * vec_A[1]) +
+			(vec_A[1] * vec_B[2]) - (vec_B[1] * vec_A[2]));
 }
 
 float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B)

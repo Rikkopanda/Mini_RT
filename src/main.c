@@ -38,7 +38,6 @@ int	main(int argc, char **argv)
 		return (exit_error(1, fd, argv[1]));
 	else if (!parse_rt_file(&scene, fd))
 		return (exit_error(2, fd, NULL));
-	scene.ray.origin = scene.camera.location;
 	close(fd);
 	render_scene(&scene);
 	clear_objects(scene.objects);

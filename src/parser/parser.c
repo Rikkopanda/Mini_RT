@@ -23,13 +23,13 @@ t_vec4f	intersect_sphere(void *object, t_ray ray)
 	if (dir_projected_len <= 0)
 		return ((t_vec4f){0,0,0,-1});
 
-	float tc = powf(dir_projected_len, 2);
-	float d2 = dot_product_3d(cam_to_obj, cam_to_obj) - tc;
-
+	float d2 = dot_product_3d(cam_to_obj, cam_to_obj) - powf(dir_projected_len, 2);
 	if (d2 > powf(sphere->radius, 2))
 		return ((t_vec4f){0,0,0,-1});
 	float tc1 = sqrtf(powf(sphere->radius, 2) - d2);
-	t_vec4f hitpoint = (t_vec4f)(ray.origin + (ray.normalized_vec * (tc - tc1)));
+	t_vec4f hitpoint = (t_vec4f)(ray.origin + ray.normalized_vec * (dir_projected_len - tc1));
+	// printf("len %f,   tc %f,  tc1 %f\nhitpoint: ", dir_projected_len, dir_projected_len, tc1);
+	// print_matrix_1_3(hitpoint);
 	hitpoint[3] = 1;
 	return hitpoint;
 }
