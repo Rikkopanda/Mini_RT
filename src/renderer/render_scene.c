@@ -31,11 +31,11 @@ void init_ray_send_tools(t_ray_sending_tools *r_t, t_scene_data *scene)
 
 	float bottom = -top;
 
-    printf("Screen window left/right coordinates: %f %f\n", left, right);
-    printf("Screen window top/bottom coordinates: %f %f\n", top, bottom);
+    // printf("Screen window left/right coordinates: %f %f\n", left, right);
+    // printf("Screen window top/bottom coordinates: %f %f\n", top, bottom);
 
-	printf("aspect ratio %f\n", aspect_ratio);
-	printf("fov verti %f\t horizontal %f\n", tan_of_half_fov_v, tan_of_half_fov_h);
+	// printf("aspect ratio %f\n", aspect_ratio);
+	// printf("fov verti %f\t horizontal %f\n", tan_of_half_fov_v, tan_of_half_fov_h);
 
 
 

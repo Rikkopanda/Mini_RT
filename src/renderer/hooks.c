@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/07/22 11:07:39 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/22 14:04:30 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,12 @@ int handle_input(int keysym, t_scene_data *data)
 		return (0);
 	send_rays(data);
 	mlx_put_image_to_window(data->mlx.mlx_ptr, data->mlx.win_ptr, data->image.img_ptr, 0, 0);
+	printf("sphere \n");
+
+	print_matrix_1_3(data->objects->get_location(data->objects->object));
+	printf("light \n");
+
+	print_matrix_1_3(data->light.location);
 	printf("%d key\n", keysym);
     return (0);
 }

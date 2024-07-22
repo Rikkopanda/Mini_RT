@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/22 11:13:45 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/22 14:39:03 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,12 +116,16 @@ int	hit_ray(t_scene_data *data)
 	t_vec4f hit = check_if_hit(data, &data->ray, &hit_data);
 	if (hit[3] != NADA)
 	{
-		t_vec4f surface_to_light_ray = points_derived_vector(hit, data->light.location);
-		
+		t_vec4f surface_to_light_ray = data->light.location - hit;
+
 		normalize_vector(&surface_to_light_ray);
-		
-		t_vec4f_color light_color = (t_vec4f_color){1, 1, 1};
-		t_vec4f_color ambient = (t_vec4f_color){0.2, 0.2, 0.2};
+
+		// printf("light:\n");
+		// print_matrix_1_3(surface_to_light_ray);
+		// print_matrix_1_3(data->light.location);
+		// print_matrix_1_3(hit);
+		t_vec4f_color light_color = (t_vec4f_color){1, 1, 1, 1};
+		t_vec4f_color ambient = (t_vec4f_color){0.2, 0.2, 0.2, 1};
 		float diffuse_strenght = fmaxf(0.0, dot_product_3d(hit_data.surface_normal, surface_to_light_ray));
 
 		t_vec4f_color diffuse = light_color * diffuse_strenght;
@@ -132,10 +136,16 @@ int	hit_ray(t_scene_data *data)
 		normalize_vector(&half_way);
 
 
-		float specular_strenght = fabsf(dot_product_3d(hit_data.surface_normal, half_way));
+		float specular_strenght = fmaxf(0.0f, dot_product_3d(hit_data.surface_normal, half_way));
+
+		specular_strenght = powf(specular_strenght, 32);
 		t_vec4f_color specular = specular_strenght * light_color;
-		t_vec4f_color lightning_result = hit_data.color.rgb_f * ((ambient * (float)0.3) + (diffuse * 1) + (specular * 1));
-		hit_data.color.rgb_f = hit_data.color.rgb_f * lightning_result;
+
+		ambient *= hit_data.color.rgb_f;
+		diffuse *= hit_data.color.rgb_f;
+
+		t_vec4f_color lightning_result = ((ambient * (float)0.1) + (diffuse * (float)0.3) + (specular * (float)0.9));
+		// hit_data.color.rgb_f = hit_data.color.rgb_f * lightning_result;
 		
 		make_rgb_with_normalized_rgb_f(hit_data.color.rgb, lightning_result);
 		hit_data.color.color_code = create_color(hit_data.color.rgb[0], hit_data.color.rgb[1], hit_data.color.rgb[2]);
@@ -144,10 +154,6 @@ int	hit_ray(t_scene_data *data)
 	return (NADA);
 }
 /*
-		// printf("light:\n");
-		// print_matrix_1_3(surface_to_light_ray);
-		// print_matrix_1_3(data->light.location);
-		// print_matrix_1_3(hit);
 
 		
 		// printf("bug gespot: %d -> %d %d %d\n", hit_data.color.color_code, hit_data.color.rgb[0], hit_data.color.rgb[1], hit_data.color.rgb[2]);
@@ -237,7 +243,7 @@ void send_rays(t_scene_data *scene)
 			t_vec4f	comp3[3];
 			// if (PRINT_DEBUG) printf("angles horizontal, vertical: %f\t%f\n", ft_rad_to_degr(pixel_angle_screen_space_x), ft_rad_to_degr(pixel_angle_screen_space_y));
 			
-			init_t_around_z(rota_horiz, DEGR_10_IN_RAD * 2);
+			init_t_around_z(rota_horiz, 0);
 
 			// init_t_around_z(rota_horiz, pixel_angle_screen_space_x);
 			// rota_horiz[0] += scene->camera.rotation_around_z[0];
@@ -279,9 +285,9 @@ void send_rays(t_scene_data *scene)
 			// if (PRINT_DEBUG) print_matrix_1_3(scene->ray.normalized_vec);
 
 			t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_screen_x, pixel_screen_y * -1);
-			// scene->ray.normalized_vec = (t_vec4f){0, 0, 0, 0};
+			// scene->ray.normalized_vec = (t_vec4f)comp2{0, 0, 0, 0};
 			// scene->ray.normalized_vec = camara_space_vec;
-			matrix_multiply_1x3_3x3(&camara_space_vec, comp2, &scene->ray.normalized_vec);
+			matrix_multiply_1x3_3x3(&camara_space_vec, scene->camera.rotation_comp, &scene->ray.normalized_vec);
 
 			// matrix_multiply_1x3_3x3(&scene->camera.orientation, comp3, &scene->ray.normalized_vec);
 

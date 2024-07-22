@@ -21,7 +21,7 @@ t_vec4f t_vec4f_construct(float x, float y, float z)
 	vec_constructed[0] = x;
 	vec_constructed[1] = y;
 	vec_constructed[2] = z;
-	vec_constructed[3] = 0;
+	vec_constructed[3] = 1;
 	return (vec_constructed);
 }
 
