@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/07/22 17:00:43 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/07/23 15:42:55 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,6 +181,38 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 	return (blinn_phong_shading(scene, closest_hit));
 }
 
+t_vec4f	invert_quaternion(t_vec4f quaternion)
+{
+	const float	squared =	quaternion[0] * quaternion[0] + \
+							quaternion[1] * quaternion[1] + \
+							quaternion[2] * quaternion[2] + \
+							quaternion[3] * quaternion[3];
+	float		inverse;
+
+	if (squared == 0.0f)
+		return (quaternion);
+	inverse = 1.0f / squared;
+	return ((t_vec4f){quaternion[0] * inverse, \
+					-quaternion[1] * inverse, \
+					-quaternion[2] * inverse, \
+					-quaternion[3] * inverse});
+}
+
+t_vec4f	quaternion_rotation(t_vec4f point, t_vec4f axis, float angle_degrees)
+{
+	if (angle_degrees == 0.0f)
+		return (point);
+	const float	angle_rad = ft_degr_to_rad(angle_degrees);
+	const t_vec4f	quaternion_rotation = axis * (sinf(angle_degrees/2) + cosf(angle_rad/2));
+	const t_vec4f	quaternion_point = {0, point[0], point[1], point[2]};
+	const t_vec4f	inverted = invert_quaternion(quaternion_rotation);
+	const t_vec4f	rotated_quaternion = quaternion_rotation * quaternion_point * inverted;
+
+	return ((t_vec4f){rotated_quaternion[1], \
+					rotated_quaternion[2], \
+					rotated_quaternion[3], 1});
+}
+
 /**
  * @note Constructing a normalised camera ray from 
  * the x and y coordinates of a screen pixel.
@@ -199,6 +231,10 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 				tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
 	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 1};
 	normalize_vector(&ray.direction);
+	t_vec4f		axis = (t_vec4f){0, 0, 1, 0};
+	// print_vec3(ray.direction, "ray before");
+	ray.direction = quaternion_rotation(ray.direction, axis, 10);
+	// print_vec3(ray.direction, "ray after");
 	return (ray);
 }
 
