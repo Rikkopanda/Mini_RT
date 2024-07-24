@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/07/24 21:47:12 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/07/24 22:16:47 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,10 +197,12 @@ t_vec4f	invert_quaternion(t_vec4f quaternion)
 	if (squared == 0.0f)
 		return (quaternion);
 	inverse = 1.0f / squared;
-	return ((t_vec4f){quaternion[0] * inverse, \
-					-quaternion[1] * inverse, \
-					-quaternion[2] * inverse, \
-					-quaternion[3] * inverse});
+	return ((t_vec4f){
+		quaternion[0] * inverse, \
+		-quaternion[1] * inverse, \
+		-quaternion[2] * inverse, \
+		-quaternion[3] * inverse
+	});
 }
 
 t_vec4f	invert_unit_quaternion(t_vec4f uq)
@@ -247,6 +249,18 @@ t_vec4f	hamilton_product(t_vec4f q1, t_vec4f q2)
 	return (product);
 }
 
+t_vec4f combine_rotations(t_vec4f rotation)
+{
+	const t_vec4f q_x = axis_angle_to_quaternion((t_vec4f){1, 0, 0, 0}, \
+												ft_degr_to_rad(rotation[0]));
+	const t_vec4f q_y = axis_angle_to_quaternion((t_vec4f){0, 1, 0, 0}, \
+												ft_degr_to_rad(rotation[1]));
+	const t_vec4f q_z = axis_angle_to_quaternion((t_vec4f){0, 0, 1, 0}, \
+												ft_degr_to_rad(rotation[2]));
+
+	return (hamilton_product(hamilton_product(q_z, q_y), q_x));
+}
+
 /**
  * @note converts a point to a pure quaternion and applies rotation using the 
  * formula: P' = qpq*
@@ -256,40 +270,13 @@ t_vec4f	hamilton_product(t_vec4f q1, t_vec4f q2)
  * Source: https://danceswithcode.net/engineeringnotes/quaternions/quaternions.html
  * Source: https://www.youtube.com/watch?v=3BR8tK-LuB0
  */
-t_vec4f	rotate_vector(t_vec4f point, t_vec4f axis, float angle_degrees)
-{
-	if (angle_degrees == 0.0f)
-		return (point);
-	const t_vec4f	q_rotate = axis_angle_to_quaternion(axis, ft_degr_to_rad(angle_degrees));
-	const t_vec4f	quaternion_point = {0, point[0], point[1], point[2]};
-	const t_vec4f	q_inverse = invert_unit_quaternion(q_rotate);
-	const t_vec4f	rotated_point = hamilton_product(hamilton_product(q_rotate, quaternion_point), q_inverse);
-
-	// print_vec4(q_rotate, "q_rotate");
-	// print_vec4(quaternion_point, "quaternion_point");
-	// print_vec4(inverted, "inverted");
-	// print_vec4(rotated_quaternion, "rotated");
-	// printf("\n");
-	return ((t_vec4f){rotated_point[1], \
-					rotated_point[2], \
-					rotated_point[3], 1});
-}
-
-t_vec4f combine_rotations(t_vec4f rotations)
-{
-	const t_vec4f q_x = axis_angle_to_quaternion((t_vec4f){1, 0, 0, 0}, ft_degr_to_rad(rotations[0]));
-	const t_vec4f q_y = axis_angle_to_quaternion((t_vec4f){0, 1, 0, 0}, ft_degr_to_rad(rotations[1]));
-	const t_vec4f q_z = axis_angle_to_quaternion((t_vec4f){0, 0, 1, 0}, ft_degr_to_rad(rotations[2]));
-
-	return (hamilton_product(hamilton_product(q_z, q_y), q_x));
-}
-
-t_vec4f	apply_camera_rotation(t_vec4f point, t_vec4f rotation)
+t_vec4f	apply_rotation(t_vec4f point, t_vec4f rotation)
 {
 	const t_vec4f q_combined = combine_rotations(rotation);
 	const t_vec4f quaternion_point = {0, point[0], point[1], point[2]};
 	const t_vec4f q_inverse = invert_unit_quaternion(q_combined);
-	const t_vec4f rotated_point = hamilton_product(hamilton_product(q_combined, quaternion_point), q_inverse);
+	const t_vec4f rotated_point = hamilton_product(hamilton_product(q_combined,\
+												 quaternion_point), q_inverse);
 
 	return ((t_vec4f){rotated_point[1], rotated_point[2], rotated_point[3], 1});
 }
@@ -299,7 +286,8 @@ t_vec4f	apply_camera_rotation(t_vec4f point, t_vec4f rotation)
  * the x and y coordinates of a screen pixel.
  * From: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays.html
  */
-t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float aspect_ratio)
+t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
+							const float aspect_ratio)
 {
 	t_ray		ray;
 	float		pixel_camera_x;
@@ -312,9 +300,7 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 				tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
 	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 1};
 	normalize_vector(&ray.direction);
-	// t_vec4f		axis = (t_vec4f){0, 1, 0, 0};
-	// ray.direction = rotate_vector(ray.direction, axis, 10);
-	ray.direction = apply_camera_rotation(ray.direction, scene->camera.orientation);
+	ray.direction = apply_rotation(ray.direction, scene->camera.orientation);
 	return (ray);
 }
 
@@ -329,9 +315,10 @@ t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], \
 	t_ray		ray;
 	t_vec4f		color;
 	int			i;
-	float		angle = 0.0;
+	float		angle;
 	const float	inc = 2 * M_PI / samples;
 
+	angle = 0;
 	i = 0;
 	color = (t_vec4f){0, 0, 0, -1};
 	ray = construct_camera_ray(raycenter[0], raycenter[1], scene, aspect_ratio);
