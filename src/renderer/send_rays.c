@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/07/23 15:42:55 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/07/24 15:44:12 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,11 @@ void	fit_interpolation_range(float *rgb_factor)
 void	print_vec3(t_vec4f v, const char *msg)
 {
 	printf("%s [%.4f, %.4f, %.4f]\n", msg, v[0], v[1], v[2]);
+}
+
+void	print_vec4(t_vec4f v, const char *msg)
+{
+	printf("%s [%.4f, %.4f, %.4f, %.4f]\n", msg, v[0], v[1], v[2], v[3]);
 }
 
 void	moved_vector_position(t_vec4f *result, t_vec4f target_vec, t_vec4f offset)
@@ -183,7 +188,7 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 
 t_vec4f	invert_quaternion(t_vec4f quaternion)
 {
-	const float	squared =	quaternion[0] * quaternion[0] + \
+	const float	squared = quaternion[0] * quaternion[0] + \
 							quaternion[1] * quaternion[1] + \
 							quaternion[2] * quaternion[2] + \
 							quaternion[3] * quaternion[3];
@@ -198,19 +203,76 @@ t_vec4f	invert_quaternion(t_vec4f quaternion)
 					-quaternion[3] * inverse});
 }
 
-t_vec4f	quaternion_rotation(t_vec4f point, t_vec4f axis, float angle_degrees)
+t_vec4f	invert_unit_quaternion(t_vec4f uq)
+{
+	return ((t_vec4f){uq[0], -uq[1], -uq[2], -uq[3]});
+}
+
+t_vec4f	axis_angle_to_quaternion(t_vec4f axis, float angle_rad)
+{
+	if (angle_rad == 0.0f)
+		return ((t_vec4f){0, 0, 0, 0});
+	return ((t_vec4f){
+		cosf(angle_rad / 2), \
+		axis[0] * sinf(angle_rad / 2),
+		axis[1] * sinf(angle_rad / 2),
+		axis[2] * sinf(angle_rad / 2)
+	});
+}
+/**
+ * @note multiplying quaternions according to Hamilton's product
+ * Source: https://en.wikipedia.org/wiki/Quaternion#Hamilton_product
+ * Source: https://www.meccanismocomplesso.org/en/hamiltons-quaternions-and-3d-rotation-with-python/
+ */
+t_vec4f	hamilton_product(t_vec4f q1, t_vec4f q2)
+{
+	t_vec4f	product;
+
+	product[0] = q1[0] * q2[0] - \
+				q1[1] * q2[1] - \
+				q1[2] * q2[2] - \
+				q1[3] * q2[3];
+	product[1] = q1[0] * q2[1] + \
+				q1[1] * q2[0] + \
+				q1[2] * q2[3] - \
+				q1[3] * q2[2];
+	product[2] = q1[0] * q2[2] + \
+				q1[2] * q2[0] + \
+				q1[3] * q2[1] - \
+				q1[1] * q2[3];
+	product[3] = q1[0] * q2[3] + \
+				q1[3] * q2[0] + \
+				q1[1] * q2[2] - \
+				q1[2] * q2[1];
+	return (product);
+}
+
+/**
+ * @note converts a point to a pure quaternion and applies rotation using the 
+ * formula: P' = qpq*
+ * P' = rotated point
+ * q = the rotation quaternion (q_rotate)
+ * q* = inverse of the rotation quaternion (q_inverse)
+ * Source: https://danceswithcode.net/engineeringnotes/quaternions/quaternions.html
+ * Source: https://www.youtube.com/watch?v=3BR8tK-LuB0
+ */
+t_vec4f	rotate_vector(t_vec4f point, t_vec4f axis, float angle_degrees)
 {
 	if (angle_degrees == 0.0f)
 		return (point);
-	const float	angle_rad = ft_degr_to_rad(angle_degrees);
-	const t_vec4f	quaternion_rotation = axis * (sinf(angle_degrees/2) + cosf(angle_rad/2));
+	const t_vec4f	q_rotate = axis_angle_to_quaternion(axis, ft_degr_to_rad(angle_degrees));
 	const t_vec4f	quaternion_point = {0, point[0], point[1], point[2]};
-	const t_vec4f	inverted = invert_quaternion(quaternion_rotation);
-	const t_vec4f	rotated_quaternion = quaternion_rotation * quaternion_point * inverted;
+	const t_vec4f	q_inverse = invert_unit_quaternion(q_rotate);
+	const t_vec4f	rotated_point = hamilton_product(hamilton_product(q_rotate, quaternion_point), q_inverse);
 
-	return ((t_vec4f){rotated_quaternion[1], \
-					rotated_quaternion[2], \
-					rotated_quaternion[3], 1});
+	// print_vec4(q_rotate, "q_rotate");
+	// print_vec4(quaternion_point, "quaternion_point");
+	// print_vec4(inverted, "inverted");
+	// print_vec4(rotated_quaternion, "rotated");
+	// printf("\n");
+	return ((t_vec4f){rotated_point[1], \
+					rotated_point[2], \
+					rotated_point[3], 1});
 }
 
 /**
@@ -231,9 +293,9 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 				tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
 	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 1};
 	normalize_vector(&ray.direction);
-	t_vec4f		axis = (t_vec4f){0, 0, 1, 0};
+	t_vec4f		axis = (t_vec4f){0, 1, 0, 0};
 	// print_vec3(ray.direction, "ray before");
-	ray.direction = quaternion_rotation(ray.direction, axis, 10);
+	ray.direction = rotate_vector(ray.direction, axis, 360);
 	// print_vec3(ray.direction, "ray after");
 	return (ray);
 }
