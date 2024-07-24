@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/01/07 15:29:32 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/06/25 13:22:20 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/07/24 21:39:23 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,11 @@ float	ft_degr_to_rad(float x)
 		return (0);
 	x = (x * M_PI) / (float)180;
 	return (x);
+}
+
+t_vec4f	normal_orientation_to_degrees(t_vec4f orientation)
+{
+	return (((orientation + 1.0f) / 2.0f) * 360.0f);
 }
 
 void	print_matrix_1_3(t_vec4f m)

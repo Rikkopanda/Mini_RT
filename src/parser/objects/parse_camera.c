@@ -40,6 +40,7 @@ int	parse_camera(t_object **objects, char **format)
 	camera->fov = ft_atoi(format[2]);
 	if (!has_valid_ranges(camera))
 		return (free(camera), 0);
+	camera->orientation = normal_orientation_to_degrees(camera->orientation);
 	new = new_object(CAMERA, camera);
 	if (!new)
 		return (perror("malloc error"), free(camera), 0);

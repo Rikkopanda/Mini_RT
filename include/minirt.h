@@ -155,6 +155,7 @@ void	init_t_around_x(t_vec4f R[3], float rad);
 void	init_result(t_vec4f *M);
 float	ft_degr_to_rad(float x);
 float	ft_rad_to_degr(float x);
+t_vec4f	normal_orientation_to_degrees(t_vec4f orientation);
 int		render_scene(t_scene_data *data);
 void	send_rays(t_scene_data *scene);
 int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert);

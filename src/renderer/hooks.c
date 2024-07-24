@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/27 09:26:30 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/06/22 14:53:08 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/07/24 21:59:38 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,35 +69,34 @@ int move_lighting(int keysym, t_scene_data *data)
 
 int	rotate_view(int keysym, t_scene_data *data)
 {
-	t_vec4f	add_angle[3];
-	t_vec4f	original_orientation_matrix;
-
-	init_comp_m(add_angle);
-	original_orientation_matrix = data->camera.orientation;
-	// copy_matrix(&original_orientation_matrix, data->camera.orientation);
+	const int	degrees = 10;
 	if (keysym == UP)
 	{
-		init_t_around_y(add_angle, DEGR_10_IN_RAD);
-		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);	
+		data->camera.orientation[0] += degrees;
+		if (data->camera.orientation[0] > 360)
+			data->camera.orientation[0] = (int)data->camera.orientation[0] % 360;
 		return (printf("rotating up...\n"), TRUE);
 	}
 	else if (keysym == DOWN)
 	{
-		init_t_around_y(add_angle, -DEGR_10_IN_RAD);
-		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
+		data->camera.orientation[0] -= degrees;
+		if (data->camera.orientation[0] < 0)
+			data->camera.orientation[0] = 360 + data->camera.orientation[0];
 		return (printf("rotating down...\n"), TRUE);
 	}
 	else if (keysym == LEFT)
 	{
-		init_t_around_z(add_angle, DEGR_10_IN_RAD);
-		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
+		data->camera.orientation[1] += degrees;
+		if (data->camera.orientation[1] > 360)
+			data->camera.orientation[1] = (int)data->camera.orientation[1] % 360;
 		return (printf("rotating left...\n"), TRUE);
 
 	}
 	else if (keysym == RIGHT)
 	{
-		init_t_around_z(add_angle, -DEGR_10_IN_RAD);
-		matrix_multiply_1x3_3x3(&original_orientation_matrix, add_angle, &data->camera.orientation);
+		data->camera.orientation[1] -= degrees;
+		if (data->camera.orientation[1] < 0)
+			data->camera.orientation[1] = 360 + data->camera.orientation[1];
 		return (printf("rotating right...\n"), TRUE);
 	}
 	return (FALSE);

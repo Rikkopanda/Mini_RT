@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/07/24 15:44:12 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/07/24 21:47:12 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,7 +211,7 @@ t_vec4f	invert_unit_quaternion(t_vec4f uq)
 t_vec4f	axis_angle_to_quaternion(t_vec4f axis, float angle_rad)
 {
 	if (angle_rad == 0.0f)
-		return ((t_vec4f){0, 0, 0, 0});
+		return ((t_vec4f){1, 0, 0, 0});
 	return ((t_vec4f){
 		cosf(angle_rad / 2), \
 		axis[0] * sinf(angle_rad / 2),
@@ -275,6 +275,25 @@ t_vec4f	rotate_vector(t_vec4f point, t_vec4f axis, float angle_degrees)
 					rotated_point[3], 1});
 }
 
+t_vec4f combine_rotations(t_vec4f rotations)
+{
+	const t_vec4f q_x = axis_angle_to_quaternion((t_vec4f){1, 0, 0, 0}, ft_degr_to_rad(rotations[0]));
+	const t_vec4f q_y = axis_angle_to_quaternion((t_vec4f){0, 1, 0, 0}, ft_degr_to_rad(rotations[1]));
+	const t_vec4f q_z = axis_angle_to_quaternion((t_vec4f){0, 0, 1, 0}, ft_degr_to_rad(rotations[2]));
+
+	return (hamilton_product(hamilton_product(q_z, q_y), q_x));
+}
+
+t_vec4f	apply_camera_rotation(t_vec4f point, t_vec4f rotation)
+{
+	const t_vec4f q_combined = combine_rotations(rotation);
+	const t_vec4f quaternion_point = {0, point[0], point[1], point[2]};
+	const t_vec4f q_inverse = invert_unit_quaternion(q_combined);
+	const t_vec4f rotated_point = hamilton_product(hamilton_product(q_combined, quaternion_point), q_inverse);
+
+	return ((t_vec4f){rotated_point[1], rotated_point[2], rotated_point[3], 1});
+}
+
 /**
  * @note Constructing a normalised camera ray from 
  * the x and y coordinates of a screen pixel.
@@ -293,10 +312,9 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, const float as
 				tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
 	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 1};
 	normalize_vector(&ray.direction);
-	t_vec4f		axis = (t_vec4f){0, 1, 0, 0};
-	// print_vec3(ray.direction, "ray before");
-	ray.direction = rotate_vector(ray.direction, axis, 360);
-	// print_vec3(ray.direction, "ray after");
+	// t_vec4f		axis = (t_vec4f){0, 1, 0, 0};
+	// ray.direction = rotate_vector(ray.direction, axis, 10);
+	ray.direction = apply_camera_rotation(ray.direction, scene->camera.orientation);
 	return (ray);
 }
 
@@ -375,6 +393,7 @@ void send_rays(t_scene_data *scene)
 	}
 	print_vec3(scene->light.location, "light");
 	print_vec3(scene->camera.location, "camera");
+	print_vec3(scene->camera.orientation, "cam orientation");
 	printf("done\n");
 }
 /*
