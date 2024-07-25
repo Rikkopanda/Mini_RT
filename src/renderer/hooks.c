@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/27 09:26:30 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/07/24 21:59:38 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/07/25 15:18:11 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,33 +70,34 @@ int move_lighting(int keysym, t_scene_data *data)
 int	rotate_view(int keysym, t_scene_data *data)
 {
 	const int	degrees = 10;
+	const int	rotation_max = 180;
 	if (keysym == UP)
 	{
 		data->camera.orientation[0] += degrees;
-		if (data->camera.orientation[0] > 360)
-			data->camera.orientation[0] = (int)data->camera.orientation[0] % 360;
+		if (data->camera.orientation[0] > rotation_max)
+			data->camera.orientation[0] = -rotation_max + degrees;
 		return (printf("rotating up...\n"), TRUE);
 	}
 	else if (keysym == DOWN)
 	{
 		data->camera.orientation[0] -= degrees;
-		if (data->camera.orientation[0] < 0)
-			data->camera.orientation[0] = 360 + data->camera.orientation[0];
+		if (data->camera.orientation[0] < -rotation_max)
+			data->camera.orientation[0] = rotation_max - degrees;
 		return (printf("rotating down...\n"), TRUE);
 	}
 	else if (keysym == LEFT)
 	{
-		data->camera.orientation[1] += degrees;
-		if (data->camera.orientation[1] > 360)
-			data->camera.orientation[1] = (int)data->camera.orientation[1] % 360;
+		data->camera.orientation[1] -= degrees;
+		if (data->camera.orientation[1] < -rotation_max)
+			data->camera.orientation[1] = rotation_max - degrees;
 		return (printf("rotating left...\n"), TRUE);
 
 	}
 	else if (keysym == RIGHT)
 	{
-		data->camera.orientation[1] -= degrees;
-		if (data->camera.orientation[1] < 0)
-			data->camera.orientation[1] = 360 + data->camera.orientation[1];
+		data->camera.orientation[1] += degrees;
+		if (data->camera.orientation[1] > rotation_max)
+			data->camera.orientation[1] = -rotation_max + degrees;
 		return (printf("rotating right...\n"), TRUE);
 	}
 	return (FALSE);
