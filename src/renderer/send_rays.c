@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/25 13:41:11 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/25 14:01:39 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void moved_vector_position(t_vec4f *result, t_vec4f target_vec, t_vec4f offset)
 /**
  * @note not declaring and initializing new vectors faster??
 */
-t_vec4f check_if_hit(t_scene_data *data, t_ray *ray, t_hit_data *hit_data)
+int check_if_hit(t_scene_data *data, t_ray *ray, t_hit_data *hit_data)
 {
 	t_object	*current;
 	t_vec4f		hit;
@@ -101,11 +101,11 @@ t_vec4f check_if_hit(t_scene_data *data, t_ray *ray, t_hit_data *hit_data)
 			normalize_vector(&hit_data->color.rgb_f);
 
 			// printf("\ncolor code %d \n\n", hit_data->color.color_code);
-			return (hit);
+			return TRUE;
 		}
 		current = current->next;
 	}
-	return (hit);
+	return FALSE;
 }
 // print_camera_data(data->camera);
 // printf("data camera: x, y, z %f %f %f\n", data->camera.location[0], data->camera.location[1], data->camera.location[2]);
@@ -113,49 +113,54 @@ t_vec4f check_if_hit(t_scene_data *data, t_ray *ray, t_hit_data *hit_data)
 // current->print_object_data(current->object);
 // *obj_to_ray_vec = points_derived_vector(current->get_location(current->object), ray->world_pos_of_scaled_vec);
 
-int	hit_ray(t_scene_data *data)
+int phong_blim_shading(t_scene_data *data, t_hit_data *hit_data)
 {
-	t_hit_data hit_data;
-
-	normalize_vector(&data->ray.normalized_vec);
-	t_vec4f hit = check_if_hit(data, &data->ray, &hit_data);
-	if (hit[3] != NADA)
-	{
-		t_vec4f surface_to_light_ray = data->light.location - hit;
+		t_vec4f surface_to_light_ray = data->light.location - hit_data->hit;
 
 		normalize_vector(&surface_to_light_ray);
 
 		// print_matrix_1_3(hit);
 		t_vec4f_color light_color = (t_vec4f_color){1, 1, 1, 1};
 		t_vec4f_color ambient = (t_vec4f_color){0.2, 0.2, 0.2, 1};
-		float diffuse_strenght = fmaxf(0.0, dot_product_3d(hit_data.surface_normal, surface_to_light_ray));
+		float diffuse_strenght = fmaxf(0.0, dot_product_3d(hit_data->surface_normal, surface_to_light_ray));
 
 		// printf("surface to light:\n");
 		// print_matrix_1_3(surface_to_light_ray);
 		// printf("surface_normal:\n");
-		// print_matrix_1_3(hit_data.surface_normal);
+		// print_matrix_1_3(hit_data->surface_normal);
 
 		t_vec4f_color diffuse = light_color * diffuse_strenght;
-		t_vec4f view_src = data->camera.location - hit;
+		t_vec4f view_src = data->camera.location - hit_data->hit;
 		normalize_vector(&view_src);
 
 		t_vec4f half_way = (view_src + surface_to_light_ray) / (get_magnitude(surface_to_light_ray) + get_magnitude(view_src));
 		normalize_vector(&half_way);
 
-		float specular_strenght = fmaxf(0.0f, dot_product_3d(hit_data.surface_normal, half_way));
+		float specular_strenght = fmaxf(0.0f, dot_product_3d(hit_data->surface_normal, half_way));
 
-		specular_strenght = powf(specular_strenght, 32);
+		specular_strenght = powf(specular_strenght, 128);
 		t_vec4f_color specular = specular_strenght * light_color;
 
-		ambient *= hit_data.color.rgb_f;
-		diffuse *= hit_data.color.rgb_f;
+		ambient *= hit_data->color.rgb_f;
+		diffuse *= hit_data->color.rgb_f;
 
-		t_vec4f_color lightning_result = ((ambient * (float)0.2) + (diffuse * (float)0) + (specular * (float)1));
-		// hit_data.color.rgb_f = hit_data.color.rgb_f * lightning_result;
+		t_vec4f_color lightning_result = ((ambient * (float)0) + (diffuse * (float)1) + (specular * (float)1));
+		// hit_data->color.rgb_f = hit_data->color.rgb_f * lightning_result;
 		
-		make_rgb_with_normalized_rgb_f(hit_data.color.rgb, lightning_result);
-		hit_data.color.color_code = create_color(hit_data.color.rgb[0], hit_data.color.rgb[1], hit_data.color.rgb[2]);
-		return (hit_data.color.color_code);
+		make_rgb_with_normalized_rgb_f(hit_data->color.rgb, lightning_result);
+		hit_data->color.color_code = create_color(hit_data->color.rgb[0], hit_data->color.rgb[1], hit_data->color.rgb[2]);
+		return hit_data->color.color_code;
+}
+
+
+int	hit_ray(t_scene_data *data)
+{
+	t_hit_data hit_data;
+
+	normalize_vector(&data->ray.normalized_vec);
+	if (check_if_hit(data, &data->ray, &hit_data) == TRUE)
+	{
+		return (phong_blim_shading(data, &hit_data));
 	}
 	return (NADA);
 }

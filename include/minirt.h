@@ -132,7 +132,8 @@ typedef struct s_scene_data
 }	t_scene_data;
 
 typedef struct s_hit_data
-{
+{ 
+	t_vec4f hit;
 	t_vec4f surface_normal;
 	t_color	color;
 } t_hit_data;
