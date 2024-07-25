@@ -19,10 +19,8 @@ t_vec4f	intersect_sphere(void *object, t_ray ray)
 	t_vec4f		cam_to_obj = sphere->location - ray.origin;
 
 	float dir_projected_len = dot_product_3d(cam_to_obj, ray.normalized_vec);
-
 	if (dir_projected_len <= 0)
 		return ((t_vec4f){0,0,0,-1});
-
 	float d2 = dot_product_3d(cam_to_obj, cam_to_obj) - powf(dir_projected_len, 2);
 	if (d2 > powf(sphere->radius, 2))
 		return ((t_vec4f){0,0,0,-1});

@@ -53,45 +53,6 @@ void init_ray_send_tools(t_ray_sending_tools *r_t, t_scene_data *scene)
 
 }
 
-void	init_light_source(t_scene_data *data)
-{
-	data->light.brightness = 1;
-	data->light.location[0] = 0;
-	data->light.location[1] = 0;
-	data->light.location[2] = -100;
-	data->light.location[3] = 0;
-	data->light.color.rgb[0] = 255;
-	data->light.color.rgb[1] = 255;
-	data->light.color.rgb[2] = 255;
-}
-
-// void	init_sphere(t_scene_data *data)
-// {
-// 	data->sphere.radius = 30;
-// 	data->sphere.color.color_code = ORANGE;
-// 	data->sphere.location[0] = 100;
-// 	data->sphere.location[1] = 40;
-// 	data->sphere.location[2] = 0;
-// 	data->sphere.location[3] = 0;
-// }
-
-void	init_camera(t_scene_data *data)
-{
-	// data->camera.fov = 70;
-	data->camera.orientation[0] = 1;
-	data->camera.orientation[1] = 0;
-	data->camera.orientation[2] = 0;
-	data->camera.orientation[3] = 0;
-	data->camera.location[0] = 0;
-	data->camera.location[1] = 0;
-	data->camera.location[2] = 0;
-	data->camera.location[3] = 0;
-	#ifdef PRINT_DEBUG
-		printf("original\n");
-		print_matrix_1_3(data->camera.orientation);
-	#endif
-}
-
 // void determine_window_ratio(t_scene_data *data)
 // {
 // 	// float verti_triangle_angle = ft_degr_to_rad((float)data->camera.fov_verti) * 0.5;
