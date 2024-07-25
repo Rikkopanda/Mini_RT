@@ -12,7 +12,6 @@
 # include "../../lib/minilibx-linux/mlx.h"
 # include <stdlib.h>
 # include "libft.h"
-# define PRINT_DEBUG 1
 # include "color.h"
 
 
@@ -141,9 +140,13 @@ typedef struct s_hit_data
 void	matrix_multiplication(t_vec4f comp[3], t_ray *ray, t_vec4f camera_vector);
 void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m);
 void	compilation_matrix(t_vec4f comp[3], t_vec4f R[3], t_vec4f R3[3]);
-void	copy_matrix(t_vec4f *dst, t_vec4f src);
 void	init_comp_m(t_vec4f comp[3]);
 float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B);
+
+
+void	copy_matrix(t_vec4f dst[3], t_vec4f src[3]);
+void	matrix_addition(t_vec4f target[3], t_vec4f M[3]);
+
 
 void	normalize_vector(t_vec4f *v);
 void	vector_scaling(t_vec4f *v, float scale);
@@ -173,6 +176,8 @@ void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);
 void	matrix_multiply_3x3_3x3(t_vec4f a[3], t_vec4f b[3], t_vec4f result_m[3]);
 void	init_identy_matrix(t_vec4f m[3]);
+t_vec4f	cross_product(t_vec4f A, t_vec4f B);
+void 	scale_3x3_matrix(t_vec4f M[3], float scale);
 
 int		handle_input(int keysym, t_scene_data *data);
 

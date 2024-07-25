@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   matrix_tools.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/07/22 07:55:16 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/24 22:04:46 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,28 @@ void	init_comp_m(t_vec4f comp[3])
 	}
 }
 
-float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
+// float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
+// {
+// 	return ((vec_A[2] * vec_B[3]) - (vec_B[2] * vec_A[3]) +
+// 			(vec_A[3] * vec_B[1]) - (vec_B[3] * vec_A[1]) +
+// 			(vec_A[1] * vec_B[2]) - (vec_B[1] * vec_A[2]));
+// }
+
+void scale_3x3_matrix(t_vec4f M[3], float scale)
 {
-	return ((vec_A[2] * vec_B[3]) - (vec_B[2] * vec_A[3]) +
-			(vec_A[3] * vec_B[1]) - (vec_B[3] * vec_A[1]) +
-			(vec_A[1] * vec_B[2]) - (vec_B[1] * vec_A[2]));
+	(M)[0] *= scale;
+	(M)[1] *= scale;
+	(M)[2] *= scale;
+}
+
+t_vec4f	cross_product(t_vec4f A, t_vec4f B)
+{
+	t_vec4f result;
+
+	result[0] = A[1] * B[2] - A[2] * B[1];
+	result[1] = -(A[0] * B[2] - A[2] * B[0]);
+	result[2] = A[0] * B[1] - A[1] * B[0];
+	return (result);
 }
 
 float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B)
@@ -67,17 +84,25 @@ void	compilation_matrix(t_vec4f comp[3], t_vec4f R[3], t_vec4f R3[3])
 	}
 }
 
-// void	copy_matrix(t_vec4f *dst, t_vec4f src)
-// {
-// 	int i;
+void	copy_matrix(t_vec4f dst[3], t_vec4f src[3])
+{
+	int i;
 
-// 	i = 0;
-// 	while (i < 4)
-// 	{
-// 		(*dst)[i] = src[i];
-// 		i++;
-// 	}
-// }
+	i = 0;
+	while (i < 4)
+	{
+		(dst)[i] = src[i];
+		i++;
+	}
+}
+
+void	matrix_addition(t_vec4f target[3], t_vec4f M[3])
+{
+	(target)[0] += M[0];
+	(target)[1] += M[1];
+	(target)[2] += M[2];
+}
+
 void	construct_4x4vec4f(t_vec4f translate, t_vec4f rotation[3], t_vec4f *transform_result[4])
 {
 	(*transform_result)[0] = (t_vec4f){0,0,0,0};

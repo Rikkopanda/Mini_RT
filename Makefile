@@ -69,6 +69,9 @@ all: ${NAME}
 debug: CFLAGS += -g
 debug: re
 
+print_debug: CFLAGS += -DPRINT_DEBUG
+print_debug: re
+
 clean:
 	rm -f ${OBJ}
 
@@ -80,4 +83,4 @@ tests: ${OBJ}
 
 re: fclean all
 
-.PHONY: all clean fclean re tests debug
+.PHONY: all clean fclean re tests debug print_debug

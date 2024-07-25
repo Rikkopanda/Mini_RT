@@ -86,8 +86,10 @@ void	init_camera(t_scene_data *data)
 	data->camera.location[1] = 0;
 	data->camera.location[2] = 0;
 	data->camera.location[3] = 0;
-	if (PRINT_DEBUG) printf("original\n");
-	if (PRINT_DEBUG) print_matrix_1_3(data->camera.orientation);
+	#ifdef PRINT_DEBUG
+		printf("original\n");
+		print_matrix_1_3(data->camera.orientation);
+	#endif
 }
 
 // void determine_window_ratio(t_scene_data *data)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/22 14:39:03 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/25 10:41:26 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,11 +190,26 @@ int	hit_ray(t_scene_data *data)
 // {
 // }
 
+t_vec4f make_camera_space_vector(t_scene_data *scene, t_ray_sending_tools *r_t)
+{
+	const float aspect_ratio = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
+
+	float pixelNDCx = ((float)r_t->pixel_x + (float)0.5) / (float)WINDOW_WIDTH;
+	// + 0.5 because it has to be in the middle of the pixel(raster square, how u want to call it)
+	float pixelNDCy = ((float)r_t->pixel_y + (float)0.5) / (float)WINDOW_HEIGHT;
+	// printf("NDC space x y %f\t%f\n", pixelNDCx, pixelNDCy);
+
+	float scale = tanf(ft_degr_to_rad(scene->camera.fov) * 0.5);
+	float pixel_screen_x = ((2 * pixelNDCx) - 1) * aspect_ratio * scale;
+	float pixel_screen_y = (1 - (2 * pixelNDCy)) * scale;
+
+	return t_vec4f_construct(1, pixel_screen_x, pixel_screen_y * -1);// dir: x y z
+}
+
 void send_rays(t_scene_data *scene)
 {
 	t_ray_sending_tools	r_t;
 	int					color;
-	const float aspect_ratio = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
 	scene->ray.origin = scene->camera.location;
 
 	for (int i = 0; i < WINDOW_HEIGHT; i++)
@@ -213,14 +228,7 @@ void send_rays(t_scene_data *scene)
 		while (r_t.pixel_x <= WINDOW_WIDTH)
 		{
 
-			float pixelNDCx = ((float)r_t.pixel_x + (float)0.5) / (float)WINDOW_WIDTH;
-			// + 0.5 because it has to be in the middle of the pixel(raster square, how u want to call it)
-			float pixelNDCy = ((float)r_t.pixel_y + (float)0.5) / (float)WINDOW_HEIGHT;
-			// printf("NDC space x y %f\t%f\n", pixelNDCx, pixelNDCy);
 
-			float scale = tanf(ft_degr_to_rad(scene->camera.fov) * 0.5);
-			float pixel_screen_x = ((2 * pixelNDCx) - 1) * aspect_ratio * scale;
-			float pixel_screen_y = (1 - (2 * pixelNDCy)) * scale;
 			
 			// float pixel_screen_x =  pixelNDCx * aspect_ratio;
 			// float pixel_screen_y =  pixelNDCy;
@@ -284,13 +292,81 @@ void send_rays(t_scene_data *scene)
 
 			// if (PRINT_DEBUG) print_matrix_1_3(scene->ray.normalized_vec);
 
-			t_vec4f camara_space_vec = t_vec4f_construct(1, pixel_screen_x, pixel_screen_y * -1);
+			t_vec4f camara_space_vec = make_camera_space_vector(scene, &r_t);
 			// scene->ray.normalized_vec = (t_vec4f)comp2{0, 0, 0, 0};
 			// scene->ray.normalized_vec = camara_space_vec;
 			matrix_multiply_1x3_3x3(&camara_space_vec, scene->camera.rotation_comp, &scene->ray.normalized_vec);
-
+			
 			// matrix_multiply_1x3_3x3(&scene->camera.orientation, comp3, &scene->ray.normalized_vec);
+			#ifdef PRINT_DEBUG
+				printf("user input orientation\n");
+				print_matrix_1_3(scene->camera.orientation);
+				printf("reference vector\n");
+				const t_vec4f reference_vector = {1,0,0,1};
+				print_matrix_1_3(reference_vector);
+				printf("camera space\n");
+				print_matrix_1_3(camara_space_vec);
+				printf("rotation\n");
+				print_matrix_3_3(scene->camera.rotation_comp);
+				printf("original\n");
+				print_matrix_1_3(scene->ray.normalized_vec);
+				printf("\n\ncalculation\n");
+				printf("\n\ncross\n");
 
+				t_vec4f cross_vector = cross_product(reference_vector, scene->camera.orientation);
+				normalize_vector(&cross_vector);
+				print_matrix_1_3(cross_vector);
+
+				float angle = acosf(dot_product_3d(reference_vector, scene->camera.orientation) / (get_magnitude(reference_vector) * get_magnitude(scene->camera.orientation)));
+				printf("angle\n%f\n", angle);
+
+				t_vec4f K[3] = {(t_vec4f){0, -cross_vector[2], cross_vector[1]},
+							(t_vec4f){cross_vector[2], 0, -cross_vector[0]},
+							(t_vec4f){-cross_vector[1], cross_vector[0], 0}};
+				printf("K\n");
+				print_matrix_3_3(K);
+
+				t_vec4f I[3];
+				t_vec4f R[3];
+				init_identy_matrix(I);
+				copy_matrix(R, I);
+
+				t_vec4f K_sin_theta[3];
+				copy_matrix(K_sin_theta, K);
+				scale_3x3_matrix(K_sin_theta, sinf(angle));
+				printf("K scale  sin(theta)\n");
+				print_matrix_3_3(K_sin_theta);
+				t_vec4f K_squared_and_cos[3];
+				matrix_multiply_3x3_3x3(K, K, K_squared_and_cos);
+				scale_3x3_matrix(K_squared_and_cos, 1 - cosf(angle));
+				printf("K squared and cos theta\n");
+
+				print_matrix_3_3(K_squared_and_cos);
+				printf("R add 1\n");
+
+				matrix_addition(R, K_sin_theta);
+				print_matrix_3_3(R);
+
+				matrix_addition(R, K_squared_and_cos);
+				printf("R add 2\n");
+				print_matrix_3_3(R);
+
+				t_vec4f test_result;
+				matrix_multiply_1x3_3x3((t_vec4f *)&scene->camera.orientation, R, &test_result);
+				printf("camera orientation x R =\n");
+				print_matrix_1_3(test_result);
+			
+				matrix_multiply_1x3_3x3((t_vec4f *)&reference_vector, R, &test_result);
+				printf("ref x R =\n");
+				print_matrix_1_3(test_result);
+
+				printf("camera space vector pre\n");
+				print_matrix_1_3(camara_space_vec);
+				matrix_multiply_1x3_3x3((t_vec4f *)&camara_space_vec, R, &test_result);
+				printf("camera space vector multiplied by R\n");
+				print_matrix_1_3(test_result);
+				// exit(0);
+			#endif
 			// scene->ray.normalized_vec[1] += 1;
 			// scene->ray.normalized_vec[1] /= 2;
 			// scene->ray.normalized_vec[2] += 1;
