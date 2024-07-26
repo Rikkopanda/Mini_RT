@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/26 15:00:14 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/26 15:29:00 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,10 +171,19 @@ t_vec4f lerp(t_vec4f a, t_vec4f b, float f)
 
 t_vec4f	sky_box(float y)
 {
-	t_vec4f	color1 = (t_vec4f){145,224,255,1};
-	t_vec4f	color2 = (t_vec4f){255,255,255,1};
-
-	return (lerp(color2, color1, (y + 1.0f) / 2));
+	t_vec4f	top_hemi = (t_vec4f){145,224,255,-1};
+	t_vec4f	bottom_hemi = (t_vec4f){255,255,255,-1};
+	
+	if (y > 0.1)
+		return top_hemi;
+	else if (y < -0.1)
+		return bottom_hemi;
+	// 0.1 / 0.1 = 1
+	// -0.1 / 0.1 = -1
+	// dat + 0.1 / 0.2
+	t_vec4f result = lerp(bottom_hemi, top_hemi, (y + 0.1f) / 0.2f);
+	result[3] = -1;
+	return (result);
 }
 
 /**
