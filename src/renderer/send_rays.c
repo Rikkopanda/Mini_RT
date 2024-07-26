@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   send_rays.c                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/07/25 14:41:04 by kwchu         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   send_rays.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
+/*   Updated: 2024/07/26 09:21:45 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ typedef struct s_hit_info
  * From: https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model &
  * https://www.youtube.com/watch?v=KdDdljGtfeg
  */
-int	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
+t_vec4f	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 {
 	const t_vec4f	surface_to_light = scene->light.location - surface.hit_location;
 	const t_vec4f	surface_to_cam = scene->camera.location - surface.hit_location;
@@ -137,7 +137,7 @@ int	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 	surface.color[0] = ft_min(surface.color[0], 255);
 	surface.color[1] = ft_min(surface.color[1], 255);
 	surface.color[2] = ft_min(surface.color[2], 255);// kleuren tussen float 0 - 255 ?
-	return (vec4rgb_to_int(surface.color));
+	return (surface.color);
 }
 
 void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
@@ -158,32 +158,32 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
  * bg_strength is used for the effect of the ambient color strength 
  * on the background, so it is different from the object's "shadow" color.
  */
-int	object_hit_color(t_scene_data *scene, t_ray ray)
+t_vec4f	object_hit_color(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit)
 {
 	t_object	*current;
-	t_hit_info	closest_hit;
+	//t_hit_info	closest_hit;//move
 	t_vec4f		hit;
 	float		length;
 	const float	bg_strength = 0.2f;
 
 	current = scene->objects;
-	closest_hit.hit_location = (t_vec4f){0, 0, 0, -1};
-	closest_hit.length = 200;
+	closest_hit->hit_location = (t_vec4f){0, 0, 0, -1};
+	closest_hit->length = 200;
 	while (current)
 	{
 		hit = current->intersect(current->object, ray);
 		if (hit[STATUS_INDEX] != -1)
 		{
 			length = fabsf(vector_length(hit - ray.origin)); // fabs omdat we ook in de negatieve richting kunnen kijken als de camera zo staat?
-			if (length <= closest_hit.length)
+			if (length <= closest_hit->length)
 				update_hit_info(&closest_hit, hit, current, length);
 		}
 		current = current->next;
 	}
-	if (closest_hit.hit_location[STATUS_INDEX] == -1)
-		return (vec4rgb_to_int(scene->ambient.ratio * \
-				scene->ambient.color.rgb_f * bg_strength));
-	return (blinn_phong_shading(scene, closest_hit));
+	if (closest_hit->hit_location[STATUS_INDEX] == -1)
+		return (scene->ambient.ratio * \
+				scene->ambient.color.rgb_f * bg_strength);
+	return (blinn_phong_shading(scene, *closest_hit));
 }
 
 t_vec4f	invert_quaternion(t_vec4f quaternion)
@@ -304,6 +304,38 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
 	return (ray);
 }
 
+#define MAX_BOUNCE_DEPTH 4
+#define REFLECT_RAYS 20
+
+t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
+{
+	int i;
+	t_vec4f this_color;
+	t_vec4f color_bounce_sum = (t_vec4f){0,0,0,0};
+	t_hit_info hit_info;
+
+	i = 0;
+	bounce_depth++;
+	this_color = object_hit_color(scene, ray, &hit_info);
+	if (bounce_depth == MAX_BOUNCE_DEPTH)
+		return this_color;
+	ray.origin = hit_info.hit_location;
+	while (i < REFLECT_RAYS)
+	{
+		color_bounce_sum += trace_ray(scene, ray, bounce_depth);
+		ray.direction = generate_random_vec4f();
+		if (dot_product_3d(hit_info.normal, ray.direction) < 0)
+			ray.direction *= -1;
+		i++;
+	}
+	color_bounce_sum /= REFLECT_RAYS;
+	return (this_color + color_bounce_sum);// heb geen idee
+	//hoeveel this_color meetelt te maken met hoeveel licht wordt geabsorbeerd?
+	//als al het licht wordt geabsorbeerd, geen specular en geen reflections
+	//
+}
+
+
 /**
  * @note Anti-aliasing sampling method, evenly distributes samples 
  * in a radius around the center pixel, raycenter in this case.
@@ -321,17 +353,19 @@ t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], \
 	angle = 0;
 	i = 0;
 	color = (t_vec4f){0, 0, 0, -1};
-	ray = construct_camera_ray(raycenter[0], raycenter[1], scene, aspect_ratio);
-	color += int_to_vec4rgb(object_hit_color(scene, ray));
+	ray = construct_camera_ray(raycenter[0], raycenter[1], scene, aspect_ratio );
+	color = trace_ray(ray)
+	
 	while (i < samples)
 	{
 		ray = construct_camera_ray(raycenter[0] + RADIUS * cos(angle), \
 				raycenter[1] + RADIUS * sin(angle), scene, aspect_ratio);
-		color += int_to_vec4rgb(object_hit_color(scene, ray));
+		// color += int_to_vec4rgb(object_hit_color(scene, ray));
 		angle += inc;
 		i++;
 	}
-	return (color / (samples + 1));
+	// return (color / (samples + 1));
+	return color;
 }
 
 void	visualise_light_location(t_object *current, t_light light)
