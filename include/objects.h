@@ -30,7 +30,10 @@ typedef struct s_light
 {
 	t_vec4f	location;
 	float	ratio;
+	float	diameter;
+	float	radius;
 	t_color	color;
+	float	smoothness;
 	float	brightness; // range 0.0-1.0
 }	t_light;
 
@@ -99,5 +102,13 @@ t_object	*last_object(t_object *head);
 void		append_object(t_object **head, t_object *object);
 void		clear_objects(t_object *current);
 void		object_removetype(t_object **head, t_objectid type);
+
+t_vec4f 	t_get_location_sphere(void *object);
+t_vec4f		t_get_color_sphere(void *object);
+float		t_get_smoothness_sphere(void *object);
+
+t_vec4f 	t_get_location_light(void *object);
+t_vec4f		t_get_color_light(void *object);
+
 
 #endif

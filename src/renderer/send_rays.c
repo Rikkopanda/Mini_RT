@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/26 15:29:00 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/26 17:40:38 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,8 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 	hit_info->object = object;
 	hit_info->length = length;
 	hit_info->material.color = object->get_color(object->object);
-	hit_info->material.smoothness = object->get_smoothness(object->object);
+	if (object->type != LIGHT)
+		hit_info->material.smoothness = object->get_smoothness(object->object);
 	// if (hit_info->material.smoothness > 0)
 	// 	printf("smoothness %f\n", hit_info->material.smoothness);
 	t_vec4f obj_center = object->get_location(object->object);
@@ -173,7 +174,7 @@ t_vec4f	sky_box(float y)
 {
 	t_vec4f	top_hemi = (t_vec4f){145,224,255,-1};
 	t_vec4f	bottom_hemi = (t_vec4f){255,255,255,-1};
-	
+
 	if (y > 0.1)
 		return top_hemi;
 	else if (y < -0.1)
