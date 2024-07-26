@@ -6,7 +6,7 @@ CFLAGS += -Ofast
 # CFLAGS += -fPIE
 # CFLAGS := -g
 
-CC = gcc
+CC = cc
 
 DIR_LIB = lib
 LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/get_next_line -lgnl 

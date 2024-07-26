@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/26 12:36:04 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/26 15:00:14 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,11 +155,27 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 	hit_info->length = length;
 	hit_info->material.color = object->get_color(object->object);
 	hit_info->material.smoothness = object->get_smoothness(object->object);
+	// if (hit_info->material.smoothness > 0)
+	// 	printf("smoothness %f\n", hit_info->material.smoothness);
+	t_vec4f obj_center = object->get_location(object->object);
 	hit_info->normal = hit - object->get_location(object->object);
 	normalize_vector(&hit_info->normal);
 }
 
 #define STATUS_INDEX 3
+
+t_vec4f lerp(t_vec4f a, t_vec4f b, float f) 
+{
+    return (a * (float)(1.0 - f)) + (b * f);
+}
+
+t_vec4f	sky_box(float y)
+{
+	t_vec4f	color1 = (t_vec4f){145,224,255,1};
+	t_vec4f	color2 = (t_vec4f){255,255,255,1};
+
+	return (lerp(color2, color1, (y + 1.0f) / 2));
+}
 
 /**
  * @note Keeps track of closest intersection object.
@@ -193,8 +209,7 @@ t_vec4f	object_hit_color(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit
 		current = current->next;
 	}
 	if (closest_hit->hit_location[STATUS_INDEX] == -1)
-		return (scene->ambient.ratio * \
-				scene->ambient.color.rgb_f * bg_strength);
+		return (sky_box(ray.direction[2]));
 	return (blinn_phong_shading(scene, *closest_hit) * (1 - closest_hit->material.smoothness));
 }
 
@@ -315,11 +330,6 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
 	return (ray);
 }
 
-t_vec4f lerp(t_vec4f a, t_vec4f b, float f) 
-{
-    return (a * (float)(1.0 - f)) + (b * f);
-}
-
 t_vec4f reflect(t_vec4f normal, t_vec4f incoming)
 {
 	t_vec4f reflection;
@@ -328,8 +338,8 @@ t_vec4f reflect(t_vec4f normal, t_vec4f incoming)
 	return reflection;
 }
 
-#define MAX_BOUNCE_DEPTH 5
-#define REFLECT_RAYS 15
+#define MAX_BOUNCE_DEPTH 2
+#define REFLECT_RAYS 5
 
 t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 {
@@ -342,6 +352,8 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	this_color = object_hit_color(scene, ray, &hit_info);
 	// if (bounce_depth != 0)
 	// 	this_color *= fminf(1.0f, 5.0f / hit_info.length);
+	if (this_color[STATUS_INDEX] == -1)
+		return this_color; //zit in de lucht
 	if (bounce_depth == MAX_BOUNCE_DEPTH)
 		return this_color;
 	ray.origin = hit_info.hit_location;
@@ -349,17 +361,18 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	{
 		t_vec4f diffuse_ray = generate_random_vec4f();
 		t_vec4f reflection = reflect(hit_info.normal, ray.direction);//using old direction
-		
+
+		if (dot_product_3d(hit_info.normal, diffuse_ray) < 0)
+			diffuse_ray *= -1;
 		ray.direction = lerp(diffuse_ray, reflection, hit_info.material.smoothness);
-		if (dot_product_3d(hit_info.normal, ray.direction) < 0)
-			ray.direction *= -1;
+		// printf("reflectiveness %f\n", dot_product_3d(reflection, ray.direction));
 		color_bounce_sum += trace_ray(scene, ray, bounce_depth + 1);
 		i++;
 	}
 	// this_color *=
 	color_bounce_sum /= REFLECT_RAYS;
-	this_color *= 2; //telt 3/4 keer mee en reflecties 1/4
-	return ((this_color + color_bounce_sum) / 3 );// heb geen idee hoe het echt moet
+	// this_color *= 2; //telt 3/4 keer mee en reflecties 1/4
+	return ((this_color + color_bounce_sum) / 2 );// heb geen idee hoe het echt moet
 	//hoeveel this_color meetelt te maken met hoeveel licht wordt geabsorbeerd?
 	//als al het licht wordt geabsorbeerd, geen specular en geen reflections
 	//
