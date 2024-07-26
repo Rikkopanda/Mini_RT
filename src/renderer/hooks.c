@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   hooks.c                                            :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/05/27 09:26:30 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/07/25 15:18:11 by kwchu         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   hooks.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
+/*   Updated: 2024/07/26 17:47:28 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int move_lighting(int keysym, t_scene_data *data)
 		return (printf("move lighting x-...\n"), data->light.location[0] -= dist, 1);	
 	else if (keysym == 'p')
 		return (printf("move lighting y+...\n"), data->light.location[1] += dist, 1);	
-	else if (keysym == ';')
+	else if (keysym == 'o')
 		return (printf("move lighting y-...\n"), data->light.location[1] -= dist, 1);	
 	else if (keysym == 'k')
 		return (printf("move lighting z+...\n"), data->light.location[2] += dist, 1);	
@@ -87,17 +87,17 @@ int	rotate_view(int keysym, t_scene_data *data)
 	}
 	else if (keysym == LEFT)
 	{
-		data->camera.orientation[1] -= degrees;
-		if (data->camera.orientation[1] < -rotation_max)
-			data->camera.orientation[1] = rotation_max - degrees;
+		data->camera.orientation[2] -= degrees;
+		if (data->camera.orientation[2] < -rotation_max)
+			data->camera.orientation[2] = rotation_max - degrees;
 		return (printf("rotating left...\n"), TRUE);
 
 	}
 	else if (keysym == RIGHT)
 	{
-		data->camera.orientation[1] += degrees;
-		if (data->camera.orientation[1] > rotation_max)
-			data->camera.orientation[1] = -rotation_max + degrees;
+		data->camera.orientation[2] += degrees;
+		if (data->camera.orientation[2] > rotation_max)
+			data->camera.orientation[2] = -rotation_max + degrees;
 		return (printf("rotating right...\n"), TRUE);
 	}
 	return (FALSE);

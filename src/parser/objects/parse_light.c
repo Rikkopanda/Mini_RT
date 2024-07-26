@@ -26,6 +26,7 @@ out of range [0.0, 1.0]\n", light->ratio);
 	}
 	light->color.color_code = vec4rgb_to_int(atovec3f(format[3]));
 	light->color.rgb_f = int_to_vec4rgb(light->color.color_code);
+	light->color.rgb_f[STATUS_INDEX] = LIGHT;
 	new = new_object(LIGHT, light);
 	if (!new)
 		return (perror("malloc error"), free(light), 0);

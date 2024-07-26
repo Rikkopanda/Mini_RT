@@ -25,3 +25,10 @@ t_vec4f	t_get_color_light(void *object)
 
 	return (light->color.rgb_f);
 }
+
+float	t_get_brightness_light(void *object)
+{
+	t_light *light = (t_light *)object;
+
+	return (light->ratio);
+}

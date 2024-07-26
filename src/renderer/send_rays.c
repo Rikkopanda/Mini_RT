@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/26 17:40:38 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/26 19:47:49 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ typedef struct s_material
 typedef struct s_hit_info
 {
 	t_object	*object;
+	t_objectid	type;
 	t_vec4f		hit_location;
 	float		length;
 	t_vec4f		normal;
@@ -122,13 +123,13 @@ typedef struct s_hit_info
  * From: https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model &
  * https://www.youtube.com/watch?v=KdDdljGtfeg
  */
-t_vec4f	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
+t_vec4f	blinn_phong_shading(t_scene_data *scene, t_vec4f color_bounce_sum, t_vec4f emmisive_light_color_sum, t_hit_info surface)
 {
 	const t_vec4f	surface_to_light = scene->light.location - surface.hit_location;
 	const t_vec4f	surface_to_cam = scene->camera.location - surface.hit_location;
 	const float		distance_to_light = vector_length(surface_to_light);
 	const float		distance_to_cam = vector_length(surface_to_cam);
-	const float		strength = scene->light.ratio / distance_to_light * 50.0f;
+	const float		strength = scene->light.ratio / distance_to_light * 50.0f; // ratio == brightness
 	t_vec4f			halfway_vec = (surface_to_light + surface_to_cam) / (distance_to_light + distance_to_cam); // wat doet de / (dist1 + dist2)  als je toch gaat normalizen?
 	t_vec4f			diffuse;
 	t_vec4f			specular;
@@ -137,9 +138,12 @@ t_vec4f	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 
 	normalize_vector(&halfway_vec);
 	ambient = (scene->ambient.ratio * scene->ambient.color.rgb_f + scene->ambient.ratio * surface.material.color) / 2;
-	diffuse = ft_maxf(dot_product_3d(surface_to_light, surface.normal) / distance_to_light, 0.0f) * surface.material.color;
+	diffuse = ((color_bounce_sum + surface.material.color) / distance_to_light) * color_bounce_sum;// light kleur van invloed nu
+
+	// diffuse = (ft_maxf(dot_product_3d(surface_to_light, surface.normal) / distance_to_light, 0.0f) * surface.material.color) * scene->light.color.rgb_f;// light kleur van invloed nu
 	const float spec_strength = 0.5f;
 	specular = powf(ft_maxf(dot_product_3d(halfway_vec, surface.normal), 0.0f), fac) * scene->light.color.rgb_f * spec_strength;
+	
 	surface.material.color = (diffuse + specular) * strength + ambient;// hoe is de voorrang van haakjes?
 	surface.material.color[0] = ft_min(surface.material.color[0], 255);
 	surface.material.color[1] = ft_min(surface.material.color[1], 255);
@@ -153,6 +157,7 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 	hit_info->hit_location = hit;
 	hit_info->object = object;
 	hit_info->length = length;
+	hit_info->type = object->type;
 	hit_info->material.color = object->get_color(object->object);
 	if (object->type != LIGHT)
 		hit_info->material.smoothness = object->get_smoothness(object->object);
@@ -162,8 +167,6 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 	hit_info->normal = hit - object->get_location(object->object);
 	normalize_vector(&hit_info->normal);
 }
-
-#define STATUS_INDEX 3
 
 t_vec4f lerp(t_vec4f a, t_vec4f b, float f) 
 {
@@ -196,7 +199,7 @@ t_vec4f	sky_box(float y)
  * 	0.0 smoothness means * 1
  *  1.0 smoothness means * 0
  */
-t_vec4f	object_hit_color(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit)
+void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit)
 {
 	t_object	*current;
 	//t_hit_info	closest_hit;//move
@@ -219,8 +222,7 @@ t_vec4f	object_hit_color(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit
 		current = current->next;
 	}
 	if (closest_hit->hit_location[STATUS_INDEX] == -1)
-		return (sky_box(ray.direction[2]));
-	return (blinn_phong_shading(scene, *closest_hit) * (1 - closest_hit->material.smoothness));
+		closest_hit->type = NONE;
 }
 
 t_vec4f	invert_quaternion(t_vec4f quaternion)
@@ -356,15 +358,18 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	int i;
 	t_vec4f this_color;
 	t_vec4f color_bounce_sum = (t_vec4f){0,0,0,0};
+	t_vec4f emmisive_light_color_sum = (t_vec4f){0,0,0,0};
 	t_hit_info hit_info;
 
 	i = 0;
-	this_color = object_hit_color(scene, ray, &hit_info);
+	check_intersection(scene, ray, &hit_info);
 	// if (bounce_depth != 0)
 	// 	this_color *= fminf(1.0f, 5.0f / hit_info.length);
-	if (this_color[STATUS_INDEX] == -1)
-		return this_color; //zit in de lucht
-	if (bounce_depth == MAX_BOUNCE_DEPTH)
+	if (hit_info.type == NONE)
+		return (sky_box(ray.direction[2]));
+	else if (hit_info.type == LIGHT)
+		return (hit_info.material.color * hit_info.object->get_brightness(hit_info.object->object));
+	else if (bounce_depth == MAX_BOUNCE_DEPTH)
 		return this_color;
 	ray.origin = hit_info.hit_location;
 	while (i < REFLECT_RAYS)
@@ -376,12 +381,21 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 			diffuse_ray *= -1;
 		ray.direction = lerp(diffuse_ray, reflection, hit_info.material.smoothness);
 		// printf("reflectiveness %f\n", dot_product_3d(reflection, ray.direction));
-		color_bounce_sum += trace_ray(scene, ray, bounce_depth + 1);
+		t_vec4f hit_color_value = trace_ray(scene, ray, bounce_depth + 1);
+		if (hit_color_value[STATUS_INDEX] == LIGHT)
+			emmisive_light_color_sum += hit_color_value;
+		else
+			color_bounce_sum += hit_color_value;
 		i++;
 	}
 	// this_color *=
 	color_bounce_sum /= REFLECT_RAYS;
+	emmisive_light_color_sum /= REFLECT_RAYS / 2;
+
+	this_color = blinn_phong_shading(scene, color_bounce_sum, emmisive_light_color_sum, hit_info) * (float)(1 - hit_info.material.smoothness);
 	// this_color *= 2; //telt 3/4 keer mee en reflecties 1/4
+	
+	return this_color;
 	return ((this_color + color_bounce_sum) / 2 );// heb geen idee hoe het echt moet
 	//hoeveel this_color meetelt te maken met hoeveel licht wordt geabsorbeerd?
 	//als al het licht wordt geabsorbeerd, geen specular en geen reflections

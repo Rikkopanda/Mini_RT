@@ -4,6 +4,8 @@
 # include "minirt.h"
 # include "color.h"
 
+#define STATUS_INDEX 3
+
 typedef float	t_vec4f __attribute__ ((vector_size ((sizeof(float) * 4))));
 // typedef struct s_color	t_color;
 
@@ -65,6 +67,7 @@ typedef struct s_cylinder
 
 typedef enum e_objectid
 {
+	NONE = -2,
 	INVALID = -1,
 	AMBIENT = 0,
 	CAMERA,
@@ -85,6 +88,8 @@ typedef t_vec4f (*t_get_color)(void *object);
 
 typedef float (*t_get_smoothness)(void *object);
 
+typedef float (*t_get_brightness)(void *object);
+
 typedef struct s_object
 {
 	t_objectid			type;
@@ -93,6 +98,7 @@ typedef struct s_object
 	t_get_location		get_location;
 	t_get_color			get_color;
 	t_get_smoothness	get_smoothness;
+	t_get_brightness	get_brightness;
 	intersect_ptr		intersect;
 	struct s_object		*next;
 }	t_object;
@@ -109,6 +115,7 @@ float		t_get_smoothness_sphere(void *object);
 
 t_vec4f 	t_get_location_light(void *object);
 t_vec4f		t_get_color_light(void *object);
+t_vec4f		t_get_brightness_light(void *object);
 
 
 #endif

@@ -111,6 +111,14 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 	};
+	const t_get_brightness	get_brightness[OBJ_TYPE_COUNT] = {
+		NULL,
+		NULL,
+		t_get_brightness_light,
+		NULL,
+		NULL,
+		NULL,
+	};
 	while (current)
 	{
 		current->intersect = (intersect_ptr)function_pointer[current->type];
