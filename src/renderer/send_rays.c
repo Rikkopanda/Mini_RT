@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/26 09:21:45 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/07/26 12:36:04 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,13 +99,20 @@ float	ft_maxf(float a, float b)
 	return (b);
 }
 
+typedef struct s_material
+{
+	float		smoothness;
+	t_vec4f		color;
+} t_material;
+
+
 typedef struct s_hit_info
 {
 	t_object	*object;
 	t_vec4f		hit_location;
 	float		length;
-	t_vec4f		color;
 	t_vec4f		normal;
+	t_material	material;
 }	t_hit_info;
 
 /**
@@ -129,15 +136,15 @@ t_vec4f	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 	const int		fac = 128;
 
 	normalize_vector(&halfway_vec);
-	ambient = (scene->ambient.ratio * scene->ambient.color.rgb_f + scene->ambient.ratio * surface.color) / 2;
-	diffuse = ft_maxf(dot_product_3d(surface_to_light, surface.normal) / distance_to_light, 0.0f) * surface.color;
+	ambient = (scene->ambient.ratio * scene->ambient.color.rgb_f + scene->ambient.ratio * surface.material.color) / 2;
+	diffuse = ft_maxf(dot_product_3d(surface_to_light, surface.normal) / distance_to_light, 0.0f) * surface.material.color;
 	const float spec_strength = 0.5f;
 	specular = powf(ft_maxf(dot_product_3d(halfway_vec, surface.normal), 0.0f), fac) * scene->light.color.rgb_f * spec_strength;
-	surface.color = (diffuse + specular) * strength + ambient;// hoe is de voorrang van haakjes?
-	surface.color[0] = ft_min(surface.color[0], 255);
-	surface.color[1] = ft_min(surface.color[1], 255);
-	surface.color[2] = ft_min(surface.color[2], 255);// kleuren tussen float 0 - 255 ?
-	return (surface.color);
+	surface.material.color = (diffuse + specular) * strength + ambient;// hoe is de voorrang van haakjes?
+	surface.material.color[0] = ft_min(surface.material.color[0], 255);
+	surface.material.color[1] = ft_min(surface.material.color[1], 255);
+	surface.material.color[2] = ft_min(surface.material.color[2], 255);// kleuren tussen float 0 - 255 ?
+	return (surface.material.color);
 }
 
 void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
@@ -146,7 +153,8 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 	hit_info->hit_location = hit;
 	hit_info->object = object;
 	hit_info->length = length;
-	hit_info->color = object->get_color(object->object);
+	hit_info->material.color = object->get_color(object->object);
+	hit_info->material.smoothness = object->get_smoothness(object->object);
 	hit_info->normal = hit - object->get_location(object->object);
 	normalize_vector(&hit_info->normal);
 }
@@ -157,6 +165,10 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
  * @note Keeps track of closest intersection object.
  * bg_strength is used for the effect of the ambient color strength 
  * on the background, so it is different from the object's "shadow" color.
+ * 
+ * 
+ * 	0.0 smoothness means * 1
+ *  1.0 smoothness means * 0
  */
 t_vec4f	object_hit_color(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit)
 {
@@ -176,14 +188,14 @@ t_vec4f	object_hit_color(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit
 		{
 			length = fabsf(vector_length(hit - ray.origin)); // fabs omdat we ook in de negatieve richting kunnen kijken als de camera zo staat?
 			if (length <= closest_hit->length)
-				update_hit_info(&closest_hit, hit, current, length);
+				update_hit_info(closest_hit, hit, current, length);
 		}
 		current = current->next;
 	}
 	if (closest_hit->hit_location[STATUS_INDEX] == -1)
 		return (scene->ambient.ratio * \
 				scene->ambient.color.rgb_f * bg_strength);
-	return (blinn_phong_shading(scene, *closest_hit));
+	return (blinn_phong_shading(scene, *closest_hit) * (1 - closest_hit->material.smoothness));
 }
 
 t_vec4f	invert_quaternion(t_vec4f quaternion)
@@ -257,7 +269,6 @@ t_vec4f combine_rotations(t_vec4f rotation)
 												ft_degr_to_rad(rotation[1]));
 	const t_vec4f q_z = axis_angle_to_quaternion((t_vec4f){0, 0, 1, 0}, \
 												ft_degr_to_rad(rotation[2]));
-
 	return (hamilton_product(hamilton_product(q_z, q_y), q_x));
 }
 
@@ -304,8 +315,21 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
 	return (ray);
 }
 
-#define MAX_BOUNCE_DEPTH 4
-#define REFLECT_RAYS 20
+t_vec4f lerp(t_vec4f a, t_vec4f b, float f) 
+{
+    return (a * (float)(1.0 - f)) + (b * f);
+}
+
+t_vec4f reflect(t_vec4f normal, t_vec4f incoming)
+{
+	t_vec4f reflection;
+
+	reflection = incoming - (2 * dot_product_3d(incoming, normal) * normal);
+	return reflection;
+}
+
+#define MAX_BOUNCE_DEPTH 5
+#define REFLECT_RAYS 15
 
 t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 {
@@ -315,21 +339,27 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	t_hit_info hit_info;
 
 	i = 0;
-	bounce_depth++;
 	this_color = object_hit_color(scene, ray, &hit_info);
+	// if (bounce_depth != 0)
+	// 	this_color *= fminf(1.0f, 5.0f / hit_info.length);
 	if (bounce_depth == MAX_BOUNCE_DEPTH)
 		return this_color;
 	ray.origin = hit_info.hit_location;
 	while (i < REFLECT_RAYS)
 	{
-		color_bounce_sum += trace_ray(scene, ray, bounce_depth);
-		ray.direction = generate_random_vec4f();
+		t_vec4f diffuse_ray = generate_random_vec4f();
+		t_vec4f reflection = reflect(hit_info.normal, ray.direction);//using old direction
+		
+		ray.direction = lerp(diffuse_ray, reflection, hit_info.material.smoothness);
 		if (dot_product_3d(hit_info.normal, ray.direction) < 0)
 			ray.direction *= -1;
+		color_bounce_sum += trace_ray(scene, ray, bounce_depth + 1);
 		i++;
 	}
+	// this_color *=
 	color_bounce_sum /= REFLECT_RAYS;
-	return (this_color + color_bounce_sum);// heb geen idee
+	this_color *= 2; //telt 3/4 keer mee en reflecties 1/4
+	return ((this_color + color_bounce_sum) / 3 );// heb geen idee hoe het echt moet
 	//hoeveel this_color meetelt te maken met hoeveel licht wordt geabsorbeerd?
 	//als al het licht wordt geabsorbeerd, geen specular en geen reflections
 	//
@@ -353,9 +383,9 @@ t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], \
 	angle = 0;
 	i = 0;
 	color = (t_vec4f){0, 0, 0, -1};
-	ray = construct_camera_ray(raycenter[0], raycenter[1], scene, aspect_ratio );
-	color = trace_ray(ray)
-	
+	ray = construct_camera_ray(raycenter[0], raycenter[1], scene, aspect_ratio);
+	color = trace_ray(scene, ray, 0);
+	return color;
 	while (i < samples)
 	{
 		ray = construct_camera_ray(raycenter[0] + RADIUS * cos(angle), \

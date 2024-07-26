@@ -39,6 +39,7 @@ typedef struct s_sphere
 	t_vec4f	location;
 	float	radius;
 	float	diameter;
+	float	smoothness;
 	t_color	color;
 }	t_sphere;
 
@@ -79,16 +80,18 @@ typedef t_vec4f (*t_get_location)(void *object);
 
 typedef t_vec4f (*t_get_color)(void *object);
 
+typedef float (*t_get_smoothness)(void *object);
 
 typedef struct s_object
 {
-	t_objectid		type;
-	void			*object;
-	print_data		print_object_data;
-	t_get_location	get_location;
-	t_get_color		get_color;
-	intersect_ptr	intersect;
-	struct s_object	*next;
+	t_objectid			type;
+	void				*object;
+	print_data			print_object_data;
+	t_get_location		get_location;
+	t_get_color			get_color;
+	t_get_smoothness	get_smoothness;
+	intersect_ptr		intersect;
+	struct s_object		*next;
 }	t_object;
 
 t_object	*new_object(t_objectid id, void *object);
