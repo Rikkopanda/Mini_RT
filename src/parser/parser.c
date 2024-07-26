@@ -1,19 +1,10 @@
 #include "parser.h"
 #include "get_next_line.h"
-
-// int	example_intersect_sphere(void *object, t_vec4f obj_to_ray_vec)
-// {
-// 	t_sphere *sphere = (t_sphere *)object;
-
-// 	const float squared = powf(obj_to_ray_vec[0], 2) + powf(obj_to_ray_vec[1], 2) + powf(obj_to_ray_vec[2], 2);
-// 	// printf("hoi sphere:  %f, squared_root %f, color %d\n", sphere->radius, sqrtf(squared), sphere->color.color_code);
-// 	if (sqrtf(squared) <= sphere->radius)
-// 		return (TRUE);
-// 	else
-// 		return (FALSE);
-// }
-
-t_vec4f	example_intersect_sphere(void *object, t_ray ray)
+/**
+ * @note 
+ * source: https://kylehalladay.com/blog/tutorial/math/2013/12/24/Ray-Sphere-Intersection.html
+ */
+t_vec4f	intersect_sphere(void *object, t_ray ray)
 {
 	t_sphere	*sphere = (t_sphere *)object;
 	t_vec4f		ray_to_object = sphere->location - ray.origin;
@@ -33,12 +24,27 @@ t_vec4f	example_intersect_sphere(void *object, t_ray ray)
 	return (ray.origin + ray.direction * (tc - t1c));
 }
 
-t_vec4f	example_intersect_cylinder(void *object, t_ray ray)
+t_vec4f	intersect_cylinder(void *object, t_ray ray)
 {
+	t_cylinder	*cylinder = (t_cylinder *)object;
+	t_vec4f		ray_to_object = cylinder->location - ray.origin;
+	float		tc;
+	float		d2;
+	float		radius2;
+	float		t1c;
+
+	tc = dot_product_3d(ray_to_object, ray.direction);
+	if (tc < 0.0f)
+		return ((t_vec4f){0, 0, 0, -1});
+	d2 = dot_product_3d(ray_to_object, ray_to_object) - (tc * tc);
+	radius2 = cylinder->radius * cylinder->radius;
+	if (d2 > radius2)
+		return ((t_vec4f){0, 0, 0, -1});
+	t1c = sqrtf(radius2 - d2);
 	return ((t_vec4f){0, 0, 0, -1});
 }
 
-t_vec4f example_intersect_plane(void *object, t_ray ray)
+t_vec4f intersect_plane(void *object, t_ray ray)
 {
 	return ((t_vec4f){0, 0, 0, -1});
 }
@@ -75,9 +81,9 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 		NULL,
-		example_intersect_sphere,
-		example_intersect_plane,
-		example_intersect_cylinder,
+		intersect_sphere,
+		intersect_plane,
+		intersect_cylinder,
 	};
 	const print_data	function_pointer_data[OBJ_TYPE_COUNT] = {
 		NULL,
