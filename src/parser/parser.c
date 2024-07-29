@@ -18,7 +18,9 @@ t_vec4f	example_intersect_sphere(void *object, t_ray ray)
 	if (d2 > radius2)
 		return ((t_vec4f){0, 0, 0, -1});
 	t1c = sqrtf(radius2 - d2);
-	return (ray.origin + ray.direction * (tc - t1c));
+	t_vec4f result = ray.origin + ray.direction * (tc - t1c);
+	result[STATUS_INDEX] = SPHERE;
+	return (result);
 }
 
 t_vec4f	example_intersect_light(void *object, t_ray ray)
@@ -38,7 +40,9 @@ t_vec4f	example_intersect_light(void *object, t_ray ray)
 	if (d2 > radius2)
 		return ((t_vec4f){0, 0, 0, -1});
 	t1c = sqrtf(radius2 - d2);
-	return (ray.origin + ray.direction * (tc - t1c));
+	t_vec4f result = ray.origin + ray.direction * (tc - t1c);
+	result[STATUS_INDEX] = LIGHT;
+	return (result);
 }
 
 t_vec4f	example_intersect_cylinder(void *object, t_ray ray)

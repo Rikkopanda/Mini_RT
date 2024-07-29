@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/27 09:45:47 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/07/29 14:05:54 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ t_vec4f	blinn_phong_shading(t_scene_data *scene, t_vec4f color_bounce_sum, t_vec
 
 	normalize_vector(&halfway_vec);
 	ambient = (scene->ambient.ratio * scene->ambient.color.rgb_f + scene->ambient.ratio * surface.material.color) / 2;
-	diffuse = ((color_bounce_sum + surface.material.color) / 2) * emmisive_light_color_sum;// light kleur van invloed nu
+	diffuse = ((color_bounce_sum + surface.material.color) / 2);// light kleur van invloed nu
 
 	// diffuse = (ft_maxf(dot_product_3d(surface_to_light, surface.normal) / distance_to_light, 0.0f) * surface.material.color) * scene->light.color.rgb_f;// light kleur van invloed nu
 	const float spec_strength = 0.5f;
@@ -157,7 +157,10 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 	hit_info->hit_location = hit;
 	hit_info->object = object;
 	hit_info->length = length;
-	hit_info->type = object->type;
+	if (hit[STATUS_INDEX] == -1)
+		hit_info->type = NONE;
+	else
+		hit_info->type = object->type;
 	hit_info->material.color = object->get_color(object->object);
 	if (object->type != LIGHT)
 		hit_info->material.smoothness = object->get_smoothness(object->object);
@@ -199,7 +202,7 @@ t_vec4f	sky_box(float y)
  * 	0.0 smoothness means * 1
  *  1.0 smoothness means * 0
  */
-void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit)
+void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit, int depth)
 {
 	t_object	*current;
 	//t_hit_info	closest_hit;//move
@@ -209,25 +212,26 @@ void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit)
 
 	current = scene->objects;
 	closest_hit->hit_location = (t_vec4f){0, 0, 0, -1};
-	closest_hit->length = 200;
+	closest_hit->length = 400;
 	while (current)
 	{
+		// if (depth != 0)
+		// 	print_matrix_1_3(ray.direction);
 		hit = current->intersect(current->object, ray);
 		if (hit[STATUS_INDEX] != -1)
 		{
 			length = fabsf(vector_length(hit - ray.origin)); // fabs omdat we ook in de negatieve richting kunnen kijken als de camera zo staat?
 			if (length <= closest_hit->length)
 				update_hit_info(closest_hit, hit, current, length);
+			// if (closest_hit->type == LIGHT)
+			// {
+				// print_matrix_1_3(closest_hit->material.color);
+			// }
+			if (depth != 0)
+				printf("type: %d\n", current->type);
 		}
 		current = current->next;
 	}
-	if (closest_hit->type == LIGHT)
-	{
-		// print_matrix_1_3(closest_hit->material.color);
-		// printf("yes light\n");
-	}
-	if (closest_hit->hit_location[STATUS_INDEX] == -1)
-		closest_hit->type = NONE;
 }
 
 t_vec4f	invert_quaternion(t_vec4f quaternion)
@@ -355,8 +359,9 @@ t_vec4f reflect(t_vec4f normal, t_vec4f incoming)
 	return reflection;
 }
 
-#define MAX_BOUNCE_DEPTH 3
-#define REFLECT_RAYS 180
+#define MAX_BOUNCE_DEPTH 2
+#define REFLECT_RAYS 20
+// #define PROCESS_SUM REFLECT_RAYS * MAX_BOUNCE_DEPTH
 
 t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 {
@@ -367,14 +372,18 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	t_hit_info hit_info;
 
 	i = 0;
-	check_intersection(scene, ray, &hit_info);
+	// if (bounce_depth > 0)
+		// printf("hi\n");
+	check_intersection(scene, ray, &hit_info, bounce_depth);
 	// if (bounce_depth != 0)
 	// 	this_color *= fminf(1.0f, 5.0f / hit_info.length);
 	if (hit_info.type == NONE)
 		return (sky_box(ray.direction[2]));
-	else if (hit_info.type == LIGHT)
+	if (hit_info.type == LIGHT)
 	{
-		hit_info.material.color * (float)hit_info.object->get_brightness(hit_info.object->object);
+		if (bounce_depth > 0)
+			printf("bounce depth %d\n", bounce_depth);
+		hit_info.material.color *= (float)hit_info.object->get_brightness(hit_info.object->object);
 		hit_info.material.color[STATUS_INDEX] = LIGHT;
 		return (hit_info.material.color);
 	}
@@ -384,12 +393,14 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	while (i < REFLECT_RAYS)
 	{
 		t_vec4f diffuse_ray = generate_random_vec4f();
-		t_vec4f reflection = reflect(hit_info.normal, ray.direction);//using old direction
-
+		// t_vec4f reflection = reflect(hit_info.normal, ray.direction);//using old direction
+		// if (bounce_depth > 0)
+		// 	printf("hi\n");
 		if (dot_product_3d(hit_info.normal, diffuse_ray) < 0)
 			diffuse_ray *= -1;
-		ray.direction = lerp(diffuse_ray, reflection, hit_info.material.smoothness);
-		// printf("reflectiveness %f\n", dot_product_3d(reflection, ray.direction));
+		// ray.direction = lerp(diffuse_ray, reflection, hit_info.material.smoothness);
+		ray.direction = diffuse_ray;
+		// printf("reflectiveness %f\n", dot_product_3d(hit_info.normal, ray.direction));
 		t_vec4f hit_color_value = trace_ray(scene, ray, bounce_depth + 1);
 		if (hit_color_value[STATUS_INDEX] == LIGHT)
 			emmisive_light_color_sum += hit_color_value;
@@ -398,15 +409,17 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 		i++;
 	}
 	// this_color *=
-	color_bounce_sum /= REFLECT_RAYS;
 	// printf("emmisive light PRE\n");
-	if (emmisive_light_color_sum[0] > 0 || emmisive_light_color_sum[1] > 0 || emmisive_light_color_sum[2] > 0)
-		print_matrix_1_3(emmisive_light_color_sum);
+	// if (emmisive_light_color_sum[0] > 0 || emmisive_light_color_sum[1] > 0 || emmisive_light_color_sum[2] > 0)
+		// print_matrix_1_3(emmisive_light_color_sum);
 
 	emmisive_light_color_sum /= (REFLECT_RAYS / 2);
+	color_bounce_sum /= (REFLECT_RAYS);
+
 	// printf("emmisive light\n");
 	// print_matrix_1_3(emmisive_light_color_sum);
-
+	// printf("obj color\n");
+	// print_matrix_1_3(color_bounce_sum);
 	this_color = blinn_phong_shading(scene, color_bounce_sum, emmisive_light_color_sum, hit_info) * (float)(1 - hit_info.material.smoothness);
 	// this_color *= 2; //telt 3/4 keer mee en reflecties 1/4
 	
@@ -491,6 +504,8 @@ void send_rays(t_scene_data *scene)
 								aspect_ratio, samples);
 			put_pixel_img(scene->image, ray_x, ray_y, vec4rgb_to_int(color));
 			ray_x++;
+			if (ray_x == scene->win_width - 1)
+				printf("status bar %d, total: %d\n", ray_y * ray_x, scene->win_height * scene->win_width);
 		}
 		ray_y++;
 	}
