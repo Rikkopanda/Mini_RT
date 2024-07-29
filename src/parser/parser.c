@@ -126,6 +126,7 @@ void	assign_intersect_functions(t_object *current)
 		current->get_location = (t_get_location)location_getters[current->type];
 		current->get_color = (t_get_color)color_getters[current->type];
 		current->get_smoothness = (t_get_smoothness)get_smoothness[current->type];
+		current->get_brightness = (t_get_brightness)get_brightness[current->type];
 		current = current->next;
 	}
 }

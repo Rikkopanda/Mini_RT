@@ -115,7 +115,7 @@ float		t_get_smoothness_sphere(void *object);
 
 t_vec4f 	t_get_location_light(void *object);
 t_vec4f		t_get_color_light(void *object);
-t_vec4f		t_get_brightness_light(void *object);
+float		t_get_brightness_light(void *object);
 
 
 #endif

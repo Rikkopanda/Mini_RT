@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/26 19:47:49 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/27 09:45:47 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ t_vec4f	blinn_phong_shading(t_scene_data *scene, t_vec4f color_bounce_sum, t_vec
 
 	normalize_vector(&halfway_vec);
 	ambient = (scene->ambient.ratio * scene->ambient.color.rgb_f + scene->ambient.ratio * surface.material.color) / 2;
-	diffuse = ((color_bounce_sum + surface.material.color) / distance_to_light) * color_bounce_sum;// light kleur van invloed nu
+	diffuse = ((color_bounce_sum + surface.material.color) / 2) * emmisive_light_color_sum;// light kleur van invloed nu
 
 	// diffuse = (ft_maxf(dot_product_3d(surface_to_light, surface.normal) / distance_to_light, 0.0f) * surface.material.color) * scene->light.color.rgb_f;// light kleur van invloed nu
 	const float spec_strength = 0.5f;
@@ -220,6 +220,11 @@ void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit)
 				update_hit_info(closest_hit, hit, current, length);
 		}
 		current = current->next;
+	}
+	if (closest_hit->type == LIGHT)
+	{
+		// print_matrix_1_3(closest_hit->material.color);
+		// printf("yes light\n");
 	}
 	if (closest_hit->hit_location[STATUS_INDEX] == -1)
 		closest_hit->type = NONE;
@@ -350,8 +355,8 @@ t_vec4f reflect(t_vec4f normal, t_vec4f incoming)
 	return reflection;
 }
 
-#define MAX_BOUNCE_DEPTH 2
-#define REFLECT_RAYS 5
+#define MAX_BOUNCE_DEPTH 3
+#define REFLECT_RAYS 180
 
 t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 {
@@ -368,7 +373,11 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	if (hit_info.type == NONE)
 		return (sky_box(ray.direction[2]));
 	else if (hit_info.type == LIGHT)
-		return (hit_info.material.color * hit_info.object->get_brightness(hit_info.object->object));
+	{
+		hit_info.material.color * (float)hit_info.object->get_brightness(hit_info.object->object);
+		hit_info.material.color[STATUS_INDEX] = LIGHT;
+		return (hit_info.material.color);
+	}
 	else if (bounce_depth == MAX_BOUNCE_DEPTH)
 		return this_color;
 	ray.origin = hit_info.hit_location;
@@ -390,7 +399,13 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	}
 	// this_color *=
 	color_bounce_sum /= REFLECT_RAYS;
-	emmisive_light_color_sum /= REFLECT_RAYS / 2;
+	// printf("emmisive light PRE\n");
+	if (emmisive_light_color_sum[0] > 0 || emmisive_light_color_sum[1] > 0 || emmisive_light_color_sum[2] > 0)
+		print_matrix_1_3(emmisive_light_color_sum);
+
+	emmisive_light_color_sum /= (REFLECT_RAYS / 2);
+	// printf("emmisive light\n");
+	// print_matrix_1_3(emmisive_light_color_sum);
 
 	this_color = blinn_phong_shading(scene, color_bounce_sum, emmisive_light_color_sum, hit_info) * (float)(1 - hit_info.material.smoothness);
 	// this_color *= 2; //telt 3/4 keer mee en reflecties 1/4
