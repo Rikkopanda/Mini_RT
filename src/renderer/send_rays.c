@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/07/26 12:19:55 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/07/29 17:39:19 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,7 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 	if (closest_hit.hit_location[STATUS_INDEX] == -1)
 		return (vec4rgb_to_int(scene->ambient.ratio * \
 				scene->ambient.color.rgb_f * bg_strength));
+	return (vec4rgb_to_int(closest_hit.color));
 	return (blinn_phong_shading(scene, closest_hit));
 }
 
@@ -316,13 +317,15 @@ t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], \
 	t_vec4f		color;
 	int			i;
 	float		angle;
-	const float	inc = 2 * M_PI / samples;
+	float		inc;
 
 	angle = 0;
 	i = 0;
 	color = (t_vec4f){0, 0, 0, -1};
 	ray = construct_camera_ray(raycenter[0], raycenter[1], scene, aspect_ratio);
 	color += int_to_vec4rgb(object_hit_color(scene, ray));
+	if (samples != 0)
+		inc = 2 * M_PI / samples;
 	while (i < samples)
 	{
 		ray = construct_camera_ray(raycenter[0] + RADIUS * cos(angle), \
@@ -362,7 +365,7 @@ void send_rays(t_scene_data *scene)
 	int			ray_y;
 	t_vec4f 	color;
 	const float	aspect_ratio = (float)scene->win_width / scene->win_height;
-	const int	samples = 2;
+	const int	samples = 0;
 
 	// visualise_light_location(scene->objects, scene->light);
 	ray_y = 0;

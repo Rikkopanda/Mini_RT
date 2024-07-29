@@ -3,45 +3,64 @@
 /**
  * @note 
  * source: https://kylehalladay.com/blog/tutorial/math/2013/12/24/Ray-Sphere-Intersection.html
+ * source: https://nachodevblog.com/posts/ray-cylinder-intersection/
  */
 t_vec4f	intersect_sphere(void *object, t_ray ray)
 {
 	t_sphere	*sphere = (t_sphere *)object;
 	t_vec4f		ray_to_object = sphere->location - ray.origin;
-	float		tc;
-	float		d2;
-	float		radius2;
-	float		t1c;
+	float		tp;
+	float		tc_squared;
+	float		radius_squared;
+	float		ti;
 
-	tc = dot_product_3d(ray_to_object, ray.direction);
-	if (tc < 0.0f)
+	tp = dot_product_3d(ray_to_object, ray.direction);
+	if (tp < 0.0f)
 		return ((t_vec4f){0, 0, 0, -1});
-	d2 = dot_product_3d(ray_to_object, ray_to_object) - (tc * tc);
-	radius2 = sphere->radius * sphere->radius;
-	if (d2 > radius2)
+	tc_squared = dot_product_3d(ray_to_object, ray_to_object) - (tp * tp);
+	radius_squared = sphere->radius * sphere->radius;
+	if (tc_squared > radius_squared)
 		return ((t_vec4f){0, 0, 0, -1});
-	t1c = sqrtf(radius2 - d2);
-	return (ray.origin + ray.direction * (tc - t1c));
+	ti = sqrtf(radius_squared - tc_squared);
+	return (ray.origin + ray.direction * (tp - ti));
 }
 
 t_vec4f	intersect_cylinder(void *object, t_ray ray)
 {
 	t_cylinder	*cylinder = (t_cylinder *)object;
 	t_vec4f		ray_to_object = cylinder->location - ray.origin;
-	float		tc;
-	float		d2;
-	float		radius2;
-	float		t1c;
+	t_vec4f		ray_to_slice_center = ray_to_object;
+	t_vec4f		ray_slice_direction = ray.direction;
+	float		tp;
+	float		tc_squared;
+	float		radius_squared;
+	float		ti;
+	float		ip;
+	float		cosb;
+	float		pp;
+	t_vec4f		point;
 
-	tc = dot_product_3d(ray_to_object, ray.direction);
-	if (tc < 0.0f)
+	ray_to_slice_center[1] = ray.origin[1];
+	ray_slice_direction[1] = 0;
+	tp = dot_product_3d(ray_to_slice_center, ray_slice_direction);
+	if (tp < 0.0f)
 		return ((t_vec4f){0, 0, 0, -1});
-	d2 = dot_product_3d(ray_to_object, ray_to_object) - (tc * tc);
-	radius2 = cylinder->radius * cylinder->radius;
-	if (d2 > radius2)
+	tc_squared = dot_product_3d(ray_to_slice_center, ray_to_slice_center) - (tp * tp);
+	radius_squared = cylinder->radius * cylinder->radius;
+	if (tc_squared > radius_squared)
 		return ((t_vec4f){0, 0, 0, -1});
-	t1c = sqrtf(radius2 - d2);
-	return ((t_vec4f){0, 0, 0, -1});
+	ti = sqrtf(radius_squared - tc_squared);
+	ip = tp - ti;
+	normalize_vector(&ray_to_slice_center);
+	cosb = dot_product_3d(ray.direction, ray_to_slice_center);
+	if (cosb == 0.0f)
+		return ((t_vec4f){0, 0, 0, -1});
+	pp = ip / cosb;
+	point = ray.origin + ray.direction * pp;
+	print_matrix_1_3(point);
+	if (fabsf(cylinder->location[1] - point[1]) > cylinder->height / 2)
+		return ((t_vec4f){0, 0, 0, -1});
+	return (point);
 }
 
 t_vec4f intersect_plane(void *object, t_ray ray)
@@ -61,18 +80,32 @@ void print_camera_data(void *object)
 	printf("data camera: x, y, z %f %f %f\n", camera->location[0], camera->location[1], camera->location[2]);
 }
 
-t_vec4f t_get_location_sphere(void *object)
+t_vec4f get_location_sphere(void *object)
 {
 	t_sphere *sphere = (t_sphere *)object;
 
-	return sphere->location;
+	return (sphere->location);
 }
 
-t_vec4f	t_get_color_sphere(void *object)
+t_vec4f	get_color_sphere(void *object)
 {
 	t_sphere *sphere = (t_sphere *)object;
 
 	return (sphere->color.rgb_f);
+}
+
+t_vec4f get_location_cylinder(void *object)
+{
+	t_cylinder *cylinder = (t_cylinder *)object;
+
+	return (cylinder->location);
+}
+
+t_vec4f	get_color_cylinder(void *object)
+{
+	t_cylinder *cylinder = (t_cylinder *)object;
+
+	return (cylinder->color.rgb_f);
 }
 
 void	assign_intersect_functions(t_object *current)
@@ -97,17 +130,17 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 		NULL,
-		t_get_location_sphere,
+		get_location_sphere,
 		NULL,
-		NULL,
+		get_location_cylinder,
 	};
 	const t_get_color	color_getters[OBJ_TYPE_COUNT] = {
 		NULL,
 		NULL,
 		NULL,
-		t_get_color_sphere,
+		get_color_sphere,
 		NULL,
-		NULL,
+		get_color_cylinder,
 	};
 	while (current)
 	{

@@ -39,6 +39,7 @@ int	parse_cylinder(t_object **objects, char **format)
 	cylinder->location = atovec3f(format[0]);
 	cylinder->vector = atovec3f(format[1]);
 	cylinder->diameter = ft_atof(format[2]);
+	cylinder->radius = cylinder->diameter / 2;
 	cylinder->height = ft_atof(format[3]);
 	if (!has_valid_ranges(cylinder))
 		return (free(cylinder), 0);
