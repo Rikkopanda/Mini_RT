@@ -135,6 +135,22 @@ typedef struct s_scene_data
 	int			win_height;	
 }	t_scene_data;
 
+typedef struct s_material
+{
+	float		smoothness;
+	t_vec4f		color;
+} t_material;
+
+
+typedef struct s_hit_info
+{
+	t_object	*object;
+	t_objectid	type;
+	t_vec4f		hit_location;
+	float		length;
+	t_vec4f		normal;
+	t_material	material;
+}	t_hit_info;
 
 void	matrix_multiplication(t_vec4f comp[3], t_ray *ray, t_vec4f camera_vector);
 void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m);
@@ -159,6 +175,9 @@ t_vec4f	normal_orientation_to_degrees(t_vec4f orientation);
 int		render_scene(t_scene_data *data);
 void	send_rays(t_scene_data *scene);
 int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert);
+t_vec4f	ray_trace_coloring(t_scene_data *scene, t_vec4f color_bounce_sum, t_vec4f emmisive_light_color_sum, t_hit_info surface);
+
+
 
 void	put_pixel_img(t_img img, int x, int y, int color);
 void	init_rgb(t_color *rgb, int color);

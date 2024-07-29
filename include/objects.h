@@ -84,6 +84,8 @@ typedef t_vec4f (*intersect_ptr)(void *object, t_ray ray);
 
 typedef t_vec4f (*t_get_location)(void *object);
 
+typedef void (*t_set_location)(void *object, int xyz_index, int addition);
+
 typedef t_vec4f (*t_get_color)(void *object);
 
 typedef float (*t_get_smoothness)(void *object);
@@ -96,6 +98,7 @@ typedef struct s_object
 	void				*object;
 	print_data			print_object_data;
 	t_get_location		get_location;
+	t_set_location		set_location;
 	t_get_color			get_color;
 	t_get_smoothness	get_smoothness;
 	t_get_brightness	get_brightness;
@@ -109,13 +112,15 @@ void		append_object(t_object **head, t_object *object);
 void		clear_objects(t_object *current);
 void		object_removetype(t_object **head, t_objectid type);
 
-t_vec4f 	t_get_location_sphere(void *object);
-t_vec4f		t_get_color_sphere(void *object);
-float		t_get_smoothness_sphere(void *object);
+t_vec4f 	get_location_sphere(void *object);
+t_vec4f		get_color_sphere(void *object);
+float		get_smoothness_sphere(void *object);
+void		set_location_sphere(void *object, int xyz_index, int addition);
 
-t_vec4f 	t_get_location_light(void *object);
-t_vec4f		t_get_color_light(void *object);
-float		t_get_brightness_light(void *object);
+t_vec4f 	get_location_light(void *object);
+t_vec4f		get_color_light(void *object);
+float		get_brightness_light(void *object);
+void		set_location_light(void *object, int xyz_index, int addition);
 
 
 #endif

@@ -94,16 +94,16 @@ void	assign_intersect_functions(t_object *current)
 	const t_get_location	location_getters[OBJ_TYPE_COUNT] = {
 		NULL,
 		NULL,
-		t_get_location_light,
-		t_get_location_sphere,
+		get_location_light,
+		get_location_sphere,
 		NULL,
 		NULL,
 	};
 	const t_get_color	color_getters[OBJ_TYPE_COUNT] = {
 		NULL,
 		NULL,
-		t_get_color_light,
-		t_get_color_sphere,
+		get_color_light,
+		get_color_sphere,
 		NULL,
 		NULL,
 	};
@@ -111,15 +111,23 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 		NULL,
-		t_get_smoothness_sphere,
+		get_smoothness_sphere,
 		NULL,
 		NULL,
 	};
 	const t_get_brightness	get_brightness[OBJ_TYPE_COUNT] = {
 		NULL,
 		NULL,
-		t_get_brightness_light,
+		get_brightness_light,
 		NULL,
+		NULL,
+		NULL,
+	};
+	const t_set_location	location_setters[OBJ_TYPE_COUNT] = {
+		NULL,
+		NULL,
+		set_location_light,
+		set_location_sphere,
 		NULL,
 		NULL,
 	};
@@ -128,6 +136,7 @@ void	assign_intersect_functions(t_object *current)
 		current->intersect = (intersect_ptr)function_pointer[current->type];
 		current->print_object_data = (print_data)function_pointer_data[current->type];
 		current->get_location = (t_get_location)location_getters[current->type];
+		current->set_location = (t_set_location)location_setters[current->type];
 		current->get_color = (t_get_color)color_getters[current->type];
 		current->get_smoothness = (t_get_smoothness)get_smoothness[current->type];
 		current->get_brightness = (t_get_brightness)get_brightness[current->type];
@@ -180,7 +189,7 @@ static int	is_valid_scene(t_scene_data *scene)
 {
 	if (!is_valid_object_count(scene->obj_count[AMBIENT], AMBIENT, 1, 1) || \
 		!is_valid_object_count(scene->obj_count[CAMERA], CAMERA, 1, 1) || \
-		!is_valid_object_count(scene->obj_count[LIGHT], LIGHT, 1, 1) || \
+		!is_valid_object_count(scene->obj_count[LIGHT], LIGHT, 1, 10) || \
 		!is_valid_object_count(scene->obj_count[SPHERE], SPHERE, 0, 10) || \
 		!is_valid_object_count(scene->obj_count[PLANE], PLANE, 0, 10) || \
 		!is_valid_object_count(scene->obj_count[CYLINDER], CYLINDER, 0, 10))

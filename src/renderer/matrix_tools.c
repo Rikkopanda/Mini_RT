@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   matrix_tools.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/07/27 09:43:06 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/07/29 14:56:50 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ float	ft_degr_to_rad(float x)
 
 t_vec4f	normal_orientation_to_degrees(t_vec4f orientation)
 {
-	return (((orientation + 1.0f) / 2.0f) * 360.0f);
+	return (orientation * 180.0f);
 }
 
 void	print_matrix_1_3(t_vec4f m)

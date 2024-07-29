@@ -30,7 +30,7 @@ cannot be 0 or lower.\n", sphere->diameter);
 	sphere->color.rgb_f = int_to_vec4rgb(sphere->color.color_code);
 	sphere->color.rgb_f[STATUS_INDEX] = SPHERE;
 	sphere->smoothness = ft_atof(format[3]);
-	printf("smoothness parse %f\n", sphere->smoothness);
+	// printf("smoothness parse %f\n", sphere->smoothness);
 
 	new = new_object(SPHERE, sphere);
 	if (!new)

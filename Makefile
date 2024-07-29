@@ -24,7 +24,7 @@ LIBGNL = ${DIR_LIB}/get_next_line/libgnl.a
 DIR_SRC = src
 DIR_PARSER = parser
 DIR_PARSER_OBJECTS = objects
-DIR_PARSER_GETTERS = getters
+DIR_PARSER_GETTERS = getters_setters
 DIR_OBJ = obj
 
 DIR_RENDERER = renderer
@@ -44,7 +44,8 @@ SRC_PARSER := ${addprefix ${DIR_PARSER}/, ${SRC_PARSER} ${SRC_PARSER_OBJECTS} ${
 
 SRC_RENDERER =	render_scene.c matrixes.c matrix_tools.c \
 	send_rays.c vector_functions.c \
-	colors_drawing.c hooks.c ft_mlx_functions.c
+	colors_drawing.c hooks.c ft_mlx_functions.c \
+	summation.c
 SRC_RENDERER := ${addprefix ${DIR_RENDERER}/, ${SRC_RENDERER}}
 
 SRC := ${addprefix ${DIR_SRC}/, ${SRC} ${SRC_PARSER} ${SRC_RENDERER}}
