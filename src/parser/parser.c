@@ -42,7 +42,8 @@ t_vec4f	intersect_cylinder(void *object, t_ray ray)
 
 	ray_to_slice_center[1] = ray.origin[1];
 	ray_slice_direction[1] = 0;
-	tp = dot_product_3d(ray_to_slice_center, ray_slice_direction);
+	normalize_vector(&ray_slice_direction);
+	tp = dot_product_3d(ray_slice_direction, ray_to_slice_center);
 	if (tp < 0.0f)
 		return ((t_vec4f){0, 0, 0, -1});
 	tc_squared = dot_product_3d(ray_to_slice_center, ray_to_slice_center) - (tp * tp);
@@ -54,13 +55,9 @@ t_vec4f	intersect_cylinder(void *object, t_ray ray)
 	normalize_vector(&ray_to_slice_center);
 	cosb = dot_product_3d(ray.direction, ray_to_slice_center);
 	if (cosb == 0.0f)
-		return ((t_vec4f){0, 0, 0, -1});
+		return (ray.origin + ray.direction * ip);
 	pp = ip / cosb;
-	point = ray.origin + ray.direction * pp;
-	print_matrix_1_3(point);
-	if (fabsf(cylinder->location[1] - point[1]) > cylinder->height / 2)
-		return ((t_vec4f){0, 0, 0, -1});
-	return (point);
+	return (ray.origin + ray.direction * pp);
 }
 
 t_vec4f intersect_plane(void *object, t_ray ray)
@@ -108,6 +105,23 @@ t_vec4f	get_color_cylinder(void *object)
 	return (cylinder->color.rgb_f);
 }
 
+t_vec4f	get_normal_sphere(void *object, t_vec4f point)
+{
+	t_sphere *sphere = (t_sphere *)object;
+
+	return (point - sphere->location);
+}
+
+t_vec4f	get_normal_cylinder(void *object, t_vec4f point)
+{
+	t_cylinder *cylinder = (t_cylinder *)object;
+	t_vec4f		normal;
+	
+	normal = point - cylinder->location;
+	normal[1] = point[1];
+	return (normal);
+}
+
 void	assign_intersect_functions(t_object *current)
 {
 	const intersect_ptr	function_pointer[OBJ_TYPE_COUNT] = {
@@ -142,12 +156,21 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		get_color_cylinder,
 	};
+	const t_get_normal	normal_getters[OBJ_TYPE_COUNT] = {
+		NULL,
+		NULL,
+		NULL,
+		get_normal_sphere,
+		NULL,
+		get_normal_cylinder,
+	};
 	while (current)
 	{
 		current->intersect = (intersect_ptr)function_pointer[current->type];
 		current->print_object_data = (print_data)function_pointer_data[current->type];
 		current->get_location = (t_get_location)location_getters[current->type];
 		current->get_color = (t_get_color)color_getters[current->type];
+		current->get_normal = (t_get_normal)normal_getters[current->type];
 		current = current->next;
 	}
 }
