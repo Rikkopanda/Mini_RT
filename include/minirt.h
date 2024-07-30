@@ -148,6 +148,7 @@ typedef struct s_hit_info
 	t_objectid	type;
 	t_vec4f		hit_location;
 	float		length;
+	t_vec4f		emission;
 	t_vec4f		normal;
 	t_material	material;
 }	t_hit_info;

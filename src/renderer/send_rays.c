@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/30 14:44:25 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/30 18:58:39 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,14 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 	hit_info->material.color = object->get_color(object->object);
 	if (object->type != LIGHT)
 		hit_info->material.smoothness = object->get_smoothness(object->object);
+	if (object->type == LIGHT)
+	{
+		t_vec4f light_color = object->get_color(object->object);
+		light_color /= 255;
+		hit_info->emission = (object->get_brightness(object->object) * 100) * light_color;
+	}
+	else
+		hit_info->emission = (t_vec4f){0,0,0,0};
 	// if (hit_info->material.smoothness > 0)
 	// 	printf("smoothness %f\n", hit_info->material.smoothness);
 	t_vec4f obj_center = object->get_location(object->object);
@@ -187,7 +195,6 @@ t_vec4f	sky_box(float y)
 void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit, int depth)
 {
 	t_object	*current;
-	//t_hit_info	closest_hit;//move
 	t_vec4f		hit;
 	float		length;
 	const float	bg_strength = 0.2f;
@@ -200,6 +207,7 @@ void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit,
 	{
 		// if (depth != 0)
 		// 	print_matrix_1_3(ray.direction);
+		// printf("intersect f: %p\n", current->intersect);
 		hit = current->intersect(current->object, ray);
 		if (hit[STATUS_INDEX] != -1)
 		{
@@ -341,9 +349,9 @@ t_vec4f reflect(t_vec4f normal, t_vec4f incoming)
 	reflection = incoming - (2 * dot_product_3d(incoming, normal) * normal);
 	return reflection;
 }
+#define MAX_BOUNCE_DEPTH 2
+#define REFLECT_RAYS 20
 
-#define MAX_BOUNCE_DEPTH 4
-#define REFLECT_RAYS 10
 
 t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 {
@@ -354,33 +362,31 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	t_vec4f ret_sum = (t_vec4f){0,0,0,0};
 	t_vec4f throughput = (t_vec4f){1,1,1,1};
 
-
-
 	i = 0;
 	// if (bounce_depth > 0)
 	// 	printf("1\n");
 	// if (bounce_depth != 0)
 	// 	this_color *= fminf(1.0f, 5.0f / hit_info.length);
 
-	if (hit_info.type == NONE)
-	{
-		return (sky_box(ray.direction[1]));
-	}
-	else if (hit_info.type == LIGHT)
-	{
-		// if (bounce_depth > 0)
-		// 	printf("bounce depth %d\n", bounce_depth);
-		// hit_info.material.color *= (float)hit_info.object->get_brightness(hit_info.object->object);
-		hit_info.material.color[STATUS_INDEX] = LIGHT;
-		// if (emmisive_light_color_sum[0] < 0 || emmisive_light_color_sum[1] < 0 || emmisive_light_color_sum[2] < 0)
-		// 	print_matrix_1_3(hit_info.material.color);
-		return (hit_info.material.color);
-	}
-	else if (bounce_depth == MAX_BOUNCE_DEPTH)
-	{
-		this_color[STATUS_INDEX] = 0;
-		return this_color;
-	}
+	// if (hit_info.type == NONE)
+	// {
+	// 	return (sky_box(ray.direction[1]));
+	// }
+	// else if (hit_info.type == LIGHT)
+	// {
+	// 	// if (bounce_depth > 0)
+	// 	// 	printf("bounce depth %d\n", bounce_depth);
+	// 	// hit_info.material.color *= (float)hit_info.object->get_brightness(hit_info.object->object);
+	// 	hit_info.material.color[STATUS_INDEX] = LIGHT;
+	// 	// if (emmisive_light_color_sum[0] < 0 || emmisive_light_color_sum[1] < 0 || emmisive_light_color_sum[2] < 0)
+	// 	// 	print_matrix_1_3(hit_info.material.color);
+	// 	return (hit_info.material.color);
+	// }
+	// else if (bounce_depth == MAX_BOUNCE_DEPTH)
+	// {
+	// 	this_color[STATUS_INDEX] = 0;
+	// 	return this_color;
+	// }
 	while (i < REFLECT_RAYS)
 	{
 		t_hit_info hit_info;
@@ -427,7 +433,7 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 
 	// printf("obj color\n");
 	// print_matrix_1_3(color_bounce_sum);
-	this_color = ray_trace_coloring(scene, color_bounce_sum, emmisive_light_color_sum, hit_info) * (float)(1 - hit_info.material.smoothness);
+	// this_color = ray_trace_coloring(scene, color_bounce_sum, emmisive_light_color_sum, hit_info) * (float)(1 - hit_info.material.smoothness);
 	// this_color *= 2; //telt 3/4 keer mee en reflecties 1/4
 	this_color[STATUS_INDEX] = 0;
 	return this_color;
@@ -437,34 +443,44 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	//
 }
 
-
+/**
+ * 
+ * 
+ * https://www.youtube.com/watch?v=gsZiJeaMO48&t=274s
+ * https://www.umb.edu/spectralmass/terra-aqua-modis/modis/
+ * 
+ * file:///home/rverhoev/Downloads/ray_tracing_practice.pdf
+ * https://www.youtube.com/watch?v=wawf7Am6xy0
+ * 
+ */
 t_vec4f	pseudo_trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 {
-	//integrate
-	for(int i = 0; i < TOTAL_REFLECTIONS; i++)
+	t_hit_info hit_info;
+	t_vec4f IncomingLightColor = (t_vec4f){0,0,0,0};
+	// printf("hello\n");
+	check_intersection(scene, ray, &hit_info, bounce_depth);
+	// hit_info.emission // == light 0.8, 0.9, 0.8 * emissionstrenght(bijv. 100). dit is direct een lichtsource
+	ray.origin = hit_info.hit_location;
+	//integrate over incoming light(in program is outgoing rays now), compute average
+	//material color reflects certain waveforms aka color channel
+	if (hit_info.type == NONE)
+		return (t_vec4f){0,0,0,0};// return (sky_box(ray.direction[1]) / 255);
+	else if (bounce_depth == MAX_BOUNCE_DEPTH)
+		return (hit_info.emission);
+	for(int i = 0; i < REFLECT_RAYS; i++)
 	{
-		checkCollision(ray)
+		// emittive_light_incoming = hitinfo.light_color * hitinfo.light_strenght;//(0.8, 0.9, 0.7) * 100
+		ray.direction = generate_random_vec4f();
 
-		emittive_light_incoming = hitinfo.light_color * hitinfo.light_strenght;//(0.8, 0.9, 0.7) * 100
+		float light_angle_factor = dot_product_3d(hit_info.normal, ray.direction * -1);// dir reverse from obj to light.
+		// IncomingLightColor += (pseudo_trace_ray(scene, ray, bounce_depth + 1));
 
-		light_angle_factor = dot_product_3d(hitinfo.normal, ray.dir * -1);// dir reverse from obj to light.
-
-		ray.origin = hitinfo.location;
-		
-		ray.dir = generate_random_vec4f();
-
-
-		t_vec4f result_color = hitinfo.material.color * (IncomingLightColor * light_angle_factor);
+		IncomingLightColor += (pseudo_trace_ray(scene, ray, bounce_depth + 1) * light_angle_factor);
 	}
-
+	t_vec4f result_color = hit_info.material.color * (IncomingLightColor / REFLECT_RAYS);//material.color in ranges 0-255, incomininglight in ranges of 0-1 finally
+	result_color += hit_info.emission;
+	return (result_color);
 }
-
-https://www.youtube.com/watch?v=gsZiJeaMO48&t=274s
-https://www.umb.edu/spectralmass/terra-aqua-modis/modis/
-
-file:///home/rverhoev/Downloads/ray_tracing_practice.pdf
-https://www.youtube.com/watch?v=wawf7Am6xy0
-
 
 
 
@@ -487,7 +503,7 @@ t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], \
 	i = 0;
 	color = (t_vec4f){0, 0, 0, -1};
 	ray = construct_camera_ray(raycenter[0], raycenter[1], scene, aspect_ratio);
-	color = trace_ray(scene, ray, 0);
+	color = pseudo_trace_ray(scene, ray, 0);
 	return color;
 	while (i < samples)
 	{
