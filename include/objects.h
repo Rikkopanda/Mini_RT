@@ -79,6 +79,8 @@ typedef t_vec4f (*t_get_location)(void *object);
 
 typedef t_vec4f (*t_get_color)(void *object);
 
+typedef t_vec4f (*t_get_normal)(void *object, t_vec4f point);
+
 
 typedef struct s_object
 {
@@ -87,6 +89,7 @@ typedef struct s_object
 	print_data		print_object_data;
 	t_get_location	get_location;
 	t_get_color		get_color;
+	t_get_normal	get_normal;
 	intersect_ptr	intersect;
 	struct s_object	*next;
 }	t_object;
