@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/29 18:04:37 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/30 14:44:25 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -351,14 +351,17 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	t_vec4f this_color;
 	t_vec4f color_bounce_sum = (t_vec4f){0,0,0,0};
 	t_vec4f emmisive_light_color_sum = (t_vec4f){0,0,0,0};
-	t_hit_info hit_info;
+	t_vec4f ret_sum = (t_vec4f){0,0,0,0};
+	t_vec4f throughput = (t_vec4f){1,1,1,1};
+
+
 
 	i = 0;
 	// if (bounce_depth > 0)
 	// 	printf("1\n");
-	check_intersection(scene, ray, &hit_info, bounce_depth);
 	// if (bounce_depth != 0)
 	// 	this_color *= fminf(1.0f, 5.0f / hit_info.length);
+
 	if (hit_info.type == NONE)
 	{
 		return (sky_box(ray.direction[1]));
@@ -378,19 +381,26 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 		this_color[STATUS_INDEX] = 0;
 		return this_color;
 	}
-	ray.origin = hit_info.hit_location;
 	while (i < REFLECT_RAYS)
 	{
-		t_vec4f diffuse_ray = generate_random_vec4f();
+		t_hit_info hit_info;
+		check_intersection(scene, ray, &hit_info, bounce_depth);
+		if (hit_info.type == NONE)
+		{
+			return (sky_box(ray.direction[1]));// break;
+		}
+		ray.origin = hit_info.hit_location;
+
+		t_vec4f diffuse_ray = hit_info.normal + generate_random_vec4f();
+		normalize_vector(&diffuse_ray);
 		t_vec4f reflection = reflect(hit_info.normal, ray.direction);//using old direction
-		// if (bounce_depth > 0)
-		// 	printf("hi\n");
 		if (dot_product_3d(diffuse_ray, hit_info.normal) < 0)
 			diffuse_ray *= -1;
 		ray.direction = lerp(diffuse_ray, reflection, hit_info.material.smoothness);
-		ray.direction = diffuse_ray;
+
 		// printf("reflectiveness %f\n", dot_product_3d(hit_info.normal, ray.direction));
 		t_vec4f hit_color_value = trace_ray(scene, ray, bounce_depth + 1);
+
 		if (hit_color_value[STATUS_INDEX] == LIGHT)
 			emmisive_light_color_sum += (hit_color_value / 255);
 		else if (hit_color_value[STATUS_INDEX != NONE])
@@ -426,6 +436,37 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 	//als al het licht wordt geabsorbeerd, geen specular en geen reflections
 	//
 }
+
+
+t_vec4f	pseudo_trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
+{
+	//integrate
+	for(int i = 0; i < TOTAL_REFLECTIONS; i++)
+	{
+		checkCollision(ray)
+
+		emittive_light_incoming = hitinfo.light_color * hitinfo.light_strenght;//(0.8, 0.9, 0.7) * 100
+
+		light_angle_factor = dot_product_3d(hitinfo.normal, ray.dir * -1);// dir reverse from obj to light.
+
+		ray.origin = hitinfo.location;
+		
+		ray.dir = generate_random_vec4f();
+
+
+		t_vec4f result_color = hitinfo.material.color * (IncomingLightColor * light_angle_factor);
+	}
+
+}
+
+https://www.youtube.com/watch?v=gsZiJeaMO48&t=274s
+https://www.umb.edu/spectralmass/terra-aqua-modis/modis/
+
+file:///home/rverhoev/Downloads/ray_tracing_practice.pdf
+https://www.youtube.com/watch?v=wawf7Am6xy0
+
+
+
 
 
 /**
