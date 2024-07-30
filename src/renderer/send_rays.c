@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/07/29 17:39:19 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/07/30 14:21:40 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 	hit_info->object = object;
 	hit_info->length = length;
 	hit_info->color = object->get_color(object->object);
-	hit_info->normal = hit - object->get_location(object->object);
+	hit_info->normal = object->get_normal(object->object, hit);
 	normalize_vector(&hit_info->normal);
 }
 
