@@ -39,6 +39,10 @@ t_vec4f	intersect_cylinder(void *object, t_ray ray)
 	float		cosb;
 	float		pp;
 	t_vec4f		point;
+	t_vec4f		y_direction;
+	float		cosw;
+	float		D;
+	float		A;
 
 	ray_to_slice_center[1] = ray.origin[1];
 	ray_slice_direction[1] = 0;
@@ -55,9 +59,24 @@ t_vec4f	intersect_cylinder(void *object, t_ray ray)
 	normalize_vector(&ray_to_slice_center);
 	cosb = dot_product_3d(ray.direction, ray_to_slice_center);
 	if (cosb == 0.0f)
-		return (ray.origin + ray.direction * ip);
+		return (ray.origin + ray_slice_direction * ip);
 	pp = ip / cosb;
-	return (ray.origin + ray.direction * pp);
+	point = ray.origin + ray.direction * pp;
+	// if (fabsf(point[1] - cylinder->location[1]) <= cylinder->height / 2)
+	// 	return (point);
+	// if (ray.direction[1] <= 0)
+	// 	y_direction = (t_vec4f){0, -1, 0, 1};
+	// else
+	// 	y_direction = (t_vec4f){0, 1, 0, 1};
+	// A = ray.origin[1] - cylinder->height / 2;
+	// cosw = dot_product_3d(ray.direction, y_direction);
+	// if (cosw == 0.0f)
+	// 	return ((t_vec4f){0, 0, 0, -1});
+	// D =  A / cosw;
+	// point = ray.origin + ray.direction * D;
+	// if (sqrtf(point[0] * point[0] + point[2] * point[2]) > cylinder->radius)
+	// 	return ((t_vec4f){0, 0, 0, -1});
+	return (point);
 }
 
 t_vec4f intersect_plane(void *object, t_ray ray)
@@ -118,7 +137,7 @@ t_vec4f	get_normal_cylinder(void *object, t_vec4f point)
 	t_vec4f		normal;
 	
 	normal = point - cylinder->location;
-	normal[1] = point[1];
+	normal[1] = 0;
 	return (normal);
 }
 

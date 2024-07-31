@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/07/30 14:21:40 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/07/31 14:08:19 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,6 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 	if (closest_hit.hit_location[STATUS_INDEX] == -1)
 		return (vec4rgb_to_int(scene->ambient.ratio * \
 				scene->ambient.color.rgb_f * bg_strength));
-	return (vec4rgb_to_int(closest_hit.color));
 	return (blinn_phong_shading(scene, closest_hit));
 }
 
