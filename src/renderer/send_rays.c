@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/31 17:29:25 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/07/31 17:56:00 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -367,15 +367,15 @@ t_vec4f clamp_vec4f(t_vec4f v, float low, float high)
 
 #include <math.h>
 #include <stdlib.h>
-
+// whyyy the do while???
 t_vec4f generate_random_vec4f_hemisphere(t_vec4f normal) {
     t_vec4f random_vec;
-    do {
+    // do {
         random_vec[0] = (float)rand() / RAND_MAX * 2.0f - 1.0f;
         random_vec[1] = (float)rand() / RAND_MAX * 2.0f - 1.0f;
         random_vec[2] = (float)rand() / RAND_MAX * 2.0f - 1.0f;
         random_vec[3] = 0.0f;
-    } while (dot_product_3d(random_vec, random_vec) >= 1.0f);
+    // } while (dot_product_3d(random_vec, random_vec) >= 1.0f);
 
     // Ensure the vector is in the same hemisphere as the normal
     if (dot_product_3d(random_vec, normal) < 0.0f) {
