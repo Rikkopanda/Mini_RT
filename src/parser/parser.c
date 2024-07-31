@@ -28,8 +28,8 @@ t_vec4f	intersect_sphere(void *object, t_ray ray)
 t_vec4f	intersect_cylinder(void *object, t_ray ray)
 {
 	t_cylinder	*cylinder = (t_cylinder *)object;
-	t_vec4f		ray_to_object = cylinder->location - ray.origin;
-	t_vec4f		ray_to_slice_center = ray_to_object;
+	t_vec4f		slice_center = cylinder->location;
+	t_vec4f		ray_to_slice_center;
 	t_vec4f		ray_slice_direction = ray.direction;
 	float		tp;
 	float		tc_squared;
@@ -44,7 +44,8 @@ t_vec4f	intersect_cylinder(void *object, t_ray ray)
 	float		D;
 	float		A;
 
-	ray_to_slice_center[1] = ray.origin[1];
+	slice_center[1] = ray.origin[1];
+	ray_to_slice_center = slice_center - ray.origin;
 	ray_slice_direction[1] = 0;
 	normalize_vector(&ray_slice_direction);
 	tp = dot_product_3d(ray_slice_direction, ray_to_slice_center);
@@ -62,20 +63,20 @@ t_vec4f	intersect_cylinder(void *object, t_ray ray)
 		return (ray.origin + ray_slice_direction * ip);
 	pp = ip / cosb;
 	point = ray.origin + ray.direction * pp;
-	// if (fabsf(point[1] - cylinder->location[1]) <= cylinder->height / 2)
-	// 	return (point);
-	// if (ray.direction[1] <= 0)
-	// 	y_direction = (t_vec4f){0, -1, 0, 1};
-	// else
-	// 	y_direction = (t_vec4f){0, 1, 0, 1};
-	// A = ray.origin[1] - cylinder->height / 2;
-	// cosw = dot_product_3d(ray.direction, y_direction);
-	// if (cosw == 0.0f)
-	// 	return ((t_vec4f){0, 0, 0, -1});
-	// D =  A / cosw;
-	// point = ray.origin + ray.direction * D;
-	// if (sqrtf(point[0] * point[0] + point[2] * point[2]) > cylinder->radius)
-	// 	return ((t_vec4f){0, 0, 0, -1});
+	if (fabsf(point[1] - cylinder->location[1]) <= cylinder->height / 2)
+		return (point);
+	if (ray.direction[1] <= 0)
+		y_direction = (t_vec4f){0, -1, 0, 1};
+	else
+		y_direction = (t_vec4f){0, 1, 0, 1};
+	A = ray.origin[1] - cylinder->height / 2;
+	cosw = dot_product_3d(ray.direction, y_direction);
+	if (cosw == 0.0f)
+		return ((t_vec4f){0, 0, 0, -1});
+	D =  cylinder->height / cosw;
+	point = ray.origin + ray.direction * D;
+	if (sqrtf(point[0] * point[0] + point[2] * point[2]) > cylinder->radius)
+		return ((t_vec4f){0, 0, 0, -1});
 	return (point);
 }
 
