@@ -42,13 +42,86 @@ t_vec4f	intersect_sphere(void *object, t_ray ray)
 	return (ray.origin + ray.direction * t1);
 }
 
-typedef struct s_ray_to_cylinder
+typedef struct s_cylinder_intersect
 {
-	t_vec4f	slice_center;
 	t_vec4f	top_center;
 	t_vec4f	bottom_center;
-	float	cap_center_distance;
-}	t_ray_to_cylinder;
+	float	a;
+	float	b;
+	float	d_dot_v;
+	float	t1;
+	float	t2;
+	float	t_top;
+	float	t_bottom;
+	float	t_min;
+}	t_cylinder_intersect;
+
+/**
+ * @note
+ * discriminant = b² * 4ac;
+ */
+float	calculate_discriminant(t_ray ray, const t_cylinder *cylinder, \
+								t_cylinder_intersect *intersect)
+{
+	const t_vec4f	x = ray.origin - cylinder->location;
+	const float		d_dot_v = dot_product_3d(ray.direction, cylinder->vector);
+	const float		x_dot_v = dot_product_3d(x, cylinder->vector);
+	float			c;
+
+	intersect->a = dot_product_3d(ray.direction, ray.direction) - d_dot_v * d_dot_v;
+	intersect->b = 2 * (dot_product_3d(ray.direction, x) - d_dot_v * x_dot_v);
+	c = dot_product_3d(x, x) - x_dot_v * x_dot_v - cylinder->radius * cylinder->radius;
+	intersect->d_dot_v = d_dot_v;
+	return (intersect->b * intersect->b - 4 * intersect->a * c);
+}
+
+void	validate_intersection_distance(t_ray ray, const t_cylinder *cylinder,
+										t_cylinder_intersect *intersect)
+{
+	float			height1;
+	float			height2;
+	const t_vec4f	point[4] = {
+		ray.origin + ray.direction * intersect->t1,
+		ray.origin + ray.direction * intersect->t2,
+		ray.origin + ray.direction * intersect->t_top,
+		ray.origin + ray.direction * intersect->t_bottom,
+	};
+
+	height1 = dot_product_3d(point[0] - cylinder->location, cylinder->vector) \
+				/ vector_length(cylinder->vector);
+	height2 = dot_product_3d(point[1] - cylinder->location, cylinder->vector) \
+				/ vector_length(cylinder->vector);
+	if (height1 < -cylinder->height / 2 || height1 > cylinder->height / 2)
+		intersect->t1 = -1;
+	if (height2 < -cylinder->height / 2 || height2 > cylinder->height / 2)
+		intersect->t2 = -1;
+	if (vector_length(point[2] - cylinder->location - cylinder->vector * \
+		(cylinder->height / 2)) > cylinder->radius || intersect->t_top < 0)
+		intersect->t_top = -1;
+	if (vector_length(point[3] - cylinder->location + cylinder->vector * \
+		(cylinder->height / 2)) > cylinder->radius || intersect->t_bottom < 0)
+		intersect->t_bottom = -1;
+}
+
+float	closest_intersect_distance(float t1, float t2, \
+									float t_top, float t_bottom)
+{
+	float	t_min;
+
+	t_min = INFINITY;
+	if (t1 > 0)
+		t_min = fminf(t_min, t1);
+	if (t2 > 0)
+		t_min = fminf(t_min, t2);
+	if (t_top > 0)
+		t_min = fminf(t_min, t_top);
+	if (t_bottom > 0)
+		t_min = fminf(t_min, t_bottom);
+	if (t_min < INFINITY)
+		return (t_min);
+	return (-1);
+}									
+
 /**
  * @note
  * Source: https://stackoverflow.com/questions/73866852/ray-cylinder-intersection-formula
@@ -56,68 +129,26 @@ typedef struct s_ray_to_cylinder
  */
 t_vec4f	intersect_cylinder(void *object, t_ray ray)
 {
-	const t_cylinder	*cylinder = (t_cylinder *)object;
-	t_ray_to_cylinder	intersect;
-	t_vec4f				X;
-	float				a;
-	float				b;
-	float				c;
-	float				d_dot_v;
-	float				x_dot_v;
-	float				t1;
-	float				t2;
-	float				tempt;
-	float				discriminant;
-	t_vec4f				intersect1;
-	t_vec4f				intersect2;
-	float				height1;
-	float				height2;
-	float				top_cap;
-	float				bottom_cap;
+	const t_cylinder		*cylinder = (t_cylinder *)object;
+	t_cylinder_intersect	intersect;
+	float					discriminant;
 
 	intersect.top_center = cylinder->location + cylinder->vector * (cylinder->height / 2);
 	intersect.bottom_center = cylinder->location - cylinder->vector * (cylinder->height / 2);
-	X = ray.origin - cylinder->location;
-	d_dot_v = dot_product_3d(ray.direction, cylinder->vector);
-	x_dot_v = dot_product_3d(X, cylinder->vector);
-	a = dot_product_3d(ray.direction, ray.direction) - d_dot_v * d_dot_v;
-	b = 2 * (dot_product_3d(ray.direction, X) - d_dot_v * x_dot_v);
-	c = dot_product_3d(X, X) - x_dot_v * x_dot_v - cylinder->radius * cylinder->radius;
-	discriminant = b * b - 4 * a * c;
+	discriminant = calculate_discriminant(ray, cylinder, &intersect);
 	if (discriminant < 0)
 		return ((t_vec4f){0, 0, 0, -1});
-	t1 = (-b - sqrtf(discriminant)) / (2 * a);
-	t2 = (-b + sqrtf(discriminant)) / (2 * a);
-	if (t1 > t2)
-	{
-		tempt = t1;
-		t1 = t2;
-		t2 = tempt;
-	}
-	intersect1 = ray.origin + ray.direction * t1;
-	intersect2 = ray.origin + ray.direction * t2;
-	height1 = dot_product_3d(intersect1 - cylinder->location, cylinder->vector);
-	height2 = dot_product_3d(intersect2 - cylinder->location, cylinder->vector);
-	if (height1 >= -cylinder->height / 2 && height1 <= cylinder->height / 2)
-		return (intersect1);
-	if (height2 >= -cylinder->height / 2 && height2 <= cylinder->height / 2)
-		return (intersect2);
-	top_cap = dot_product_3d(cylinder->location - ray.origin, cylinder->vector) / d_dot_v;
-	if (top_cap > 0)
-	{
-		t_vec4f	top_intersect = ray.origin + ray.direction * top_cap;
-		if (dot_product_3d(top_intersect - intersect.top_center, top_intersect - intersect.top_center) <= cylinder->radius * cylinder->radius)
-			return (top_intersect);
-	}
-	bottom_cap = dot_product_3d((cylinder->location - cylinder->vector * cylinder->height) - ray.origin, cylinder->vector) / d_dot_v;
-	if (bottom_cap > 0)
-	{
-		t_vec4f	bottom_intersect = ray.origin + ray.direction * bottom_cap;
-		if (dot_product_3d(bottom_intersect - intersect.bottom_center, bottom_intersect - intersect.bottom_center) <= cylinder->radius * cylinder->radius)
-			return (bottom_intersect);
-	}
-
-	return ((t_vec4f){0, 0, 0, -1});
+	intersect.t1 = (-intersect.b - sqrtf(discriminant)) / (2 * intersect.a);
+	intersect.t2 = (-intersect.b + sqrtf(discriminant)) / (2 * intersect.a);
+	if (intersect.t1 > intersect.t2)
+		swapf(&intersect.t1, &intersect.t2);
+	intersect.t_top = dot_product_3d(intersect.top_center - ray.origin, cylinder->vector) / intersect.d_dot_v;
+	intersect.t_bottom = dot_product_3d(intersect.bottom_center - ray.origin, cylinder->vector) / intersect.d_dot_v;
+	validate_intersection_distance(ray, cylinder, &intersect);
+	intersect.t_min = closest_intersect_distance(intersect.t1, intersect.t2, intersect.t_top, intersect.t_bottom);
+	if (intersect.t_min == -1)
+		return ((t_vec4f){0, 0, 0, -1});
+	return (ray.origin + ray.direction * intersect.t_min);
 }
 
 t_vec4f intersect_plane(void *object, t_ray ray)
@@ -174,12 +205,22 @@ t_vec4f	get_normal_sphere(void *object, t_vec4f point)
 
 t_vec4f	get_normal_cylinder(void *object, t_vec4f point)
 {
-	t_cylinder *cylinder = (t_cylinder *)object;
-	t_vec4f		normal;
+	t_cylinder 		*cylinder = (t_cylinder *)object;
+	const t_vec4f	top_center = cylinder->location + \
+							cylinder->vector * (cylinder->height / 2);
+	const t_vec4f	bottom_center = cylinder->location - \
+							cylinder->vector * (cylinder->height / 2);
+	t_vec4f			perpendicular_point;
+	const float		error = 0.001f;
 	
-	normal = point - cylinder->location;
-	normal[1] = 0;
-	return (normal);
+	if (fabsf(dot_product_3d(point - top_center, cylinder->vector)) < error)
+		return (cylinder->vector);
+	if (fabsf(dot_product_3d(point - bottom_center, cylinder->vector)) < error)
+		return (-cylinder->vector);
+	perpendicular_point = cylinder->location + cylinder->vector * \
+				dot_product_3d(point - cylinder->location, cylinder->vector);
+	point -= perpendicular_point;
+	return (normalize_vector(&point));
 }
 
 void	assign_intersect_functions(t_object *current)
