@@ -49,7 +49,11 @@ typedef struct s_ray_to_cylinder
 	t_vec4f	bottom_center;
 	float	cap_center_distance;
 }	t_ray_to_cylinder;
-
+/**
+ * @note
+ * Source: https://stackoverflow.com/questions/73866852/ray-cylinder-intersection-formula
+ * Source: https://en.wikipedia.org/wiki/Quadratic_formula
+ */
 t_vec4f	intersect_cylinder(void *object, t_ray ray)
 {
 	const t_cylinder	*cylinder = (t_cylinder *)object;
