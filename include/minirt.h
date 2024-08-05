@@ -142,7 +142,7 @@ void	compilation_matrix(t_vec4f comp[3], t_vec4f R[3], t_vec4f R3[3]);
 void	copy_matrix(t_vec4f *dst, t_vec4f src);
 void	init_comp_m(t_vec4f comp[3]);
 
-void	normalize_vector(t_vec4f *v);
+t_vec4f	normalize_vector(t_vec4f *v);
 void	vector_scaling(t_vec4f *v, float scale);
 
 
