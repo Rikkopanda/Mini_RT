@@ -21,6 +21,7 @@ int	parse_plane(t_object **objects, char **format)
 		fprintf(stderr, "Error: plane normal vector out of range [-1, 1]\n");
 		return (free(plane), 0);
 	}
+	normalize_vector(&plane->vector);
 	plane->color.color_code = ft_atohex(format[2]);
 	plane->color.rgb_f = int_to_vec4rgb(plane->color.color_code);
 	new = new_object(PLANE, plane);

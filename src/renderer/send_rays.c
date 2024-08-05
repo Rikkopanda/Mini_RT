@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/07/31 14:08:19 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/06 00:36:56 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,7 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 
 	current = scene->objects;
 	closest_hit.hit_location = (t_vec4f){0, 0, 0, -1};
-	closest_hit.length = 200;
+	closest_hit.length = DISTANCE_MAX;
 	while (current)
 	{
 		hit = current->intersect(current->object, ray);

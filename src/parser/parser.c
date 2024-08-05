@@ -153,7 +153,17 @@ t_vec4f	intersect_cylinder(void *object, t_ray ray)
 
 t_vec4f intersect_plane(void *object, t_ray ray)
 {
-	return ((t_vec4f){0, 0, 0, -1});
+	const t_plane	*plane = (t_plane *)object;
+	float			t;
+	float			denominator;
+
+	denominator = dot_product_3d(plane->vector, ray.direction);
+	if (fabsf(denominator) <= 1e-4f)
+		return ((t_vec4f){0, 0, 0, -1});
+	t = -(dot_product_3d(plane->vector, ray.origin) + dot_product_3d(plane->location, -plane->vector)) / denominator;
+	if (t <= 1e-4f)
+		return ((t_vec4f){0, 0, 0, -1});
+	return (ray.origin + ray.direction * t);
 }
 
 void print_sphere_data(void *object)
@@ -187,6 +197,27 @@ t_vec4f get_location_cylinder(void *object)
 	t_cylinder *cylinder = (t_cylinder *)object;
 
 	return (cylinder->location);
+}
+
+t_vec4f get_location_plane(void *object)
+{
+	t_plane *plane = (t_plane *)object;
+
+	return (plane->location);
+}
+
+t_vec4f get_color_plane(void *object)
+{
+	t_plane *plane = (t_plane *)object;
+
+	return (plane->color.rgb_f);
+}
+
+t_vec4f get_normal_plane(void *object, t_vec4f point)
+{
+	t_plane *plane = (t_plane *)object;
+
+	return (plane->vector);
 }
 
 t_vec4f	get_color_cylinder(void *object)
@@ -246,7 +277,7 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 		get_location_sphere,
-		NULL,
+		get_location_plane,
 		get_location_cylinder,
 	};
 	const t_get_color	color_getters[OBJ_TYPE_COUNT] = {
@@ -254,7 +285,7 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 		get_color_sphere,
-		NULL,
+		get_color_plane,
 		get_color_cylinder,
 	};
 	const t_get_normal	normal_getters[OBJ_TYPE_COUNT] = {
@@ -262,7 +293,7 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		NULL,
 		get_normal_sphere,
-		NULL,
+		get_normal_plane,
 		get_normal_cylinder,
 	};
 	while (current)
