@@ -36,10 +36,13 @@ t_vec4f	intersect_sphere(void *object, t_ray ray)
 	ti = sqrtf(radius_squared - tc_squared);
 	t1 = tp - ti;
 	t2 = tp + ti;
-	printf("t1 %.4f, t2 %.4f\n", t1, t2);
-	if (t2 < t1)
+	if (t1 > t2)
+		swapf(&t1, &t2);
+	if (t1 > 0)
+		return (ray.origin + ray.direction * t1);
+	if (t2 > 0)
 		return (ray.origin + ray.direction * t2);
-	return (ray.origin + ray.direction * t1);
+	return ((t_vec4f){0, 0, 0, -1});
 }
 
 typedef struct s_cylinder_intersect
@@ -211,7 +214,7 @@ t_vec4f	get_normal_cylinder(void *object, t_vec4f point)
 	const t_vec4f	bottom_center = cylinder->location - \
 							cylinder->vector * (cylinder->height / 2);
 	t_vec4f			perpendicular_point;
-	const float		error = 0.001f;
+	const float		error = 1e-4;
 	
 	if (fabsf(dot_product_3d(point - top_center, cylinder->vector)) < error)
 		return (cylinder->vector);
