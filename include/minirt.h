@@ -23,6 +23,7 @@ typedef struct s_ray	t_ray;
 # define WINDOW_WIDTH 200
 # define SAMPLES 4
 # define RADIUS 0.6f
+# define DISTANCE_MAX 1000
 
 typedef struct s_scene_data t_scene_data;
 
