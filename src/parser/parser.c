@@ -10,6 +10,20 @@ void	swapf(float *a, float *b)
 	*b = temp;
 }
 
+float	solve_ti(t_ray ray, t_vec4f sphere_center, \
+				float sphere_radius, float *tp)
+{
+	t_vec4f		ray_to_object = sphere_center - ray.origin;
+	const float	radius_squared = sphere_radius * sphere_radius;
+	float		tc_squared;
+
+	*tp = dot(ray_to_object, ray.direction);
+	tc_squared = dot(ray_to_object, ray_to_object) - powf(*tp, 2);
+	if (tc_squared > radius_squared)
+		return (INFINITY);
+	return (sqrtf(radius_squared - tc_squared));
+}
+
 /**
  * @note 
  * source: https://kylehalladay.com/blog/tutorial/math/2013/12/24/Ray-Sphere-Intersection.html
@@ -18,28 +32,21 @@ void	swapf(float *a, float *b)
 t_vec4f	intersect_sphere(void *object, t_ray ray)
 {
 	t_sphere	*sphere = (t_sphere *)object;
-	t_vec4f		ray_to_object = sphere->location - ray.origin;
-	float		tp;
-	float		tc_squared;
-	float		radius_squared;
 	float		ti;
-	float		t1;
-	float		t2;
+	float		tp;
+	float		t[2];
 	float		t_min;
 
-	tp = dot(ray_to_object, ray.direction);
-	tc_squared = dot(ray_to_object, ray_to_object) - (tp * tp);
-	radius_squared = sphere->radius * sphere->radius;
-	if (tc_squared > radius_squared)
+	ti = solve_ti(ray, sphere->location, sphere->radius, &tp);
+	if (ti == INFINITY)
 		return ((t_vec4f){0, 0, 0, -1});
-	ti = sqrtf(radius_squared - tc_squared);
-	t1 = tp - ti;
-	t2 = tp + ti;
+	t[0] = tp - ti;
+	t[1] = tp + ti;
 	t_min = INFINITY;
-	if (t1 > 0)
-		t_min = fminf(t_min, t1);
-	if (t2 > 0)
-		t_min = fminf(t_min, t2);
+	if (t[0] > 0)
+		t_min = fminf(t_min, t[0]);
+	if (t[1] > 0)
+		t_min = fminf(t_min, t[1]);
 	if (t_min < INFINITY)
 		return (ray.origin + ray.direction * t_min);
 	return ((t_vec4f){0, 0, 0, -1});
@@ -164,13 +171,14 @@ t_vec4f intersect_plane(void *object, t_ray ray)
 	const t_plane	*plane = (t_plane *)object;
 	float			t;
 	float			denominator;
+	const float		epsilon = 1e-4f;
 
 	denominator = dot(plane->vector, ray.direction);
-	if (fabsf(denominator) <= 1e-4f)
+	if (fabsf(denominator) <= epsilon)
 		return ((t_vec4f){0, 0, 0, -1});
 	t = -(dot(plane->vector, ray.origin) + \
 		dot(plane->location, -plane->vector)) / denominator;
-	if (t <= 1e-4f)
+	if (t <= epsilon)
 		return ((t_vec4f){0, 0, 0, -1});
 	return (ray.origin + ray.direction * t);
 }
@@ -251,11 +259,11 @@ t_vec4f	get_normal_cylinder(void *object, t_vec4f point)
 	const t_vec4f	bottom_center = cylinder->location - \
 							cylinder->vector * (cylinder->height / 2);
 	t_vec4f			perpendicular_point;
-	const float		error = 1e-4;
+	const float		epsilon = 1e-4f;
 	
-	if (fabsf(dot(point - top_center, cylinder->vector)) < error)
+	if (fabsf(dot(point - top_center, cylinder->vector)) < epsilon)
 		return (cylinder->vector);
-	if (fabsf(dot(point - bottom_center, cylinder->vector)) < error)
+	if (fabsf(dot(point - bottom_center, cylinder->vector)) < epsilon)
 		return (-cylinder->vector);
 	perpendicular_point = cylinder->location + cylinder->vector * \
 				dot(point - cylinder->location, cylinder->vector);

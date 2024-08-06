@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/08/06 15:59:04 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/06 16:23:30 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -365,7 +365,7 @@ void send_rays(t_scene_data *scene)
 	int			ray_y;
 	t_vec4f 	color;
 	const float	aspect_ratio = (float)scene->win_width / scene->win_height;
-	const int	samples = 4;
+	const int	samples = 0;
 
 	// visualise_light_location(scene->objects, scene->light);
 	ray_y = 0;
