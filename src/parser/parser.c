@@ -25,10 +25,9 @@ t_vec4f	intersect_sphere(void *object, t_ray ray)
 	float		ti;
 	float		t1;
 	float		t2;
+	float		t_min;
 
 	tp = dot(ray_to_object, ray.direction);
-	if (tp < 0.0f)
-		return ((t_vec4f){0, 0, 0, -1});
 	tc_squared = dot(ray_to_object, ray_to_object) - (tp * tp);
 	radius_squared = sphere->radius * sphere->radius;
 	if (tc_squared > radius_squared)
@@ -36,12 +35,13 @@ t_vec4f	intersect_sphere(void *object, t_ray ray)
 	ti = sqrtf(radius_squared - tc_squared);
 	t1 = tp - ti;
 	t2 = tp + ti;
-	if (t1 > t2)
-		swapf(&t1, &t2);
+	t_min = INFINITY;
 	if (t1 > 0)
-		return (ray.origin + ray.direction * t1);
+		t_min = fminf(t_min, t1);
 	if (t2 > 0)
-		return (ray.origin + ray.direction * t2);
+		t_min = fminf(t_min, t2);
+	if (t_min < INFINITY)
+		return (ray.origin + ray.direction * t_min);
 	return ((t_vec4f){0, 0, 0, -1});
 }
 
