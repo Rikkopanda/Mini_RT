@@ -29,6 +29,12 @@ DIR_OBJ = obj
 
 DIR_RENDERER = renderer
 
+RAYS_N = 45
+MAX_BOUNCE_DEPTH = 3
+
+CFLAGS += -DREFLECT_RAYS_N=$(RAYS_N)
+CFLAGS += -DMAX_BOUNCE_DEPTH=$(MAX_BOUNCE_DEPTH)
+
 SRC = main.c
 
 SRC_PARSER =	parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
@@ -45,7 +51,7 @@ SRC_PARSER := ${addprefix ${DIR_PARSER}/, ${SRC_PARSER} ${SRC_PARSER_OBJECTS} ${
 SRC_RENDERER =	render_scene.c matrixes.c matrix_tools.c \
 	send_rays.c vector_functions.c \
 	colors_drawing.c hooks.c ft_mlx_functions.c \
-	summation.c
+	summation.c trace_ray.c check_intersection.c
 SRC_RENDERER := ${addprefix ${DIR_RENDERER}/, ${SRC_RENDERER}}
 
 SRC := ${addprefix ${DIR_SRC}/, ${SRC} ${SRC_PARSER} ${SRC_RENDERER}}

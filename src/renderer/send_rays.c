@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/07/31 17:56:00 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/06 10:07:57 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,133 +97,6 @@ float	ft_maxf(float a, float b)
 	if (a > b)
 		return (a);
 	return (b);
-}
-
-/**
- * @note Blinn-Phong shading model, different from regular Phong shading model.
- * Instead of light reflect & surface to cam vector, uses dot product 
- * of halfway vector & surface normal, which is cheaper to compute.
- * From: https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model &
- * https://www.youtube.com/watch?v=KdDdljGtfeg
- */
-t_vec4f	blinn_phong_shading(t_scene_data *scene, t_vec4f color_bounce_sum, t_vec4f emmisive_light_color_sum, t_hit_info surface)
-{
-	const t_vec4f	surface_to_light = scene->light.location - surface.hit_location;
-	const t_vec4f	surface_to_cam = scene->camera.location - surface.hit_location;
-	const float		distance_to_light = vector_length(surface_to_light);
-	const float		distance_to_cam = vector_length(surface_to_cam);
-	const float		strength = scene->light.ratio / distance_to_light * 50.0f; // ratio == brightness
-	t_vec4f			halfway_vec = (surface_to_light + surface_to_cam) / (distance_to_light + distance_to_cam); // wat doet de / (dist1 + dist2)  als je toch gaat normalizen?
-	t_vec4f			diffuse;
-	t_vec4f			specular;
-	t_vec4f			ambient;
-	const int		fac = 128;
-
-	normalize_vector(&halfway_vec);
-	ambient = (scene->ambient.ratio * scene->ambient.color.rgb_f + scene->ambient.ratio * surface.material.color) / 2;
-	diffuse = ((color_bounce_sum + surface.material.color) / 2);// light kleur van invloed nu
-
-	// diffuse = (ft_maxf(dot_product_3d(surface_to_light, surface.normal) / distance_to_light, 0.0f) * surface.material.color) * scene->light.color.rgb_f;// light kleur van invloed nu
-	const float spec_strength = 0.5f;
-	// specular = powf(ft_maxf(dot_product_3d(halfway_vec, surface.normal), 0.0f), fac) * scene->light.color.rgb_f * spec_strength;
-
-	// surface.material.color = ((diffuse + specular) * strength + ambient);// hoe is de voorrang van haakjes?
-	normalize_vector(&emmisive_light_color_sum);
-	surface.material.color = ambient + (diffuse * emmisive_light_color_sum);
-	surface.material.color[0] = ft_min(surface.material.color[0], 255);
-	surface.material.color[1] = ft_min(surface.material.color[1], 255);
-	surface.material.color[2] = ft_min(surface.material.color[2], 255);// kleuren tussen float 0 - 255 ?
-	return (surface.material.color);
-}
-
-void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
-						float length)
-{
-	hit_info->hit_location = hit;
-	hit_info->object = object;
-	hit_info->length = length;
-	hit_info->type = object->type;
-	hit_info->material.color = object->get_color(object->object);
-	if (object->type != LIGHT)
-		hit_info->material.smoothness = object->get_smoothness(object->object);
-	if (object->type == LIGHT)
-	{
-		t_vec4f light_color = object->get_color(object->object);
-		light_color /= 255;
-		// hit_info->emission = (object->get_brightness(object->object) * 100) * light_color;
-		hit_info->emission = light_color;
-	}
-	else
-		hit_info->emission = (t_vec4f){0,0,0,0};
-	// if (hit_info->material.smoothness > 0)
-	// 	printf("smoothness %f\n", hit_info->material.smoothness);
-	t_vec4f obj_center = object->get_location(object->object);
-	hit_info->normal = hit - object->get_location(object->object);
-	normalize_vector(&hit_info->normal);
-}
-
-t_vec4f lerp(t_vec4f a, t_vec4f b, float f) 
-{
-    return (a * (float)(1.0 - f)) + (b * f);
-}
-
-t_vec4f	sky_box(float y)
-{
-	t_vec4f	top_hemi = (t_vec4f){145,224,255,-1};
-	t_vec4f	bottom_hemi = (t_vec4f){255,255,255,-1};
-
-	if (y > 0.1)
-		return top_hemi;
-	else if (y < -0.1)
-		return bottom_hemi;
-	// 0.1 / 0.1 = 1
-	// -0.1 / 0.1 = -1
-	// dat + 0.1 / 0.2
-	t_vec4f result = lerp(bottom_hemi, top_hemi, (y + 0.1f) / 0.2f);
-	result[3] = NONE;
-	return (result);
-}
-
-/**
- * @note Keeps track of closest intersection object.
- * bg_strength is used for the effect of the ambient color strength 
- * on the background, so it is different from the object's "shadow" color.
- * 
- * 
- * 	0.0 smoothness means * 1
- *  1.0 smoothness means * 0
- */
-void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit, int depth)
-{
-	t_object	*current;
-	t_vec4f		hit;
-	float		length;
-	const float	bg_strength = 0.2f;
-
-	current = scene->objects;
-	closest_hit->hit_location = (t_vec4f){0, 0, 0, -1};
-	closest_hit->length = 800;
-	closest_hit->type = NONE;
-	while (current)
-	{
-		// if (depth != 0)
-		// 	print_matrix_1_3(ray.direction);
-		// printf("intersect f: %p\n", current->intersect);
-		hit = current->intersect(current->object, ray);
-		if (hit[STATUS_INDEX] != -1)
-		{
-			length = fabsf(vector_length(hit - ray.origin)); // fabs omdat we ook in de negatieve richting kunnen kijken als de camera zo staat?
-			if (length <= closest_hit->length)
-				update_hit_info(closest_hit, hit, current, length);
-			// if (closest_hit->type == LIGHT)
-			// {
-				// print_matrix_1_3(closest_hit->material.color);
-			// }
-			// if (depth != 0)
-			// 	printf("type: %d\n", current->type);
-		}
-		current = current->next;
-	}
 }
 
 t_vec4f	invert_quaternion(t_vec4f quaternion)
@@ -343,99 +216,9 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
 	return (ray);
 }
 
-t_vec4f reflect(t_vec4f normal, t_vec4f incoming)
-{
-	t_vec4f reflection;
-
-	reflection = incoming - (2 * dot_product_3d(incoming, normal) * normal);
-	return reflection;
-}
-
-#define MAX_BOUNCE_DEPTH 3
-#define REFLECT_RAYS 30
-
-t_vec4f clamp_vec4f(t_vec4f v, float low, float high)
-{
-	t_vec4f result;
-
-	result[0] = fminf(fmaxf(v[0], low), high);
-	result[1] = fminf(fmaxf(v[1], low), high);
-	result[2] = fminf(fmaxf(v[2], low), high);
-	result[3] = fminf(fmaxf(v[3], low), high);
-	return result;
-}	
-
+#include <time.h> 
 #include <math.h>
 #include <stdlib.h>
-// whyyy the do while???
-t_vec4f generate_random_vec4f_hemisphere(t_vec4f normal) {
-    t_vec4f random_vec;
-    // do {
-        random_vec[0] = (float)rand() / RAND_MAX * 2.0f - 1.0f;
-        random_vec[1] = (float)rand() / RAND_MAX * 2.0f - 1.0f;
-        random_vec[2] = (float)rand() / RAND_MAX * 2.0f - 1.0f;
-        random_vec[3] = 0.0f;
-    // } while (dot_product_3d(random_vec, random_vec) >= 1.0f);
-
-    // Ensure the vector is in the same hemisphere as the normal
-    if (dot_product_3d(random_vec, normal) < 0.0f) {
-        random_vec *= -1.0f;
-    }
-	normalize_vector(&random_vec);
-    return (random_vec);
-}
-
-
-/**
- * 
- * https://www.youtube.com/watch?v=gsZiJeaMO48&t=274s
- * https://www.umb.edu/spectralmass/terra-aqua-modis/modis/
- * 
- * file:///home/rverhoev/Downloads/ray_tracing_practice.pdf
- * https://www.youtube.com/watch?v=wawf7Am6xy0
- * 
- */
-t_vec4f	pseudo_trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
-{
-	t_hit_info hit_info;
-	t_vec4f IncomingLightColor = (t_vec4f){0,0,0,0};
-	// printf("hello\n");
-	check_intersection(scene, ray, &hit_info, bounce_depth);
-	// hit_info.emission // == light 0.8, 0.9, 0.8 * emissionstrenght(bijv. 100). dit is direct een lichtsource
-	ray.origin = hit_info.hit_location;
-
-	//integrate over incoming light(in program is outgoing rays now), compute average
-	//material color reflects certain waveforms aka color channel
-	if (hit_info.type == NONE)
-	{
-		// scne->ambient.ratio = 0;
-		return ((sky_box(ray.direction[1]) / 255) * scene->ambient.ratio);
-	}
-	else if (bounce_depth == MAX_BOUNCE_DEPTH)
-		return (hit_info.emission);
-	else if (hit_info.type == LIGHT)
-		return (hit_info.emission);
-	for(int i = 0; i < REFLECT_RAYS; i++)
-	{
-		// emittive_light_incoming = hitinfo.light_color * hitinfo.light_strenght;//(0.8, 0.9, 0.7) * 100
-		ray.direction = generate_random_vec4f_hemisphere(hit_info.normal);
-		// if (dot_product_3d(hit_info.normal,ray.direction) < 0)
-		// 	ray.direction *= -1;
-		float light_angle_factor = dot_product_3d(hit_info.normal, ray.direction);// dir reverse from obj to light.
-		// printf("yes %f\n", light_angle_factor);
-		IncomingLightColor += (pseudo_trace_ray(scene, ray, bounce_depth + 1) * light_angle_factor);
-		// IncomingLightColor += (pseudo_trace_ray(scene, ray, bounce_depth + 1)); //* lightangle
-	}
-	t_vec4f result_color = (hit_info.material.color / 255) * (IncomingLightColor / REFLECT_RAYS);
-	// result_color += (hit_info.material.color / 255) * (IncomingLightColor / REFLECT_RAYS);//material.color in ranges 0-255, incomininglight in ranges of 0-1 finally
-	// printf("result color\n");
-	result_color += hit_info.emission;
-
-	result_color = clamp_vec4f(result_color, 0, 1);
-	// if (result_color[1] > 1) 
-	// print_matrix_1_3(result_color);
-	return (result_color);
-}
 
 /**
  * @note Anti-aliasing sampling method, evenly distributes samples 
@@ -455,7 +238,7 @@ t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], \
 	i = 0;
 	color = (t_vec4f){0, 0, 0, -1};
 	ray = construct_camera_ray(raycenter[0], raycenter[1], scene, aspect_ratio);
-	color = pseudo_trace_ray(scene, ray, 0);
+	color = trace_ray(scene, ray, 0);
 	color *= 255;
 	return color;
 	while (i < samples)

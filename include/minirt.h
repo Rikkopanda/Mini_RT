@@ -24,6 +24,13 @@ typedef struct s_ray	t_ray;
 # define SAMPLES 4
 # define RADIUS 0.6f
 
+#ifndef MAX_BOUNCE_DEPTH
+ #define MAX_BOUNCE_DEPTH 3
+#endif
+#ifndef REFLECT_RAYS_N
+ #define REFLECT_RAYS_N 15
+#endif
+
 typedef struct s_scene_data t_scene_data;
 
 # define DEGR_10_IN_RAD 0.1745329252
@@ -178,7 +185,8 @@ void	send_rays(t_scene_data *scene);
 int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert);
 t_vec4f	ray_trace_coloring(t_scene_data *scene, t_vec4f color_bounce_sum, t_vec4f emmisive_light_color_sum, t_hit_info surface);
 
-
+t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth);
+void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit, int depth);
 
 void	put_pixel_img(t_img img, int x, int y, int color);
 void	init_rgb(t_color *rgb, int color);
@@ -187,6 +195,7 @@ void	make_rgb_with_normalized_rgb_f(int rgb[3], t_vec4f rgb_f);
 int		create_color(int r, int g, int b);
 t_vec4f	int_to_vec4rgb(int color);
 int		vec4rgb_to_int(t_vec4f vec);
+float	interpolatef(float A, float B, float t);
 
 void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);

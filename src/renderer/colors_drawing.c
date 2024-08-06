@@ -58,6 +58,14 @@ int	interpolate(int color_A, int color_B, float t)
 	return (create_color(rgb_interpolate.rgb[0], rgb_interpolate.rgb[1], rgb_interpolate.rgb[2]));
 }
 
+float	interpolatef(float A, float B, float t)
+{
+	float result;
+
+	result = A + (B - A) * t; // 0.5 + (1 - 0.5) * 1 = 1
+	return result;
+}
+
 t_vec4f	int_to_vec4rgb(int color)
 {
 	return ((t_vec4f){get_r(color), get_g(color), get_b(color), 1});
