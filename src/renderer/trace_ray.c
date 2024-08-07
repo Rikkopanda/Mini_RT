@@ -11,11 +11,20 @@ t_vec4f clamp_vec4f(t_vec4f v, float low, float high);
 t_vec4f generate_random_vec4f_hemisphere(t_vec4f normal);
 
 /**
+ * rendering equation(NVIDIA's uitleg):
+ * https://www.youtube.com/watch?v=AODo_RjJoUA
  * 
+ * Josh's Channel
  * https://www.youtube.com/watch?v=gsZiJeaMO48&t=274s
+ * 
  * https://www.umb.edu/spectralmass/terra-aqua-modis/modis/
  * 
+ * rendering equation intuitieve animatie
+ * https://www.youtube.com/watch?v=eo_MTI-d28s
+ * 
  * file:///home/rverhoev/Downloads/ray_tracing_practice.pdf
+ * 
+ * lange uitleg
  * https://www.youtube.com/watch?v=wawf7Am6xy0
  * 
  */
