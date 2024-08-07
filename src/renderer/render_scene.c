@@ -52,8 +52,8 @@ void	init_camera(t_scene_data *data)
 	data->camera.location[1] = 0;
 	data->camera.location[2] = 0;
 	data->camera.location[3] = 0;
-	if (PRINT_DEBUG) printf("original\n");
-	if (PRINT_DEBUG) print_matrix_1_3(data->camera.orientation);
+	// if (PRINT_DEBUG) printf("original\n");
+	// if (PRINT_DEBUG) print_matrix_1_3(data->camera.orientation);
 }
 
 // void determine_window_ratio(t_scene_data *data)
@@ -70,20 +70,12 @@ void	init_camera(t_scene_data *data)
 int render_scene(t_scene_data *data)
 {
 
-	data->mlx = new_window(WINDOW_WIDTH, WINDOW_HEIGHT, "My first window");
+	data->mlx = new_window(data->win_width, data->win_height, "My first window");
 	if (!data->mlx.win_ptr)
 		return (1);
-	data->image = new_img(WINDOW_WIDTH, WINDOW_HEIGHT, data->mlx);
+	data->image = new_img(data->win_width, data->win_height, data->mlx);
 
 	mlx_key_hook(data->mlx.win_ptr, handle_input, data);
-
-	// determine_window_ratio(data);
-
-
-	init_camera(data);
-	init_light_source(data);
-	// init_sphere(data);
-	// printf("data object: x, y, z %d %d %d\n", );
 	send_rays(data);
 	mlx_put_image_to_window(data->mlx.mlx_ptr, data->mlx.win_ptr, data->image.img_ptr, 0, 0);
 	mlx_loop(data->mlx.mlx_ptr);

@@ -1,26 +1,58 @@
 #include "parser.h"
 #include "get_next_line.h"
 
-int	example_intersect_sphere(void *object, t_vec4f obj_to_ray_vec)
+t_vec4f	example_intersect_sphere(void *object, t_ray ray)
 {
-	t_sphere *sphere = (t_sphere *)object;
+	t_sphere	*sphere = (t_sphere *)object;
+	t_vec4f		ray_to_object = sphere->location - ray.origin;
+	float		tc;
+	float		d2;
+	float		radius2;
+	float		t1c;
 
-	const float squared = powf(obj_to_ray_vec[0], 2) + powf(obj_to_ray_vec[1], 2) + powf(obj_to_ray_vec[2], 2);
-	// printf("hoi sphere:  %f, squared_root %f, color %d\n", sphere->radius, sqrtf(squared), sphere->color.color_code);
-	if (sqrtf(squared) <= sphere->radius)
-		return (TRUE);
-	else
-		return (FALSE);
+	tc = dot_product_3d(ray_to_object, ray.direction);
+	if (tc < 0.0f)
+		return ((t_vec4f){0, 0, 0, -1});
+	d2 = dot_product_3d(ray_to_object, ray_to_object) - (tc * tc);
+	radius2 = sphere->radius * sphere->radius;
+	if (d2 > radius2)
+		return ((t_vec4f){0, 0, 0, -1});
+	t1c = sqrtf(radius2 - d2);
+	t_vec4f result = ray.origin + ray.direction * (tc - t1c);
+	result[STATUS_INDEX] = SPHERE;
+	return (result);
 }
 
-int	example_intersect_cylinder(void *object, t_vec4f obj_to_ray_vec)
+t_vec4f	example_intersect_light(void *object, t_ray ray)
 {
-	return (FALSE);
+	t_light	*light = (t_light *)object;
+	t_vec4f		ray_to_object = light->location - ray.origin;
+	float		tc;
+	float		d2;
+	float		radius2;
+	float		t1c;
+
+	tc = dot_product_3d(ray_to_object, ray.direction);
+	if (tc < 0.0f)
+		return ((t_vec4f){0, 0, 0, -1});
+	d2 = dot_product_3d(ray_to_object, ray_to_object) - (tc * tc);
+	radius2 = light->radius * light->radius;
+	if (d2 > radius2)
+		return ((t_vec4f){0, 0, 0, -1});
+	t1c = sqrtf(radius2 - d2);
+	t_vec4f result = ray.origin + ray.direction * (tc - t1c);
+	result[STATUS_INDEX] = LIGHT;
+	return (result);
 }
 
-int example_intersect_plane(void *object, t_vec4f obj_to_ray_vec)
+t_vec4f	example_intersect_cylinder(void *object, t_ray ray)
 {
-	return (FALSE);
+	return ((t_vec4f){0, 0, 0, -1});
+}
+
+t_vec4f example_intersect_plane(void *object, t_ray ray)
+{
+	return ((t_vec4f){0, 0, 0, -1});
 }
 
 void print_sphere_data(void *object)
@@ -35,37 +67,67 @@ void print_camera_data(void *object)
 	printf("data camera: x, y, z %f %f %f\n", camera->location[0], camera->location[1], camera->location[2]);
 }
 
-t_vec4f t_get_location_sphere(void *object)
+void print_light_data(void *object)
 {
-	t_sphere *sphere = (t_sphere *)object;
-
-	return sphere->location;
+	t_light *light = (t_light *)object;
+	printf("data light: x, y, z %f %f %f\n", light->location[0], light->location[1], light->location[2]);
 }
-
 
 void	assign_intersect_functions(t_object *current)
 {
-	const intersect_ptr	function_pointer[OBJ_COUNT] = {
+	const intersect_ptr	function_pointer[OBJ_TYPE_COUNT] = {
 		NULL,
 		NULL,
-		NULL,
+		example_intersect_light,
 		example_intersect_sphere,
 		example_intersect_plane,
 		example_intersect_cylinder,
 	};
-	const print_data	function_pointer_data[OBJ_COUNT] = {
+	const print_data	function_pointer_data[OBJ_TYPE_COUNT] = {
 		NULL,
 		print_camera_data,
-		NULL,
+		print_light_data,
 		print_sphere_data,
 		NULL,
 		NULL,
 	};
-	const t_get_location	location_getters[OBJ_COUNT] = {
+	const t_get_location	location_getters[OBJ_TYPE_COUNT] = {
+		NULL,
+		NULL,
+		get_location_light,
+		get_location_sphere,
+		NULL,
+		NULL,
+	};
+	const t_get_color	color_getters[OBJ_TYPE_COUNT] = {
+		NULL,
+		NULL,
+		get_color_light,
+		get_color_sphere,
+		NULL,
+		NULL,
+	};
+	const t_get_smoothness	get_smoothness[OBJ_TYPE_COUNT] = {
 		NULL,
 		NULL,
 		NULL,
-		t_get_location_sphere,
+		get_smoothness_sphere,
+		NULL,
+		NULL,
+	};
+	const t_get_brightness	get_brightness[OBJ_TYPE_COUNT] = {
+		NULL,
+		NULL,
+		get_brightness_light,
+		NULL,
+		NULL,
+		NULL,
+	};
+	const t_set_location	location_setters[OBJ_TYPE_COUNT] = {
+		NULL,
+		NULL,
+		set_location_light,
+		set_location_sphere,
 		NULL,
 		NULL,
 	};
@@ -74,6 +136,10 @@ void	assign_intersect_functions(t_object *current)
 		current->intersect = (intersect_ptr)function_pointer[current->type];
 		current->print_object_data = (print_data)function_pointer_data[current->type];
 		current->get_location = (t_get_location)location_getters[current->type];
+		current->set_location = (t_set_location)location_setters[current->type];
+		current->get_color = (t_get_color)color_getters[current->type];
+		current->get_smoothness = (t_get_smoothness)get_smoothness[current->type];
+		current->get_brightness = (t_get_brightness)get_brightness[current->type];
 		current = current->next;
 	}
 }
@@ -92,7 +158,7 @@ static void	objects_to_scene_data(t_scene_data *scene, t_object *current)
 	}
 	object_removetype(&scene->objects, AMBIENT);
 	object_removetype(&scene->objects, CAMERA);
-	object_removetype(&scene->objects, LIGHT);
+	// object_removetype(&scene->objects, LIGHT);
 	assign_intersect_functions(scene->objects);
 }
 
@@ -123,7 +189,7 @@ static int	is_valid_scene(t_scene_data *scene)
 {
 	if (!is_valid_object_count(scene->obj_count[AMBIENT], AMBIENT, 1, 1) || \
 		!is_valid_object_count(scene->obj_count[CAMERA], CAMERA, 1, 1) || \
-		!is_valid_object_count(scene->obj_count[LIGHT], LIGHT, 1, 1) || \
+		!is_valid_object_count(scene->obj_count[LIGHT], LIGHT, 1, 10) || \
 		!is_valid_object_count(scene->obj_count[SPHERE], SPHERE, 0, 10) || \
 		!is_valid_object_count(scene->obj_count[PLANE], PLANE, 0, 10) || \
 		!is_valid_object_count(scene->obj_count[CYLINDER], CYLINDER, 0, 10))

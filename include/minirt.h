@@ -19,8 +19,17 @@
 
 typedef struct s_ray	t_ray;
 
-# define WINDOW_HEIGHT 1080
-# define WINDOW_WIDTH 1920
+# define WINDOW_HEIGHT 200
+# define WINDOW_WIDTH 200
+# define SAMPLES 4
+# define RADIUS 0.6f
+
+#ifndef MAX_BOUNCE_DEPTH
+ #define MAX_BOUNCE_DEPTH 3
+#endif
+#ifndef REFLECT_RAYS_N
+ #define REFLECT_RAYS_N 15
+#endif
 
 typedef struct s_scene_data t_scene_data;
 
@@ -121,7 +130,7 @@ typedef struct s_ray_sending_tools
 
 typedef struct s_scene_data
 {
-	int			obj_count[OBJ_COUNT];
+	int			obj_count[OBJ_TYPE_COUNT];
 	t_ambient	ambient;
 	t_camera	camera;
 	t_light		light;
@@ -129,8 +138,27 @@ typedef struct s_scene_data
 	t_object	*objects;
 	t_win		mlx;
 	t_img		image;
+	int			win_width;	
+	int			win_height;	
 }	t_scene_data;
 
+typedef struct s_material
+{
+	float		smoothness;
+	t_vec4f		color;
+} t_material;
+
+
+typedef struct s_hit_info
+{
+	t_object	*object;
+	t_objectid	type;
+	t_vec4f		hit_location;
+	float		length;
+	t_vec4f		emission;
+	t_vec4f		normal;
+	t_material	material;
+}	t_hit_info;
 
 void	matrix_multiplication(t_vec4f comp[3], t_ray *ray, t_vec4f camera_vector);
 void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m);
@@ -151,18 +179,30 @@ void	init_t_around_x(t_vec4f R[3], float rad);
 void	init_result(t_vec4f *M);
 float	ft_degr_to_rad(float x);
 float	ft_rad_to_degr(float x);
+t_vec4f	normal_orientation_to_degrees(t_vec4f orientation);
 int		render_scene(t_scene_data *data);
 void	send_rays(t_scene_data *scene);
 int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert);
+t_vec4f	ray_trace_coloring(t_scene_data *scene, t_vec4f color_bounce_sum, t_vec4f emmisive_light_color_sum, t_hit_info surface);
+
+t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth);
+void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit, int depth);
 
 void	put_pixel_img(t_img img, int x, int y, int color);
 void	init_rgb(t_color *rgb, int color);
 void 	init_rgb_f(t_vec4f *rgb_f, int rgb[3]);
 void	make_rgb_with_normalized_rgb_f(int rgb[3], t_vec4f rgb_f);
 int		create_color(int r, int g, int b);
+t_vec4f	int_to_vec4rgb(int color);
+int		vec4rgb_to_int(t_vec4f vec);
+float	interpolatef(float A, float B, float t);
 
 void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);
+
+float	vector_length(t_vec4f v);
+float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B);
+float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B);
 
 int		handle_input(int keysym, t_scene_data *data);
 

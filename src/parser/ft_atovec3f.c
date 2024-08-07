@@ -14,6 +14,7 @@ t_vec4f	atovec3f(const char *a_vec3f)
 	vec4[0] = ft_atof(split[0]);
 	vec4[1] = ft_atof(split[1]);
 	vec4[2] = ft_atof(split[2]);
+	vec4[3] = 1;
 	ft_free_2darray(split);
 	return (vec4);
 }

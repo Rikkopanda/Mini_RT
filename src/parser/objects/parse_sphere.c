@@ -7,7 +7,7 @@ int	parse_sphere(t_object **head, char **format)
 	t_sphere	*sphere;
 	t_object	*new;
 
-	if (ft_2darray_size(format) != 3)
+	if (ft_2darray_size(format) != 4)
 	{
 		fprintf(stderr, "Error: incorrect sphere info format.\n");
 		return (0);
@@ -16,7 +16,7 @@ int	parse_sphere(t_object **head, char **format)
 	if (!sphere)
 		return (perror("malloc error"), 0);
 	sphere->location = atovec3f(format[0]);
-	print_sphere_data(sphere);
+	// print_sphere_data(sphere);
 	// exit(0);
 	sphere->diameter = ft_atof(format[1]);
 	if (sphere->diameter <= 0)
@@ -27,6 +27,11 @@ cannot be 0 or lower.\n", sphere->diameter);
 	}
 	sphere->radius = sphere->diameter / 2;
 	sphere->color.color_code = ft_atohex(format[2]);
+	sphere->color.rgb_f = int_to_vec4rgb(sphere->color.color_code);
+	sphere->color.rgb_f[STATUS_INDEX] = SPHERE;
+	sphere->smoothness = ft_atof(format[3]);
+	// printf("smoothness parse %f\n", sphere->smoothness);
+
 	new = new_object(SPHERE, sphere);
 	if (!new)
 		return (perror("malloc error"), free(sphere), 0);

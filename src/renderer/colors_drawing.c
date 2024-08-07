@@ -31,6 +31,7 @@ void init_rgb_f(t_vec4f *rgb_f, int rgb[3])
 	(*rgb_f)[2] = rgb[2];
 	(*rgb_f)[3] = 0;
 }
+
 void make_rgb_with_normalized_rgb_f(int rgb[3], t_vec4f rgb_f)
 {
 	rgb[0] = (rgb_f[0] * (float)255);
@@ -55,4 +56,22 @@ int	interpolate(int color_A, int color_B, float t)
 	rgb_interpolate.rgb[1] = rgb_a.rgb[1] + (rgb_b.rgb[1] - rgb_a.rgb[1]) * t;
 	rgb_interpolate.rgb[2] = rgb_a.rgb[2] + (rgb_b.rgb[2] - rgb_a.rgb[2]) * t;
 	return (create_color(rgb_interpolate.rgb[0], rgb_interpolate.rgb[1], rgb_interpolate.rgb[2]));
+}
+
+float	interpolatef(float A, float B, float t)
+{
+	float result;
+
+	result = A + (B - A) * t; // 0.5 + (1 - 0.5) * 1 = 1
+	return result;
+}
+
+t_vec4f	int_to_vec4rgb(int color)
+{
+	return ((t_vec4f){get_r(color), get_g(color), get_b(color), 1});
+}
+
+int	vec4rgb_to_int(t_vec4f vec)
+{
+	return ((int)vec[0] << 16 | (int)vec[1] << 8 | (int)vec[2]);
 }

@@ -45,6 +45,19 @@ assert_non_error() {
 	assert_mem $test_args
 }
 
+assert_non_error() {
+	local -r test_args=$1
+	echo -e "$program $test_args"
+	if [ "$($program $test_args 2>&1 | grep -i "error")" != "" ]; then
+		echo -e $red"output: $($program $test_args)"$reset
+		echo -e $red"[KO]"$reset
+		exit 0
+	else
+		echo -ne $green"[OK] "$reset
+	fi
+	assert_mem $test_args
+}
+
 assert_mem() {
 	local -r test_args=$1
 	local tmpfile=$(mktemp)

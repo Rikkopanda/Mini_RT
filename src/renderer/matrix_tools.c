@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   matrix_tools.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/06/13 10:53:30 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/07/29 14:56:50 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,22 @@ void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m)
 	
 }
 
+float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B)
+{
+	return ((vec_A[0] * vec_B[0]) + (vec_A[1] * vec_B[1]) + (vec_A[2] * vec_B[2]));
+}
 
+float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
+{
+	return ((vec_A[2] * vec_B[3]) - (vec_B[2] * vec_A[3]) +
+			(vec_A[3] * vec_B[1]) - (vec_B[3] * vec_A[1]) +
+			(vec_A[1] * vec_B[2]) - (vec_B[1] * vec_A[2]));
+}
+
+float	vector_length(t_vec4f v)
+{
+	return (sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]));
+}
 
 void	vector_scaling(t_vec4f *v, float scale)
 {
@@ -112,12 +127,17 @@ float	ft_degr_to_rad(float x)
 	return (x);
 }
 
+t_vec4f	normal_orientation_to_degrees(t_vec4f orientation)
+{
+	return (orientation * 180.0f);
+}
+
 void	print_matrix_1_3(t_vec4f m)
 {
 	int i;
 
 	i = 0;
-	while (i < 3)
+	while (i < 4)
 	{
 		printf("%f\t", m[i]);
 		i++;

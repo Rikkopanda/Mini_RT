@@ -11,7 +11,7 @@ void normalize_vector(t_vec4f *v)
 
 	squared = pow((double)(*v)[0], 2) + pow((double)(*v)[1], 2) + pow((double)(*v)[2], 2);
 	magnitude = (float)sqrt(squared);
-	vector_scaling(v, 1 / magnitude);
+	*v = *v * (1.0f / magnitude);
 }
 
 void	print_vec4ftor(float vec[3])

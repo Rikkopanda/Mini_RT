@@ -39,7 +39,7 @@ static int	handle_object_type(t_object **objects, \
 	return (0);
 }
 
-int	parse_object(const char *line, int obj_count[OBJ_COUNT], t_object **objects)
+int	parse_object(const char *line, int obj_count[OBJ_TYPE_COUNT], t_object **objects)
 {
 	char		**split;
 	int			ret;

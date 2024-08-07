@@ -22,6 +22,7 @@ int	parse_plane(t_object **objects, char **format)
 		return (free(plane), 0);
 	}
 	plane->color.color_code = ft_atohex(format[2]);
+	plane->color.rgb_f = int_to_vec4rgb(plane->color.color_code);
 	new = new_object(PLANE, plane);
 	if (!new)
 		return (perror("malloc error"), free(plane), 0);

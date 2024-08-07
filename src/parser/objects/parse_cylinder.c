@@ -43,6 +43,7 @@ int	parse_cylinder(t_object **objects, char **format)
 	if (!has_valid_ranges(cylinder))
 		return (free(cylinder), 0);
 	cylinder->color.color_code = ft_atohex(format[4]);
+	cylinder->color.rgb_f = int_to_vec4rgb(cylinder->color.color_code);
 	new = new_object(CYLINDER, cylinder);
 	if (!new)
 		return (perror("malloc error"), free(cylinder), 0);

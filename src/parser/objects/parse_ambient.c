@@ -22,6 +22,7 @@ out of range [0.0, 1.0]\n", ambient->ratio);
 		return (free(ambient), 0);
 	}
 	ambient->color.color_code = ft_atohex(format[1]);
+	ambient->color.rgb_f = int_to_vec4rgb(ambient->color.color_code);
 	new = new_object(AMBIENT, ambient);
 	if (!new)
 		return (perror("malloc error"), free(ambient), 0);
