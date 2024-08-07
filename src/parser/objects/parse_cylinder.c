@@ -39,9 +39,11 @@ int	parse_cylinder(t_object **objects, char **format)
 	cylinder->location = atovec3f(format[0]);
 	cylinder->vector = atovec3f(format[1]);
 	cylinder->diameter = ft_atof(format[2]);
+	cylinder->radius = cylinder->diameter / 2;
 	cylinder->height = ft_atof(format[3]);
 	if (!has_valid_ranges(cylinder))
 		return (free(cylinder), 0);
+	normalize_vector(&cylinder->vector);
 	cylinder->color.color_code = ft_atohex(format[4]);
 	cylinder->color.rgb_f = int_to_vec4rgb(cylinder->color.color_code);
 	new = new_object(CYLINDER, cylinder);

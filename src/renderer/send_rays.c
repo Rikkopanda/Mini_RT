@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   send_rays.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/08/07 20:05:53 by rikverhoeve      ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   send_rays.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
+/*   Updated: 2024/08/07 20:56:57 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,8 +204,8 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
 	t_ray		ray;
 	float		pixel_camera_x;
 	float		pixel_camera_y;
+	const float	near_plane = 1e-1f;
 
-	ray.origin = scene->camera.location;
 	pixel_camera_x = (2.0f * ((x + 0.5) / (float)scene->win_width) - 1) * \
 				tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f) * aspect_ratio;
 	pixel_camera_y = (1.0f - 2.0f * ((y + 0.5) / (float)scene->win_height)) * \
@@ -213,6 +213,7 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
 	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 1};
 	normalize_vector(&ray.direction);
 	ray.direction = apply_rotation(ray.direction, scene->camera.orientation);
+	ray.origin = scene->camera.location + ray.direction * near_plane;
 	return (ray);
 }
 
@@ -232,7 +233,7 @@ t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], \
 	t_vec4f		color;
 	int			i;
 	float		angle;
-	const float	inc = 2 * M_PI / samples;
+	float		inc;
 
 	angle = 0;
 	i = 0;
@@ -241,6 +242,8 @@ t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], \
 	color = trace_ray(scene, ray, 0);
 	color *= 255;
 	return color;
+	if (samples != 0)
+		inc = 2 * M_PI / samples;
 	while (i < samples)
 	{
 		ray = construct_camera_ray(raycenter[0] + RADIUS * cos(angle), \

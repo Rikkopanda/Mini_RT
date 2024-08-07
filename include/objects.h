@@ -88,6 +88,8 @@ typedef void (*t_set_location)(void *object, int xyz_index, int addition);
 
 typedef t_vec4f (*t_get_color)(void *object);
 
+typedef t_vec4f (*t_get_normal)(void *object, t_vec4f point);
+
 typedef float (*t_get_smoothness)(void *object);
 
 typedef float (*t_get_brightness)(void *object);
@@ -100,6 +102,7 @@ typedef struct s_object
 	t_get_location		get_location;
 	t_set_location		set_location;
 	t_get_color			get_color;
+	t_get_normal		get_normal;
 	t_get_smoothness	get_smoothness;
 	t_get_brightness	get_brightness;
 	intersect_ptr		intersect;
