@@ -28,7 +28,7 @@ int	parse_cylinder(t_object **objects, char **format)
 	t_cylinder	*cylinder;
 	t_object	*new;
 
-	if (ft_2darray_size(format) != 5)
+	if (ft_2darray_size(format) != 6)
 	{
 		fprintf(stderr, "Error: incorrect cylinder info format.\n");
 		return (0);
@@ -45,6 +45,7 @@ int	parse_cylinder(t_object **objects, char **format)
 		return (free(cylinder), 0);
 	normalize_vector(&cylinder->vector);
 	cylinder->color.color_code = ft_atohex(format[4]);
+	cylinder->smoothness = ft_atof(format[5]);
 	cylinder->color.rgb_f = int_to_vec4rgb(cylinder->color.color_code);
 	new = new_object(CYLINDER, cylinder);
 	if (!new)

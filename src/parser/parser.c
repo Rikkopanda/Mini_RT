@@ -223,20 +223,6 @@ void print_light_data(void *object)
 	printf("data light: x, y, z %f %f %f\n", light->location[0], light->location[1], light->location[2]);
 }
 
-t_vec4f get_location_sphere(void *object)
-{
-	t_sphere *sphere = (t_sphere *)object;
-
-	return (sphere->location);
-}
-
-t_vec4f	get_color_sphere(void *object)
-{
-	t_sphere *sphere = (t_sphere *)object;
-
-	return (sphere->color.rgb_f);
-}
-
 t_vec4f get_location_cylinder(void *object)
 {
 	t_cylinder *cylinder = (t_cylinder *)object;
@@ -270,6 +256,13 @@ t_vec4f	get_color_cylinder(void *object)
 	t_cylinder *cylinder = (t_cylinder *)object;
 
 	return (cylinder->color.rgb_f);
+}
+
+float	get_smoothness_cylinder(void *object)
+{
+	t_cylinder *cylinder = (t_cylinder *)object;
+
+	return (cylinder->smoothness);
 }
 
 t_vec4f	get_normal_sphere(void *object, t_vec4f point)
@@ -330,16 +323,16 @@ void	assign_intersect_functions(t_object *current)
 		NULL,
 		get_color_light,
 		get_color_sphere,
-		NULL,
-		NULL,
+		get_color_plane,
+		get_color_cylinder,
 	};
 	const t_get_smoothness	get_smoothness[OBJ_TYPE_COUNT] = {
 		NULL,
 		NULL,
 		NULL,
 		get_smoothness_sphere,
-		NULL,
-		NULL,
+		get_smoothness_sphere,
+		get_smoothness_cylinder,
 	};
 	const t_get_brightness	get_brightness[OBJ_TYPE_COUNT] = {
 		NULL,
@@ -361,7 +354,7 @@ void	assign_intersect_functions(t_object *current)
 	const t_get_normal		normal_getters[OBJ_TYPE_COUNT] = {
 		NULL,
 		NULL,
-		NULL,
+		get_normal_sphere,
 		get_normal_sphere,
 		get_normal_plane,
 		get_normal_cylinder,

@@ -62,6 +62,7 @@ typedef struct s_cylinder
 	float	diameter;
 	float	radius;
 	float	height;
+	float	smoothness;
 	t_color	color;
 }	t_cylinder;
 
