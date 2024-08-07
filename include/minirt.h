@@ -172,8 +172,8 @@ int		vec4rgb_to_int(t_vec4f vec);
 void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);
 
-float	magnitude(t_vec4f v);
-float	dot(t_vec4f vec_A, t_vec4f vec_B);
+float	vector_length(t_vec4f v);
+float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B);
 float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B);
 
 int		handle_input(int keysym, t_scene_data *data);

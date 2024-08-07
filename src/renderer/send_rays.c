@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/08/06 16:23:30 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/07 20:01:17 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,8 +119,8 @@ int	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 {
 	const t_vec4f	surface_to_light = scene->light.location - surface.hit_location;
 	const t_vec4f	surface_to_cam = scene->camera.location - surface.hit_location;
-	const float		distance_to_light = magnitude(surface_to_light);
-	const float		distance_to_cam = magnitude(surface_to_cam);
+	const float		distance_to_light = vector_length(surface_to_light);
+	const float		distance_to_cam = vector_length(surface_to_cam);
 	const float		strength = scene->light.ratio / distance_to_light * 50.0f;
 	t_vec4f			halfway_vec = (surface_to_light + surface_to_cam) / (distance_to_light + distance_to_cam); // wat doet de / (dist1 + dist2)  als je toch gaat normalizen?
 	t_vec4f			diffuse;
@@ -130,9 +130,9 @@ int	blinn_phong_shading(t_scene_data *scene, t_hit_info surface)
 
 	normalize_vector(&halfway_vec);
 	ambient = (scene->ambient.ratio * scene->ambient.color.rgb_f + scene->ambient.ratio * surface.color) / 2;
-	diffuse = ft_maxf(dot(surface_to_light, surface.normal) / distance_to_light, 0.0f) * surface.color;
+	diffuse = ft_maxf(dot_product_3d(surface_to_light, surface.normal) / distance_to_light, 0.0f) * surface.color;
 	const float spec_strength = 0.5f;
-	specular = powf(ft_maxf(dot(halfway_vec, surface.normal), 0.0f), fac) * scene->light.color.rgb_f * spec_strength;
+	specular = powf(ft_maxf(dot_product_3d(halfway_vec, surface.normal), 0.0f), fac) * scene->light.color.rgb_f * spec_strength;
 	surface.color = (diffuse + specular) * strength + ambient;// hoe is de voorrang van haakjes?
 	surface.color[0] = ft_min(surface.color[0], 255);
 	surface.color[1] = ft_min(surface.color[1], 255);
@@ -174,7 +174,7 @@ int	object_hit_color(t_scene_data *scene, t_ray ray)
 		hit = current->intersect(current->object, ray);
 		if (hit[STATUS_INDEX] != -1)
 		{
-			length = fabsf(magnitude(hit - ray.origin)); // fabs omdat we ook in de negatieve richting kunnen kijken als de camera zo staat?
+			length = fabsf(vector_length(hit - ray.origin)); // fabs omdat we ook in de negatieve richting kunnen kijken als de camera zo staat?
 			if (length <= closest_hit.length)
 				update_hit_info(&closest_hit, hit, current, length);
 		}
