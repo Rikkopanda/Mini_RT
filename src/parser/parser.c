@@ -24,6 +24,7 @@ float	solve_ti(t_ray ray, t_vec4f sphere_center, \
 t_vec4f	intersect_sphere(void *object, t_ray ray)
 {
 	t_sphere	*sphere = (t_sphere *)object;
+	t_vec4f		result;
 	float		ti;
 	float		tp;
 	float		t[2];
@@ -40,7 +41,11 @@ t_vec4f	intersect_sphere(void *object, t_ray ray)
 	if (t[1] > 0)
 		t_min = fminf(t_min, t[1]);
 	if (t_min < INFINITY)
-		return (ray.origin + ray.direction * t_min);
+	{
+		result = ray.origin + ray.direction * t_min;
+		result[STATUS_INDEX] = SPHERE;
+		return (result);
+	}
 	return ((t_vec4f){0, 0, 0, -1});
 }
 
@@ -114,20 +119,21 @@ void	validate_intersection_distance(t_ray ray, const t_cylinder *cylinder,
 		ray.origin + ray.direction * intersect->t_top,
 		ray.origin + ray.direction * intersect->t_bottom,
 	};
+	const float		half_height = cylinder->height / 2;
 
 	height1 = dot_product_3d(point[0] - cylinder->location, cylinder->vector) \
 				/ vector_length(cylinder->vector);
 	height2 = dot_product_3d(point[1] - cylinder->location, cylinder->vector) \
 				/ vector_length(cylinder->vector);
-	if (height1 < -cylinder->height / 2 || height1 > cylinder->height / 2)
+	if (height1 < -half_height || height1 > half_height)
 		intersect->t1 = -1;
-	if (height2 < -cylinder->height / 2 || height2 > cylinder->height / 2)
+	if (height2 < -half_height || height2 > half_height)
 		intersect->t2 = -1;
 	if (vector_length(point[2] - cylinder->location - cylinder->vector * \
-		(cylinder->height / 2)) > cylinder->radius || intersect->t_top < 0)
+		half_height) > cylinder->radius || intersect->t_top < 0)
 		intersect->t_top = -1;
 	if (vector_length(point[3] - cylinder->location + cylinder->vector * \
-		(cylinder->height / 2)) > cylinder->radius || intersect->t_bottom < 0)
+		half_height) > cylinder->radius || intersect->t_bottom < 0)
 		intersect->t_bottom = -1;
 }
 
@@ -158,6 +164,7 @@ float	closest_intersect_distance(float t1, float t2, \
 t_vec4f	intersect_cylinder(void *object, t_ray ray)
 {
 	const t_cylinder		*cylinder = (t_cylinder *)object;
+	t_vec4f					result;
 	t_cylinder_intersect	intersect;
 	float					discriminant;
 
@@ -177,12 +184,15 @@ t_vec4f	intersect_cylinder(void *object, t_ray ray)
 						intersect.t_top, intersect.t_bottom);
 	if (intersect.t_min == -1)
 		return ((t_vec4f){0, 0, 0, -1});
-	return (ray.origin + ray.direction * intersect.t_min);
+	result = ray.origin + ray.direction * intersect.t_min;
+	result[STATUS_INDEX] = CYLINDER;
+	return (result);
 }
 
 t_vec4f intersect_plane(void *object, t_ray ray)
 {
 	const t_plane	*plane = (t_plane *)object;
+	t_vec4f			result;
 	float			t;
 	float			denominator;
 	const float		epsilon = 1e-4f;
@@ -194,7 +204,9 @@ t_vec4f intersect_plane(void *object, t_ray ray)
 		dot_product_3d(plane->location, -plane->vector)) / denominator;
 	if (t <= epsilon)
 		return ((t_vec4f){0, 0, 0, -1});
-	return (ray.origin + ray.direction * t);
+	result = ray.origin + ray.direction * t;
+	result[STATUS_INDEX] = PLANE;
+	return (result);
 }
 
 void print_sphere_data(void *object)
@@ -255,6 +267,13 @@ float	get_smoothness_cylinder(void *object)
 	t_cylinder *cylinder = (t_cylinder *)object;
 
 	return (cylinder->smoothness);
+}
+
+t_vec4f	get_normal_light(void *object, t_vec4f point)
+{
+	t_light *light = (t_light *)object;
+
+	return (point - light->location);
 }
 
 t_vec4f	get_normal_sphere(void *object, t_vec4f point)
@@ -341,12 +360,11 @@ void	assign_intersect_functions(t_object *current)
 		set_location_sphere,
 		NULL,
 		NULL,
-		NULL,
 	};
 	const t_get_normal		normal_getters[OBJ_TYPE_COUNT] = {
 		NULL,
 		NULL,
-		get_normal_sphere,
+		get_normal_light,
 		get_normal_sphere,
 		get_normal_plane,
 		get_normal_cylinder,
