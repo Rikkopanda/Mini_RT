@@ -2,9 +2,9 @@ NAME = minirt
 
 # CFLAGS = -Wall -Wextra -Werror
 # CFLAGS := -fsanitize=address
-# CFLAGS += -Ofast
+CFLAGS += -Ofast
 # CFLAGS += -fPIE
-CFLAGS := -g
+# CFLAGS := -g
 
 CC = cc
 
@@ -25,7 +25,6 @@ DIR_PARSER = parser
 DIR_PARSER_OBJECTS = objects
 DIR_PARSER_GETTERS = getters_setters
 DIR_OBJ = obj
-
 DIR_RENDERER = renderer
 
 REFL_RAYS_N = 45
@@ -34,30 +33,26 @@ MAX_BOUNCE_DEPTH = 3
 CFLAGS += -DREFL_RAYS_N=$(REFL_RAYS_N)
 CFLAGS += -DMAX_BOUNCE_DEPTH=$(MAX_BOUNCE_DEPTH)
 
-SRC = main.c
+SRC = main.c parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
+		ft_split_charset.c ft_str_endswith.c object_list.c \
+		ft_min_max.c ft_atohex.c ft_free_2darray.c clamped_rgb_to_hex.c \
+		ft_vec_in_range.c parse_object.c \
+		parse_ambient.c parse_camera.c parse_cylinder.c \
+		parse_light.c parse_plane.c parse_sphere.c \
+		sphere.c light.c render_scene.c matrixes.c matrix_tools.c \
+		send_rays.c vector_functions.c \
+		hooks.c ft_mlx_functions.c \
+		summation.c trace_ray.c check_intersection.c std_color_functions_1.c \
+		std_color_functions_2.c quaternion_functions.c orient_ray_coordinates.c \
+		random_vec_gen.c
 
-SRC_PARSER =	parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
-				ft_split_charset.c ft_str_endswith.c object_list.c \
-				ft_min_max.c ft_atohex.c ft_free_2darray.c clamped_rgb_to_hex.c \
-				ft_vec_in_range.c parse_object.c
-SRC_PARSER_OBJECTS =	parse_ambient.c parse_camera.c parse_cylinder.c \
-						parse_light.c parse_plane.c parse_sphere.c
-SRC_PARSER_OBJECTS := ${addprefix ${DIR_PARSER_OBJECTS}/, ${SRC_PARSER_OBJECTS}}
-SRC_PARSER_GETTERS =	sphere.c light.c
-SRC_PARSER_GETTERS := ${addprefix ${DIR_PARSER_GETTERS}/, ${SRC_PARSER_GETTERS}}
-SRC_PARSER := ${addprefix ${DIR_PARSER}/, ${SRC_PARSER} ${SRC_PARSER_OBJECTS} ${SRC_PARSER_GETTERS}}
+vpath %.c ${DIR_SRC}
+vpath %.c ${DIR_SRC}/${DIR_PARSER}
+vpath %.c ${DIR_SRC}/${DIR_PARSER}/${DIR_PARSER_OBJECTS}
+vpath %.c ${DIR_SRC}/${DIR_PARSER}/${DIR_PARSER_GETTERS}
+vpath %.c ${DIR_SRC}/${DIR_RENDERER}
 
-SRC_RENDERER =	render_scene.c matrixes.c matrix_tools.c \
-	send_rays.c vector_functions.c \
-	hooks.c ft_mlx_functions.c \
-	summation.c trace_ray.c check_intersection.c std_color_functions_1.c \
-	std_color_functions_2.c quaternion_functions.c orient_ray_coordinates.c \
-	random_vec_gen.c
-SRC_RENDERER := ${addprefix ${DIR_RENDERER}/, ${SRC_RENDERER}}
-
-SRC := ${addprefix ${DIR_SRC}/, ${SRC} ${SRC_PARSER} ${SRC_RENDERER}}
-
-OBJ = ${subst ${DIR_SRC}/, ${DIR_OBJ}/, ${SRC:.c=.o}}
+OBJ = ${notdir ${SRC:.c=.o}}
 
 ${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT} ${LIBGNL}
 	$(CC) ${CFLAGS} $^ ${LINKS} ${LINKS_MLX} -o $@
@@ -71,7 +66,7 @@ ${LIBFT}:
 ${LIBGNL}:
 	make -C ${DIR_LIB}/get_next_line
 
-${OBJ}: ${DIR_OBJ}/%.o: ${DIR_SRC}/%.c
+${OBJ}: %.o: %.c
 	@mkdir -p ${@D}
 	$(CC) ${CFLAGS} ${INCLUDE} -c $< -o $@
 
