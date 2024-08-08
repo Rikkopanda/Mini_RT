@@ -17,7 +17,6 @@ INCLUDE = -I./include -I./${DIR_LIB}/minilibx-linux -I./${DIR_LIB}/libft -I./${D
 
 MLX_LIB = ${DIR_LIB}/minilibx-linux/libmlx.a
 
-
 LIBFT = ${DIR_LIB}/libft/libft.a
 LIBGNL = ${DIR_LIB}/get_next_line/libgnl.a
 
@@ -29,10 +28,10 @@ DIR_OBJ = obj
 
 DIR_RENDERER = renderer
 
-RAYS_N = 45
+REFL_RAYS_N = 45
 MAX_BOUNCE_DEPTH = 3
 
-CFLAGS += -DREFLECT_RAYS_N=$(RAYS_N)
+CFLAGS += -DREFL_RAYS_N=$(REFL_RAYS_N)
 CFLAGS += -DMAX_BOUNCE_DEPTH=$(MAX_BOUNCE_DEPTH)
 
 SRC = main.c
@@ -50,8 +49,10 @@ SRC_PARSER := ${addprefix ${DIR_PARSER}/, ${SRC_PARSER} ${SRC_PARSER_OBJECTS} ${
 
 SRC_RENDERER =	render_scene.c matrixes.c matrix_tools.c \
 	send_rays.c vector_functions.c \
-	colors_drawing.c hooks.c ft_mlx_functions.c \
-	summation.c trace_ray.c check_intersection.c
+	hooks.c ft_mlx_functions.c \
+	summation.c trace_ray.c check_intersection.c std_color_functions_1.c \
+	std_color_functions_2.c quaternion_functions.c orient_ray_coordinates.c \
+	random_vec_gen.c
 SRC_RENDERER := ${addprefix ${DIR_RENDERER}/, ${SRC_RENDERER}}
 
 SRC := ${addprefix ${DIR_SRC}/, ${SRC} ${SRC_PARSER} ${SRC_RENDERER}}
@@ -78,6 +79,9 @@ all: ${NAME}
 
 debug: CFLAGS += -g
 debug: re
+
+print: CFLAGS += -DPRINT_STATUS
+print: re
 
 clean:
 	rm -f ${OBJ}

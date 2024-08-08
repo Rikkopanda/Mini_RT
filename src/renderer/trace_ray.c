@@ -53,7 +53,7 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 		return (hit_info.emission);
 	else if (hit_info.type == LIGHT)
 		return (hit_info.emission);
-	for(int i = 0; i < REFLECT_RAYS_N; i++)
+	for(int i = 0; i < REFL_RAYS_N; i++)
 	{
 		// printf("\n_______________\nincident dir ray\n");
 		// print_matrix_1_3(ray.direction);
@@ -86,7 +86,7 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 
 		IncomingLightColor += (trace_ray(scene, ray, bounce_depth + 1));
 	}
-	t_vec4f result_color = (hit_info.material.color / 255) * (IncomingLightColor / REFLECT_RAYS_N);
+	t_vec4f result_color = (hit_info.material.color / 255) * (IncomingLightColor / REFL_RAYS_N);
 	// result_color += (hit_info.material.color / 255) * (IncomingLightColor / REFLECT_RAYS);//material.color in ranges 0-255, incomininglight in ranges of 0-1 finally
 	// printf("result color\n");
 	result_color += hit_info.emission;

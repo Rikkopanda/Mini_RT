@@ -6,6 +6,11 @@ void	print_vec4f(t_vec4f vec4f)
 	printf("(%.2f, %.2f, %.2f, %.2f)", vec4f[0], vec4f[1], vec4f[2], vec4f[3]);
 }
 
+void	print_vec3(t_vec4f v, const char *msg)
+{
+	printf("%s [%.4f, %.4f, %.4f]\n", msg, v[0], v[1], v[2]);
+}
+
 void	print_ambient_info(t_ambient ambient)
 {
 	printf("[ambient]\n");

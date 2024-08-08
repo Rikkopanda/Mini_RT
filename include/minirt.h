@@ -27,8 +27,8 @@ typedef struct s_ray	t_ray;
 #ifndef MAX_BOUNCE_DEPTH
  #define MAX_BOUNCE_DEPTH 3
 #endif
-#ifndef REFLECT_RAYS_N
- #define REFLECT_RAYS_N 15
+#ifndef REFL_RAYS_N
+ #define REFL_RAYS_N 15
 #endif
 
 typedef struct s_scene_data t_scene_data;
@@ -171,8 +171,6 @@ void	vector_scaling(t_vec4f *v, float scale);
 
 
 int		interpolate(int color_A, int color_B, float t);
-void	init_ray_send_tools(t_ray_sending_tools *r_t, t_scene_data *scene);
-
 void	init_t_around_z(t_vec4f R[3], float rad);
 void	init_t_around_y(t_vec4f R[3], float rad);
 void	init_t_around_x(t_vec4f R[3], float rad);
@@ -196,6 +194,12 @@ int		create_color(int r, int g, int b);
 t_vec4f	int_to_vec4rgb(int color);
 int		vec4rgb_to_int(t_vec4f vec);
 float	interpolatef(float A, float B, float t);
+
+t_vec4f	apply_rotation(t_vec4f point, t_vec4f rotation);
+t_vec4f	invert_quaternion(t_vec4f quaternion);
+t_vec4f	invert_unit_quaternion(t_vec4f uq);
+t_vec4f	axis_angle_to_quaternion(t_vec4f axis, float angle_rad);
+t_vec4f	hamilton_product(t_vec4f q1, t_vec4f q2);
 
 void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);

@@ -18,3 +18,13 @@ void	print_vec4ftor(float vec[3])
 {
 	printf("x: %f, y: %f, z: %f\n", vec[0], vec[1], vec[2]);
 }
+
+t_vec4f	int_to_vec4rgb(int color)
+{
+	return ((t_vec4f){get_r(color), get_g(color), get_b(color), 1});
+}
+
+int	vec4rgb_to_int(t_vec4f vec)
+{
+	return ((int)vec[0] << 16 | (int)vec[1] << 8 | (int)vec[2]);
+}
