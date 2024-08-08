@@ -17,6 +17,7 @@
 // typedef struct s_img		t_img;
 
 /* parser lib functions */
+void		swapf(float *a, float *b);
 int			ft_min(int a, int b);
 int			ft_max(int a, int b);
 float		ft_atof(const char *s);

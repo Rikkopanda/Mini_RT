@@ -1,14 +1,6 @@
 #include "parser.h"
 #include "get_next_line.h"
 
-void	swapf(float *a, float *b)
-{
-	float temp;
-
-	temp = *a;
-	*a = *b;
-	*b = temp;
-}
 
 float	solve_ti(t_ray ray, t_vec4f sphere_center, \
 				float sphere_radius, float *tp)
