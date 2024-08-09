@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/08/09 17:45:23 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:55:55 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
 // }
 
 t_vec4f	shoot_ray(t_scene_data *scene, const float raycenter[2], \
-					const float aspect_ratio, const float samples)
+					const float aspect_ratio)
 {
 	t_ray		ray;
 	t_vec4f		color;
@@ -98,7 +98,6 @@ void	send_rays(t_scene_data *scene)
 	int			ray_y;
 	t_vec4f		color;
 	const float	aspect_ratio = (float)scene->win_width / scene->win_height;
-	const int	samples = 2;
 
 	ray_y = 0;
 	while (ray_y < scene->win_height)
@@ -107,7 +106,7 @@ void	send_rays(t_scene_data *scene)
 		while (ray_x < scene->win_width)
 		{
 			color = shoot_ray(scene, (float [2]){ray_x, ray_y}, \
-								aspect_ratio, samples);
+								aspect_ratio);
 			put_pixel_img(scene->image, ray_x, ray_y, vec4rgb_to_int(color));
 			ray_x++;
 			if (PRINT_STATUS)

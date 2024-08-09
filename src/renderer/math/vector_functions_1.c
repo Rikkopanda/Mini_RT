@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 12:41:06 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 15:21:12 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:52:32 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * https://www.freetext.org/Introduction_to_Linear_
  * Algebra/Basic_Vector_Operations/Normalization/
 */
-void	normalize_vector(t_vec4f *v)
+t_vec4f	normalize_vector(t_vec4f *v)
 {
 	float	magnitude;
 	double	squared;
@@ -25,6 +25,7 @@ void	normalize_vector(t_vec4f *v)
 		+ pow((double)(*v)[2], 2);
 	magnitude = (float)sqrt(squared);
 	*v = *v * (1.0f / magnitude);
+	return (*v);
 }
 
 void	print_vec4ftor(float vec[3])

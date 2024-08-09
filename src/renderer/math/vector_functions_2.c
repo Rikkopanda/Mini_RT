@@ -6,13 +6,13 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 12:19:24 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 15:21:04 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:53:42 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B)
+float	dot3(t_vec4f vec_A, t_vec4f vec_B)
 {
 	return ((vec_A[0] * vec_B[0]) + \
 		(vec_A[1] * vec_B[1]) + (vec_A[2] * vec_B[2]));

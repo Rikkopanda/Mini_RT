@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 15:19:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 17:45:30 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:57:49 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,10 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 {
 	t_hit_info	hit_info;
 	t_vec4f		light_in;
-	t_vec4f		incident_origin;
 	t_vec4f		result_color;
 
 	hit_info.incident_origin = ray.origin;
-	check_intersection(scene, ray, &hit_info, bounce_depth);
+	check_intersection(scene, ray, &hit_info);
 	ray.origin = hit_info.hit_location;
 	if (hit_info.type == NONE)
 	{

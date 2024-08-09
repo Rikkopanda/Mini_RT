@@ -1,6 +1,6 @@
 NAME = minirt
 
-# CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 # CFLAGS := -fsanitize=address
 CFLAGS += -Ofast
 # CFLAGS += -fPIE
@@ -42,16 +42,22 @@ SRC = main.c parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
 		ft_vec_in_range.c parse_object.c \
 		parse_ambient.c parse_camera.c parse_cylinder.c \
 		parse_light.c parse_plane.c parse_sphere.c \
-		sphere.c light.c render_scene.c matrixes.c matrix_tools_1.c matrix_tools_2.c \
+		render_scene.c matrixes.c matrix_tools_1.c matrix_tools_2.c \
 		send_rays.c vector_functions_1.c vector_functions_2.c \
 		hooks.c ft_mlx_functions.c math_tools.c \
 		trace_ray.c check_intersection.c std_color_functions_1.c \
 		std_color_functions_2.c quaternion_functions.c orient_ray_coordinates.c \
 		random_vec_gen.c hooks_action_rotate.c hooks_action_move.c \
-		trace_ray_helpers.c vector_functions_3.c
+		trace_ray_helpers.c vector_functions_3.c \
+		sphere_get_set.c plane_get_set.c cylinder_get_set.c light_get_set.c \
+		assign_geometric_get_set.c assign_material_get_set.c print_data.c \
+		cylinder_intersect.c plane_intersect.c sphere_intersect.c light_intersect.c \
+		swapf.c
+
 
 vpath %.c ${DIR_SRC}
 vpath %.c ${DIR_SRC}/${DIR_PARSER}
+vpath %.c ${DIR_SRC}/${DIR_PARSER}/${DIR_PARSER_INTERSECTS}
 vpath %.c ${DIR_SRC}/${DIR_PARSER}/${DIR_PARSER_OBJECTS}
 vpath %.c ${DIR_SRC}/${DIR_PARSER}/${DIR_PARSER_GETTERS}
 vpath %.c ${DIR_SRC}/${DIR_RENDERER}

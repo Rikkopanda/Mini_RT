@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 15:19:11 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 16:20:51 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:54:03 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_vec4f	generate_random_vec4f_hemisphere(t_vec4f normal)
 	random_vec[2] = (float)rand();
 	random_vec[3] = 0.0f;
 	normalize_vector(&random_vec);
-	if (dot_product_3d(random_vec, normal) < 0.0f)
+	if (dot3(random_vec, normal) < 0.0f)
 	{
 		random_vec *= -1.0f;
 	}
@@ -32,7 +32,7 @@ t_vec4f	reflect(t_vec4f normal, t_vec4f incoming)
 {
 	t_vec4f	reflection;
 
-	reflection = incoming - (2 * dot_product_3d(incoming, normal) * normal);
+	reflection = incoming - (2 * dot3(incoming, normal) * normal);
 	return (reflection);
 }
 

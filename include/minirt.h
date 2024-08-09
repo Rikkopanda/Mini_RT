@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minirt.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/09 18:08:22 by rverhoev          #+#    #+#             */
+/*   Updated: 2024/08/09 18:08:24 by rverhoev         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 // #pragma once
 
 #ifndef MINIRT_H
@@ -38,6 +50,12 @@ typedef struct s_ray	t_ray;
 #endif
 #ifndef MOVE_DIST
  #define MOVE_DIST 10
+#endif
+#ifndef DEGREES
+ #define DEGREES 10
+#endif
+#ifndef ROTATION_MAX
+ #define ROTATION_MAX 180
 #endif
 
 typedef struct s_scene_data t_scene_data;
@@ -192,7 +210,7 @@ void	send_rays(t_scene_data *scene);
 int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert);
 
 t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth);
-void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit, int depth);
+void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit);
 
 void	put_pixel_img(t_img img, int x, int y, int color);
 void	init_rgb(t_color *rgb, int color);

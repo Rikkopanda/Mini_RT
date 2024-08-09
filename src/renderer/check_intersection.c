@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 16:23:38 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 17:43:02 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:56:42 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,11 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, \
  *  1.0 smoothness means * 0
  */
 void	check_intersection(t_scene_data *scene, t_ray ray, \
-			t_hit_info *closest_hit, int depth)
+			t_hit_info *closest_hit)
 {
 	t_object	*current;
 	t_vec4f		hit;
 	float		length;
-	const float	bg_strength = 0.2f;
 
 	current = scene->objects;
 	closest_hit->hit_location = (t_vec4f){0, 0, 0, -1};

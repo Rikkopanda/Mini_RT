@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 15:04:31 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:59:00 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int	select_obj_to_move(int keysym, t_scene_data *data)
 /**
  * initial value for index of object to move in the objectlist = 0
  */
-int	move_object(int keysym, t_scene_data *data, t_object *move_obj)
+int	move_object(int keysym, t_object *move_obj)
 {
 	if (move_obj == (t_object *)NADA)
 		return (TRUE);
