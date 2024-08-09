@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   parse_camera.c                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/08/09 16:52:15 by kwchu         #+#    #+#                 */
+/*   Updated: 2024/08/09 16:52:18 by kwchu         ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include "libft.h"
 #include "parser.h"
@@ -33,9 +45,6 @@ int	parse_camera(t_object **objects, char **format)
 	if (!camera)
 		return (perror("malloc error"), 0);
 	camera->location = atovec3f(format[0]);
-	// printf("data camara in parse_camera: x, y, z %f %f %f\n", camera->location[0], camera->location[1], camera->location[2]);
-
-
 	camera->orientation = atovec3f(format[1]);
 	camera->fov = ft_atoi(format[2]);
 	if (!has_valid_ranges(camera))

@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 16:28:23 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 16:28:26 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:41:55 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ static void	init_scene_data(t_scene_data *scene)
 	ft_bzero(scene->obj_count, sizeof(*scene->obj_count) * OBJ_TYPE_COUNT);
 	ft_bzero(&scene->ambient, sizeof(scene->ambient));
 	ft_bzero(&scene->camera, sizeof(scene->camera));
-	ft_bzero(&scene->light, sizeof(scene->light));
 	scene->move_obj_number = 0;
 	scene->win_height = WINDOW_HEIGHT;
 	scene->win_width = WINDOW_WIDTH;

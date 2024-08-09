@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   ft_split_charset.c                                 :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/08/09 17:11:17 by kwchu         #+#    #+#                 */
+/*   Updated: 2024/08/09 17:11:17 by kwchu         ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser.h"
 
 static char	*split_substr(char const *s, unsigned int start, size_t len)

@@ -25,6 +25,7 @@ typedef struct s_ray	t_ray;
 # define WINDOW_WIDTH 200
 # define SAMPLES 4
 # define RADIUS 0.6f
+# define DISTANCE_MAX 1000
 
 #ifndef MAX_BOUNCE_DEPTH
  #define MAX_BOUNCE_DEPTH 3
@@ -141,7 +142,6 @@ typedef struct s_scene_data
 	int			obj_count[OBJ_TYPE_COUNT];
 	t_ambient	ambient;
 	t_camera	camera;
-	t_light		light;
 	t_ray		ray;
 	t_object	*objects;
 	t_win		mlx;
@@ -170,7 +170,13 @@ typedef struct s_hit_info
 	t_vec4f		incident_origin;
 }	t_hit_info;
 
-void	normalize_vector(t_vec4f *v);
+void	matrix_multiplication(t_vec4f comp[3], t_ray *ray, t_vec4f camera_vector);
+void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m);
+void	compilation_matrix(t_vec4f comp[3], t_vec4f R[3], t_vec4f R3[3]);
+void	copy_matrix(t_vec4f *dst, t_vec4f src);
+void	init_comp_m(t_vec4f comp[3]);
+
+t_vec4f	normalize_vector(t_vec4f *v);
 void	vector_scaling(t_vec4f *v, float scale);
 
 int		interpolate(int color_A, int color_B, float t);
@@ -203,6 +209,9 @@ void	print_matrix_1_3(t_vec4f m);
 t_vec4f reflect(t_vec4f normal, t_vec4f incoming);
 t_vec4f	sky_box(float y);
 t_vec4f generate_random_vec4f_hemisphere(t_vec4f normal);
+float	vector_length(t_vec4f v);
+float	dot3(t_vec4f vec_A, t_vec4f vec_B);
+float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B);
 
 int		handle_input(int keysym, t_scene_data *data);
 

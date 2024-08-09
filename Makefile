@@ -24,6 +24,7 @@ DIR_SRC = src
 DIR_PARSER = parser
 DIR_PARSER_OBJECTS = objects
 DIR_PARSER_GETTERS = getters_setters
+DIR_PARSER_INTERSECTS = intersects
 DIR_OBJ = obj
 DIR_RENDERER = renderer
 DIR_MATH = math
@@ -37,7 +38,7 @@ CFLAGS += -DMAX_BOUNCE_DEPTH=$(MAX_BOUNCE_DEPTH)
 
 SRC = main.c parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
 		ft_split_charset.c ft_str_endswith.c object_list.c \
-		ft_min_max.c ft_atohex.c ft_free_2darray.c clamped_rgb_to_hex.c \
+		ft_min_max.c ft_rgb_to_int.c ft_free_2darray.c clamped_rgb_to_int.c \
 		ft_vec_in_range.c parse_object.c \
 		parse_ambient.c parse_camera.c parse_cylinder.c \
 		parse_light.c parse_plane.c parse_sphere.c \

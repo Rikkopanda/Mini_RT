@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   object_list.c                                      :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/08/09 17:11:26 by kwchu         #+#    #+#                 */
+/*   Updated: 2024/08/09 17:21:14 by kwchu         ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser.h"
 
 t_object	*new_object(t_objectid type, void *object)
@@ -53,14 +65,6 @@ void	object_removetype(t_object **head, t_objectid type)
 	current = *head;
 	while (current->next)
 	{
-		// if (current->type == CAMERA)
-		// // {
-		// // 	// t_camera *carmeraptr;
-
-		// // 	// carmeraptr = current;
-			// print_camera_data(current);
-		// // 	// exit(0);
-		// // }
 		if (current->next->type == type)
 		{
 			remove = current->next;

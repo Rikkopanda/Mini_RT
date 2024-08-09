@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_scene.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 13:53:18 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/08/08 13:54:27 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/08/09 17:44:53 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

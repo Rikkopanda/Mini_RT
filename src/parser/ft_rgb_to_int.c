@@ -1,36 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ft_str_endswith.c                                  :+:    :+:            */
+/*   ft_rgb_to_int.c                                    :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2024/08/09 17:11:13 by kwchu         #+#    #+#                 */
-/*   Updated: 2024/08/09 17:11:14 by kwchu         ########   odam.nl         */
+/*   Created: 2024/08/09 17:06:43 by kwchu         #+#    #+#                 */
+/*   Updated: 2024/08/09 17:06:45 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-char	*ft_str_endswith(const char *s, const char *end)
+int	ft_rgb_to_int(const char *a_rgb)
 {
-	int	len;
-	int	i;
+	char	**split;
+	int		rgb[3];
 
-	if (!s || !end)
-		return (NULL);
-	if (s == end)
-		return ((char *)s);
-	len = ft_strlen(end) - 1;
-	i = ft_strlen(s) - 1;
-	if (len < 0 || i < 0 || i < len)
-		return (NULL);
-	while (len >= 0)
-	{
-		if (end[len] != s[i])
-			return (NULL);
-		len--;
-		i--;
-	}
-	return ((char *)(s + i + 1));
+	split = ft_split(a_rgb, ',');
+	if (!split)
+		return (perror("malloc error"), 0);
+	if (ft_2darray_size(split) != 3)
+		return (ft_free_2darray(split), 0);
+	rgb[0] = ft_atoi(split[0]);
+	rgb[1] = ft_atoi(split[1]);
+	rgb[2] = ft_atoi(split[2]);
+	ft_free_2darray(split);
+	return (clamped_rgb_to_int(rgb[0], rgb[1], rgb[2]));
 }

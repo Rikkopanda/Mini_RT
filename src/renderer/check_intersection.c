@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 16:23:38 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 16:25:53 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 17:43:02 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 						float length)
 {
 	t_vec4f	light_color;
-	t_vec4f	obj_center;
 
 	hit_info->hit_location = hit;
 	hit_info->object = object;
@@ -71,7 +70,7 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 	}
 	else
 		hit_info->emission = (t_vec4f){0, 0, 0, 0};
-	obj_center = object->get_location(object->object);
-	hit_info->normal = hit - object->get_location(object->object);
+	if (object->type != LIGHT)
+		hit_info->normal = object->get_normal(object->object, hit);
 	normalize_vector(&hit_info->normal);
 }
