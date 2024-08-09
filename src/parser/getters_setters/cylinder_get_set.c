@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   cylinder.c                                         :+:    :+:            */
+/*   cylinder_get_set.c                                 :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/09 15:14:15 by kwchu         #+#    #+#                 */
-/*   Updated: 2024/08/09 15:18:02 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/09 17:14:03 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@ t_vec4f	get_location_cylinder(void *object)
 
 void	set_location_cylinder(void *object, int xyz_index, int addition)
 {
-	const t_cylinder	*cylinder = (t_cylinder *)object;
+	t_cylinder	*cylinder;
 
+	cylinder = (t_cylinder *)object;
 	cylinder->location[xyz_index] += addition;
 }
 

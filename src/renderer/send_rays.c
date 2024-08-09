@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/08/07 21:03:24 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/09 17:14:34 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	moved_vector_position(t_vec4f *result, t_vec4f target_vec, t_vec4f offset)
 float	knuth_hash(unsigned int *seed)
 {
 	*seed = ((*seed + 1) * 26761) % (1 << 27);
-	return ((float)*seed / __INT_MAX__);
+	return ((float)*seed / (float)__INT_MAX__);
 }
 /**
  * @note Box-Muller transform to turn uniformly distributed random numbers 
@@ -304,7 +304,6 @@ void send_rays(t_scene_data *scene)
 		}
 		ray_y++;
 	}
-	print_vec3(scene->light.location, "light");
 	print_vec3(scene->camera.location, "camera");
 	print_vec3(scene->camera.orientation, "cam orientation");
 	printf("done\n");

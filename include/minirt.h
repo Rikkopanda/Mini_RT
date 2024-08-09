@@ -134,7 +134,6 @@ typedef struct s_scene_data
 	int			obj_count[OBJ_TYPE_COUNT];
 	t_ambient	ambient;
 	t_camera	camera;
-	t_light		light;
 	t_ray		ray;
 	t_object	*objects;
 	t_win		mlx;
@@ -202,7 +201,7 @@ void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);
 
 float	vector_length(t_vec4f v);
-float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B);
+float	dot3(t_vec4f vec_A, t_vec4f vec_B);
 float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B);
 
 int		handle_input(int keysym, t_scene_data *data);

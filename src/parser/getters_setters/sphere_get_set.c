@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   sphere.c                                           :+:    :+:            */
+/*   sphere_get_set.c                                   :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/07/26 17:09:28 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/08/09 15:17:31 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/09 17:13:14 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@ t_vec4f	get_location_sphere(void *object)
 
 void	set_location_sphere(void *object, int xyz_index, int addition)
 {
-	const t_sphere	*sphere = (t_sphere *)object;
+	t_sphere	*sphere;
 
+	sphere = (t_sphere *)object;
 	sphere->location[xyz_index] += addition;
 }
 

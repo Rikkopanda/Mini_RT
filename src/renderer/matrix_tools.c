@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/01/07 15:29:32 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/08/07 20:41:12 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/09 14:59:08 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m)
 	
 }
 
-float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B)
+float	dot3(t_vec4f vec_A, t_vec4f vec_B)
 {
 	return ((vec_A[0] * vec_B[0]) + (vec_A[1] * vec_B[1]) + (vec_A[2] * vec_B[2]));
 }

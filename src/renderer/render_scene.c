@@ -19,18 +19,6 @@ void init_ray_send_tools(t_ray_sending_tools *r_t, t_scene_data *scene)
 
 }
 
-void	init_light_source(t_scene_data *data)
-{
-	data->light.brightness = 1;
-	data->light.location[0] = 0;
-	data->light.location[1] = 0;
-	data->light.location[2] = -100;
-	data->light.location[3] = 0;
-	data->light.color.rgb[0] = 255;
-	data->light.color.rgb[1] = 255;
-	data->light.color.rgb[2] = 255;
-}
-
 // void	init_sphere(t_scene_data *data)
 // {
 // 	data->sphere.radius = 30;

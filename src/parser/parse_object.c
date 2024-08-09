@@ -1,5 +1,16 @@
-#include "parser.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   parse_object.c                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/08/09 17:11:31 by kwchu         #+#    #+#                 */
+/*   Updated: 2024/08/09 17:21:33 by kwchu         ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "parser.h"
 
 static t_objectid	check_identifier(const char *id)
 {
@@ -39,7 +50,8 @@ static int	handle_object_type(t_object **objects, \
 	return (0);
 }
 
-int	parse_object(const char *line, int obj_count[OBJ_TYPE_COUNT], t_object **objects)
+int	parse_object(const char *line, int obj_count[OBJ_TYPE_COUNT], \
+				t_object **objects)
 {
 	char		**split;
 	int			ret;

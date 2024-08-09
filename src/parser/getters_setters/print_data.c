@@ -6,7 +6,7 @@
 /*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/09 15:20:14 by kwchu         #+#    #+#                 */
-/*   Updated: 2024/08/09 15:22:10 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/09 17:08:52 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,14 @@ void	print_camera_data(void *object)
 
 	printf("data camera: x, y, z %f %f %f\n", camera->location[0], \
 								camera->location[1], camera->location[2]);
+}
+
+void	print_plane_data(void *object)
+{
+	const t_plane	*plane = (t_plane *)object;
+
+	printf("data plane: x, y, z %f %f %f\n", plane->location[0], \
+								plane->location[1], plane->location[2]);
 }
 
 void	print_light_data(void *object)

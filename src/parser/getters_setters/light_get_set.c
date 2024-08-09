@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   light.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/26 17:09:28 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/07/26 17:09:38 by rverhoev         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   light_get_set.c                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/08/09 16:21:12 by kwchu         #+#    #+#                 */
+/*   Updated: 2024/08/09 17:13:48 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@ t_vec4f	get_location_light(void *object)
 
 void	set_location_light(void *object, int xyz_index, int addition)
 {
-	const t_light	*light = (t_light *)object;
+	t_light	*light;
 
+	light = (t_light *)object;
 	light->location[xyz_index] += addition;
 }
 

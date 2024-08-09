@@ -63,7 +63,7 @@ t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth)
 		
 		
 		t_vec4f diffuse_ray = generate_random_vec4f_hemisphere(hit_info.normal);
-		// if (dot_product_3d(diffuse_ray, hit_info.normal) < 0.0f) {
+		// if (dot3(diffuse_ray, hit_info.normal) < 0.0f) {
 		// 	diffuse_ray *= -1.0f;
 		// }
 		normalize_vector(&diffuse_ray);
@@ -105,12 +105,12 @@ t_vec4f generate_random_vec4f_hemisphere(t_vec4f normal) {
 	random_vec[1] = (float)rand();
 	random_vec[2] = (float)rand();
 	random_vec[3] = 0.0f;
-    // } while (dot_product_3d(random_vec, random_vec) >= 1.0f);
+    // } while (dot3(random_vec, random_vec) >= 1.0f);
 
 	// printf("random[2] = %f,   %d\n", random_vec[2], rand());
     // Ensure the vector is in the same hemisphere as the normal
 	normalize_vector(&random_vec);
-    if (dot_product_3d(random_vec, normal) < 0.0f) {
+    if (dot3(random_vec, normal) < 0.0f) {
         random_vec *= -1.0f;
     }
     return (random_vec);
@@ -120,7 +120,7 @@ t_vec4f reflect(t_vec4f normal, t_vec4f incoming)
 {
 	t_vec4f reflection;
 
-	reflection = incoming - (2 * dot_product_3d(incoming, normal) * normal);
+	reflection = incoming - (2 * dot3(incoming, normal) * normal);
 	return reflection;
 }
 

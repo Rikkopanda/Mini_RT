@@ -67,7 +67,7 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 		hit_info->emission = (t_vec4f){0,0,0,0};
 	// if (hit_info->material.smoothness > 0)
 	// 	printf("smoothness %f\n", hit_info->material.smoothness);
-	t_vec4f obj_center = object->get_location(object->object);
-	hit_info->normal = object->get_normal(object->object, hit);
+	if (object->type != LIGHT)
+		hit_info->normal = object->get_normal(object->object, hit);
 	normalize_vector(&hit_info->normal);
 }
