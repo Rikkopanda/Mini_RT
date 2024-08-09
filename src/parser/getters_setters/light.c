@@ -12,29 +12,30 @@
 
 #include "minirt.h"
 
-t_vec4f get_location_light(void *object)
+t_vec4f	get_location_light(void *object)
 {
-	t_light *light = (t_light *)object;
+	const t_light	*light = (t_light *)object;
 
-	return light->location;
+	return (light->location);
 }
 
-void set_location_light(void *object, int xyz_index, int addition)
+void	set_location_light(void *object, int xyz_index, int addition)
 {
-	t_light *light = (t_light *)object;
+	const t_light	*light = (t_light *)object;
+
 	light->location[xyz_index] += addition;
 }
 
 t_vec4f	get_color_light(void *object)
 {
-	t_light *light = (t_light *)object;
+	const t_light	*light = (t_light *)object;
 
 	return (light->color.rgb_f);
 }
 
 float	get_brightness_light(void *object)
 {
-	t_light *light = (t_light *)object;
+	const t_light	*light = (t_light *)object;
 
 	return (light->ratio);
 }
