@@ -1,8 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   check_intersection.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/09 16:23:38 by rverhoev          #+#    #+#             */
+/*   Updated: 2024/08/09 16:25:53 by rverhoev         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minirt.h"
 
-void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
-						float length);
+void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, \
+			t_object *object, float length);
 
 /**
  * @note Keeps track of closest intersection object.
@@ -13,7 +24,8 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
  * 	0.0 smoothness means * 1
  *  1.0 smoothness means * 0
  */
-void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit, int depth)
+void	check_intersection(t_scene_data *scene, t_ray ray, \
+			t_hit_info *closest_hit, int depth)
 {
 	t_object	*current;
 	t_vec4f		hit;
@@ -26,21 +38,12 @@ void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit,
 	closest_hit->type = NONE;
 	while (current)
 	{
-		// if (depth != 0)
-		// 	print_matrix_1_3(ray.direction);
-		// printf("intersect f: %p\n", current->intersect);
 		hit = current->intersect(current->object, ray);
 		if (hit[STATUS_INDEX] != -1)
 		{
-			length = fabsf(vector_length(hit - ray.origin)); // fabs omdat we ook in de negatieve richting kunnen kijken als de camera zo staat?
+			length = fabsf(vector_length(hit - ray.origin));
 			if (length <= closest_hit->length)
 				update_hit_info(closest_hit, hit, current, length);
-			// if (closest_hit->type == LIGHT)
-			// {
-				// print_matrix_1_3(closest_hit->material.color);
-			// }
-			// if (depth != 0)
-			// 	printf("type: %d\n", current->type);
 		}
 		current = current->next;
 	}
@@ -49,6 +52,9 @@ void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit,
 void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 						float length)
 {
+	t_vec4f	light_color;
+	t_vec4f	obj_center;
+
 	hit_info->hit_location = hit;
 	hit_info->object = object;
 	hit_info->length = length;
@@ -58,16 +64,14 @@ void	update_hit_info(t_hit_info *hit_info, t_vec4f hit, t_object *object, \
 		hit_info->material.smoothness = object->get_smoothness(object->object);
 	if (object->type == LIGHT)
 	{
-		t_vec4f light_color = object->get_color(object->object);
+		light_color = object->get_color(object->object);
 		light_color /= 255;
-		hit_info->emission = (object->get_brightness(object->object) * 10) * light_color;
-		// hit_info->emission = light_color;
+		hit_info->emission = (object->get_brightness(object->object) \
+			* 10) * light_color;
 	}
 	else
-		hit_info->emission = (t_vec4f){0,0,0,0};
-	// if (hit_info->material.smoothness > 0)
-	// 	printf("smoothness %f\n", hit_info->material.smoothness);
-	t_vec4f obj_center = object->get_location(object->object);
+		hit_info->emission = (t_vec4f){0, 0, 0, 0};
+	obj_center = object->get_location(object->object);
 	hit_info->normal = hit - object->get_location(object->object);
 	normalize_vector(&hit_info->normal);
 }

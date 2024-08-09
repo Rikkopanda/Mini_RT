@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/08/09 12:14:33 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:29:53 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <time.h> 
 #include <math.h>
 #include <stdlib.h>
+#include "mini_math.h"
 
 /**
  * @note Constructing a normalised camera ray from 

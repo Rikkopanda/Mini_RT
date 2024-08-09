@@ -17,6 +17,7 @@
 // # include "parser.h"
 # include "objects.h"
 # include <limits.h>
+# include "mini_math.h"
 
 typedef struct s_ray	t_ray;
 
@@ -33,6 +34,9 @@ typedef struct s_ray	t_ray;
 #endif
 #ifndef PRINT_STATUS
  #define PRINT_STATUS FALSE
+#endif
+#ifndef MOVE_DIST
+ #define MOVE_DIST 10
 #endif
 
 typedef struct s_scene_data t_scene_data;
@@ -163,17 +167,11 @@ typedef struct s_hit_info
 	t_vec4f		emission;
 	t_vec4f		normal;
 	t_material	material;
+	t_vec4f		incident_origin;
 }	t_hit_info;
-
-void	matrix_multiplication(t_vec4f comp[3], t_ray *ray, t_vec4f camera_vector);
-void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m);
-void	compilation_matrix(t_vec4f comp[3], t_vec4f R[3], t_vec4f R3[3]);
-void	copy_matrix(t_vec4f *dst, t_vec4f src);
-void	init_comp_m(t_vec4f comp[3]);
 
 void	normalize_vector(t_vec4f *v);
 void	vector_scaling(t_vec4f *v, float scale);
-
 
 int		interpolate(int color_A, int color_B, float t);
 void	init_t_around_z(t_vec4f R[3], float rad);
@@ -186,7 +184,6 @@ t_vec4f	normal_orientation_to_degrees(t_vec4f orientation);
 int		render_scene(t_scene_data *data);
 void	send_rays(t_scene_data *scene);
 int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert);
-t_vec4f	ray_trace_coloring(t_scene_data *scene, t_vec4f color_bounce_sum, t_vec4f emmisive_light_color_sum, t_hit_info surface);
 
 t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth);
 void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit, int depth);
@@ -200,18 +197,12 @@ t_vec4f	int_to_vec4rgb(int color);
 int		vec4rgb_to_int(t_vec4f vec);
 float	interpolatef(float A, float B, float t);
 
-t_vec4f	apply_rotation(t_vec4f point, t_vec4f rotation);
-t_vec4f	invert_quaternion(t_vec4f quaternion);
-t_vec4f	invert_unit_quaternion(t_vec4f uq);
-t_vec4f	axis_angle_to_quaternion(t_vec4f axis, float angle_rad);
-t_vec4f	hamilton_product(t_vec4f q1, t_vec4f q2);
-
 void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);
 
-float	vector_length(t_vec4f v);
-float	dot_product_3d(t_vec4f vec_A, t_vec4f vec_B);
-float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B);
+t_vec4f reflect(t_vec4f normal, t_vec4f incoming);
+t_vec4f	sky_box(float y);
+t_vec4f generate_random_vec4f_hemisphere(t_vec4f normal);
 
 int		handle_input(int keysym, t_scene_data *data);
 

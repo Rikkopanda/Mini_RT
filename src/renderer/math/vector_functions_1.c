@@ -6,11 +6,11 @@
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 12:41:06 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 12:41:28 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:21:12 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
+#include "minirt.h"
 
 /**
  * https://www.freetext.org/Introduction_to_Linear_

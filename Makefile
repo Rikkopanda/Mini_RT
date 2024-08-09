@@ -13,7 +13,7 @@ LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/get_next_line -lgnl
 
 LINKS_MLX = -L${DIR_LIB}/minilibx-linux -lmlx -lX11 -lXext -lm -lz
 
-INCLUDE = -I./include -I./${DIR_LIB}/minilibx-linux -I./${DIR_LIB}/libft -I./${DIR_LIB}/get_next_line
+INCLUDE = -I./include -I./src/renderer/math -I./${DIR_LIB}/minilibx-linux -I./${DIR_LIB}/libft -I./${DIR_LIB}/get_next_line
 
 MLX_LIB = ${DIR_LIB}/minilibx-linux/libmlx.a
 
@@ -44,9 +44,10 @@ SRC = main.c parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
 		sphere.c light.c render_scene.c matrixes.c matrix_tools_1.c matrix_tools_2.c \
 		send_rays.c vector_functions_1.c vector_functions_2.c \
 		hooks.c ft_mlx_functions.c math_tools.c \
-		summation.c trace_ray.c check_intersection.c std_color_functions_1.c \
+		trace_ray.c check_intersection.c std_color_functions_1.c \
 		std_color_functions_2.c quaternion_functions.c orient_ray_coordinates.c \
 		random_vec_gen.c hooks_action_rotate.c hooks_action_move.c \
+		trace_ray_helpers.c vector_functions_3.c
 
 vpath %.c ${DIR_SRC}
 vpath %.c ${DIR_SRC}/${DIR_PARSER}

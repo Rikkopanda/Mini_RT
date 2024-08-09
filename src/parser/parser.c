@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "get_next_line.h"
+#include "mini_math.h"
 
 t_vec4f	example_intersect_sphere(void *object, t_ray ray)
 {
