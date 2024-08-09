@@ -16,6 +16,7 @@
 # include "color.h"
 // # include "parser.h"
 # include "objects.h"
+# include <limits.h>
 
 typedef struct s_ray	t_ray;
 
@@ -29,6 +30,9 @@ typedef struct s_ray	t_ray;
 #endif
 #ifndef REFL_RAYS_N
  #define REFL_RAYS_N 15
+#endif
+#ifndef PRINT_STATUS
+ #define PRINT_STATUS FALSE
 #endif
 
 typedef struct s_scene_data t_scene_data;
@@ -138,6 +142,7 @@ typedef struct s_scene_data
 	t_object	*objects;
 	t_win		mlx;
 	t_img		image;
+	int			move_obj_number;
 	int			win_width;	
 	int			win_height;	
 }	t_scene_data;

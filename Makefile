@@ -26,6 +26,8 @@ DIR_PARSER_OBJECTS = objects
 DIR_PARSER_GETTERS = getters_setters
 DIR_OBJ = obj
 DIR_RENDERER = renderer
+DIR_MATH = math
+DIR_HOOKS = hooks
 
 REFL_RAYS_N = 45
 MAX_BOUNCE_DEPTH = 3
@@ -39,20 +41,25 @@ SRC = main.c parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
 		ft_vec_in_range.c parse_object.c \
 		parse_ambient.c parse_camera.c parse_cylinder.c \
 		parse_light.c parse_plane.c parse_sphere.c \
-		sphere.c light.c render_scene.c matrixes.c matrix_tools.c \
-		send_rays.c vector_functions.c \
-		hooks.c ft_mlx_functions.c \
+		sphere.c light.c render_scene.c matrixes.c matrix_tools_1.c matrix_tools_2.c \
+		send_rays.c vector_functions_1.c vector_functions_2.c \
+		hooks.c ft_mlx_functions.c math_tools.c \
 		summation.c trace_ray.c check_intersection.c std_color_functions_1.c \
 		std_color_functions_2.c quaternion_functions.c orient_ray_coordinates.c \
-		random_vec_gen.c
+		random_vec_gen.c hooks_action_rotate.c hooks_action_move.c \
 
 vpath %.c ${DIR_SRC}
 vpath %.c ${DIR_SRC}/${DIR_PARSER}
 vpath %.c ${DIR_SRC}/${DIR_PARSER}/${DIR_PARSER_OBJECTS}
 vpath %.c ${DIR_SRC}/${DIR_PARSER}/${DIR_PARSER_GETTERS}
 vpath %.c ${DIR_SRC}/${DIR_RENDERER}
+vpath %.c ${DIR_SRC}/${DIR_RENDERER}/${DIR_HOOKS}
+vpath %.c ${DIR_SRC}/${DIR_RENDERER}/$(DIR_MATH)
 
 OBJ = ${notdir ${SRC:.c=.o}}
+
+KAAS:
+	$(foreach LIBDIR, $(shell find lib -maxdepth 1 -mindepth 1 -d -print), $(MAKE) -C $(LIBDIR);)
 
 ${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT} ${LIBGNL}
 	$(CC) ${CFLAGS} $^ ${LINKS} ${LINKS_MLX} -o $@
@@ -89,4 +96,4 @@ tests: ${OBJ}
 
 re: fclean all
 
-.PHONY: all clean fclean re tests debug
+.PHONY: all clean fclean re tests debug KAAS

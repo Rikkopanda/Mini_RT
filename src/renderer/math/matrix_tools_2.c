@@ -1,43 +1,50 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   std_color_functions_1.c                            :+:      :+:    :+:   */
+/*   matrix_tools_2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/08 14:04:39 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/08/09 12:09:12 by rverhoev         ###   ########.fr       */
+/*   Created: 2024/01/07 15:29:32 by rverhoev          #+#    #+#             */
+/*   Updated: 2024/08/09 12:27:21 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-int	get_r(int color)
+t_vec4f	normal_orientation_to_degrees(t_vec4f orientation)
 {
-	return (color >> 16 & 0xFF);
+	return (orientation * 180.0f);
 }
 
-int	get_g(int color)
+void	print_matrix_1_3(t_vec4f m)
 {
-	return (color >> 8 & 0xFF);
+	int	i;
+
+	i = 0;
+	while (i < 4)
+	{
+		printf("%f\t", m[i]);
+		i++;
+	}
+	printf("\n");
 }
 
-int	get_b(int color)
+void	print_matrix_3_3(t_vec4f m[3])
 {
-	return (color & 0xFF);
-}
+	int	i;
+	int	j;
 
-void	init_rgb(t_color *color, int color_code)
-{
-	color->rgb[0] = get_r(color_code);
-	color->rgb[1] = get_g(color_code);
-	color->rgb[2] = get_b(color_code);
-}
-
-void	init_rgb_f(t_vec4f *rgb_f, int rgb[3])
-{
-	(*rgb_f)[0] = rgb[0];
-	(*rgb_f)[1] = rgb[1];
-	(*rgb_f)[2] = rgb[2];
-	(*rgb_f)[3] = 0;
+	i = 0;
+	while (i < 3)
+	{
+		j = 0;
+		while (j < 3)
+		{
+			printf("%f\t", m[i][j]);
+			j++;
+		}
+		i++;
+		printf("\n");
+	}
 }

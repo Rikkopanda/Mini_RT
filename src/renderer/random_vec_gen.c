@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   random_vec_gen.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 13:59:57 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/08/08 14:23:19 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/08/09 13:52:18 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 float	knuth_hash(unsigned int *seed)
 {
 	*seed = ((*seed + 1) * 26761) % (1 << 27);
-	return ((float)*seed / __INT_MAX__);
+	return ((float)*seed / (float)INT_MAX);
 }
+
 /**
  * @note Box-Muller transform to turn uniformly distributed random numbers 
  * to normal distributed
@@ -32,6 +33,7 @@ float	random_normal_distribution(unsigned int *seed)
 
 	return (rho * cos(theta));
 }
+
 /**
  * @note Unused at the moment, will be used for global illumination.
  */

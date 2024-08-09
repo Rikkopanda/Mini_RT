@@ -3,24 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   std_color_functions_2.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:04:39 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/08/08 14:24:33 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/08/09 12:09:28 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 #include "parser.h"
 
-void make_rgb_with_normalized_rgb_f(int rgb[3], t_vec4f rgb_f)
+void	make_rgb_with_normalized_rgb_f(int rgb[3], t_vec4f rgb_f)
 {
 	rgb[0] = (rgb_f[0] * (float)255);
 	rgb[1] = (rgb_f[1] * (float)255);
 	rgb[2] = (rgb_f[2] * (float)255);
 }
 
-int create_color(int r, int g, int b)
+int	create_color(int r, int g, int b)
 {
 	return (r << 16 | g << 8 | b);
 }

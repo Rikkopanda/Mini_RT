@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quaternion_functions.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 14:02:58 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/08/08 14:23:10 by rikverhoeve      ###   ########.fr       */
+/*   Updated: 2024/08/09 12:41:43 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ t_vec4f	axis_angle_to_quaternion(t_vec4f axis, float angle_rad)
 /**
  * @note multiplying quaternions according to Hamilton's product
  * Source: https://en.wikipedia.org/wiki/Quaternion#Hamilton_product
- * Source: https://www.meccanismocomplesso.org/en/hamiltons-quaternions-and-3d-rotation-with-python/
+ * Source: https://www.meccanismocomplesso.org/en/
+ * hamiltons-quaternions-and-3d-rotation-with-python/
  */
 t_vec4f	hamilton_product(t_vec4f q1, t_vec4f q2)
 {

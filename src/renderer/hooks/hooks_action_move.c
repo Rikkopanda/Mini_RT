@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   hooks.c                                            :+:      :+:    :+:   */
+/*   hooks_action_move.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/07/29 18:46:21 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:46:34 by rverhoev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ int	left_up_right_down_forward_backward(int keysym, t_scene_data *data)
 		return (0);
 }
 
-int move_obj_number = 0;
 
 t_object *retrieve_object_to_move(t_scene_data *data)
 {
@@ -54,7 +53,7 @@ t_object *retrieve_object_to_move(t_scene_data *data)
 
 	while (current != NULL)
 	{		
-		if (i == move_obj_number)
+		if (i == data->move_obj_number)
 			return current;
 		current = current->next;
 		i++;
@@ -66,7 +65,7 @@ int select_obj_to_move(int keysym, t_scene_data *data)
 {
 	if (ft_isdigit(keysym) == TRUE)
 	{
-		move_obj_number = keysym - 48;
+		data->move_obj_number = keysym - 48;
 		return TRUE;
 	}
 	return FALSE;
@@ -96,67 +95,4 @@ int move_object(int keysym, t_scene_data *data)
 		return (printf("move lighting z-...\n"), object_to_move->set_location(object_to_move->object, 2, -dist), 1);
 	else
 		return (0);
-}
-
-// int	rotate_around_z(int keysym, t_scene_data *data)
-// {
-// }
-// int	rotate_around_y(int keysym, t_scene_data *data)
-// {
-// }
-
-int	rotate_view(int keysym, t_scene_data *data)
-{
-	const int	degrees = 10;
-	const int	rotation_max = 180;
-	if (keysym == UP)
-	{
-		data->camera.orientation[0] += degrees;
-		if (data->camera.orientation[0] > rotation_max)
-			data->camera.orientation[0] = -rotation_max + degrees;
-		return (printf("rotating up...\n"), TRUE);
-	}
-	else if (keysym == DOWN)
-	{
-		data->camera.orientation[0] -= degrees;
-		if (data->camera.orientation[0] < -rotation_max)
-			data->camera.orientation[0] = rotation_max - degrees;
-		return (printf("rotating down...\n"), TRUE);
-	}
-	else if (keysym == RIGHT)
-	{
-		data->camera.orientation[1] -= degrees;
-		if (data->camera.orientation[1] < -rotation_max)
-			data->camera.orientation[1] = rotation_max - degrees;
-		return (printf("rotating right...\n"), TRUE);
-
-	}
-	else if (keysym == LEFT)
-	{
-		data->camera.orientation[1] += degrees;
-		if (data->camera.orientation[1] > rotation_max)
-			data->camera.orientation[1] = -rotation_max + degrees;
-		return (printf("rotating left...\n"), TRUE);
-	}
-	return (FALSE);
-}
-
-/**
- * @note putting all into a while() to select function pointer could be faster than if else's?
- * 
-*/
-int handle_input(int keysym, t_scene_data *data)
-{
-	printf("keysym %d\n", keysym);
-	if (left_up_right_down_forward_backward(keysym, data) == FALSE
-		&& rotate_view(keysym, data) == FALSE
-		&& extra_keys(keysym, data) == FALSE
-		&& move_object(keysym, data) == FALSE)
-		return (0);
-	if (extra_keys(keysym, data))
-		return (0);
-	send_rays(data);
-	mlx_put_image_to_window(data->mlx.mlx_ptr, data->mlx.win_ptr, data->image.img_ptr, 0, 0);
-	// printf("%d key\n", keysym);
-    return (0);
 }

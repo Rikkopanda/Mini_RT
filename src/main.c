@@ -26,6 +26,7 @@ static void	init_scene_data(t_scene_data *scene)
 	ft_bzero(&scene->ambient, sizeof(scene->ambient));
 	ft_bzero(&scene->camera, sizeof(scene->camera));
 	ft_bzero(&scene->light, sizeof(scene->light));
+	scene->move_obj_number = 0;
 	scene->win_height = WINDOW_HEIGHT;
 	scene->win_width = WINDOW_WIDTH;
 	scene->objects = NULL;
