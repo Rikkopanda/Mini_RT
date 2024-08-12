@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   send_rays.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/08/09 17:55:55 by rverhoev         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   send_rays.c                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
+/*   Updated: 2024/08/12 18:56:12 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
  * in a radius around the center pixel, raycenter in this case.
  * Returns the average color of all the samples.
  */
-// t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], \
+// t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], 
 // 					const float aspect_ratio, const float samples)
 // {
 // 	t_ray		ray;
@@ -65,7 +65,7 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
 // 	return color;
 // 	while (i < samples)
 // 	{
-// 		ray = construct_camera_ray(raycenter[0] + RADIUS * cos(angle), \
+// 		ray = construct_camera_ray(raycenter[0] + RADIUS * cos(angle), 
 // 				raycenter[1] + RADIUS * sin(angle), scene, aspect_ratio);
 // 		// color += int_to_vec4rgb(object_hit_color(scene, ray));
 // 		angle += inc;
