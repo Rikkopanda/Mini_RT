@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   vector_functions_2.c                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/09 12:19:24 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 17:53:42 by rverhoev         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   vector_functions_2.c                               :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/08/09 12:19:24 by rverhoev      #+#    #+#                 */
+/*   Updated: 2024/08/12 19:04:47 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,12 @@ float	dot3(t_vec4f vec_A, t_vec4f vec_B)
 		(vec_A[1] * vec_B[1]) + (vec_A[2] * vec_B[2]));
 }
 
-float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B)
+t_vec4f	cross3(t_vec4f vec_A, t_vec4f vec_B)
 {
-	return ((vec_A[2] * vec_B[3]) - (vec_B[2] * vec_A[3]) + \
-			(vec_A[3] * vec_B[1]) - (vec_B[3] * vec_A[1]) + \
-			(vec_A[1] * vec_B[2]) - (vec_B[1] * vec_A[2]));
+	return ((t_vec4f){
+		(vec_A[1] * vec_B[2]) - (vec_B[1] * vec_A[2]), \
+		(vec_A[2] * vec_B[0]) - (vec_B[2] * vec_A[0]), \
+		(vec_A[0] * vec_B[1]) - (vec_B[0] * vec_A[1]), vec_A[3]});
 }
 
 float	vector_length(t_vec4f v)

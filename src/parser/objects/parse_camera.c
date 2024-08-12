@@ -6,7 +6,7 @@
 /*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/09 16:52:15 by kwchu         #+#    #+#                 */
-/*   Updated: 2024/08/09 16:52:18 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/12 19:14:23 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,8 @@ int	parse_camera(t_object **objects, char **format)
 	camera->fov = ft_atoi(format[2]);
 	if (!has_valid_ranges(camera))
 		return (free(camera), 0);
-	camera->orientation = normal_orientation_to_degrees(camera->orientation);
+	camera->orientation = \
+						orientation_to_quaternion_rotation(camera->orientation);
 	new = new_object(CAMERA, camera);
 	if (!new)
 		return (perror("malloc error"), free(camera), 0);

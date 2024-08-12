@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minirt.h                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/09 18:08:22 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 18:08:24 by rverhoev         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   minirt.h                                           :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/08/09 18:08:22 by rverhoev      #+#    #+#                 */
+/*   Updated: 2024/08/12 19:03:12 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,7 @@ void	init_t_around_x(t_vec4f R[3], float rad);
 void	init_result(t_vec4f *M);
 float	ft_degr_to_rad(float x);
 float	ft_rad_to_degr(float x);
-t_vec4f	normal_orientation_to_degrees(t_vec4f orientation);
+t_vec4f	orientation_to_quaternion_rotation(t_vec4f orientation);
 int		render_scene(t_scene_data *data);
 void	send_rays(t_scene_data *scene);
 int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert);
@@ -229,7 +229,7 @@ t_vec4f	sky_box(float y);
 t_vec4f generate_random_vec4f_hemisphere(t_vec4f normal);
 float	vector_length(t_vec4f v);
 float	dot3(t_vec4f vec_A, t_vec4f vec_B);
-float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B);
+t_vec4f	cross3(t_vec4f vec_A, t_vec4f vec_B);
 
 int		handle_input(int keysym, t_scene_data *data);
 

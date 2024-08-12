@@ -66,11 +66,11 @@ vpath %.c ${DIR_SRC}/${DIR_RENDERER}/$(DIR_MATH)
 
 OBJ = ${notdir ${SRC:.c=.o}}
 
-KAAS:
-	$(foreach LIBDIR, $(shell find lib -maxdepth 1 -mindepth 1 -d -print), $(MAKE) -C $(LIBDIR);)
-
 ${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT} ${LIBGNL}
 	$(CC) ${CFLAGS} $^ ${LINKS} ${LINKS_MLX} -o $@
+
+KAAS:
+	$(foreach LIBDIR, $(shell find lib -maxdepth 1 -mindepth 1 -d -print), $(MAKE) -C $(LIBDIR);)
 
 ${MLX_LIB}:
 	make -C ${DIR_LIB}/minilibx-linux

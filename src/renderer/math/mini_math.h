@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   mini_math.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/09 14:56:52 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 17:53:35 by rverhoev         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   mini_math.h                                        :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/08/09 14:56:52 by rverhoev      #+#    #+#                 */
+/*   Updated: 2024/08/12 19:02:55 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	init_comp_m(t_vec4f comp[3]);
 float	vector_length(t_vec4f v);
 t_vec4f	clamp_vec4f(t_vec4f v, float low, float high);
 float	dot3(t_vec4f vec_A, t_vec4f vec_B);
-float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B);
+t_vec4f	cross3(t_vec4f vec_A, t_vec4f vec_B);
 t_vec4f	lerp(t_vec4f a, t_vec4f b, float f);
 
 // quaternion functions
