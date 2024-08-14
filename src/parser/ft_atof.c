@@ -6,7 +6,7 @@
 /*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/09 17:07:03 by kwchu         #+#    #+#                 */
-/*   Updated: 2024/08/09 17:07:04 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/14 15:43:15 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,10 @@ float	ft_atof(const char *s)
 
 	dot_pos = 0;
 	sign = 1;
+	if (!s)
+		return (0);
 	integer = (float)ft_atoi(s);
-	if (integer < 0)
+	if (s[0] == '-' || integer < 0)
 		sign = -1;
 	dot_pos = ft_strchr(s, '.');
 	if (!dot_pos)
