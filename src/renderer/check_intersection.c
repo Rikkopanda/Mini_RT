@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_intersection.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 16:23:38 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 17:56:42 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/14 11:36:44 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

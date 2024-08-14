@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   send_rays.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/08/09 17:55:55 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/14 12:33:03 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
 				tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
 	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 1};
 	normalize_vector(&ray.direction);
+	// print_matrix_1_3(scene->camera.orientation);
 	ray.direction = apply_rotation(ray.direction, scene->camera.orientation);
 	ray.origin = scene->camera.location + ray.direction * near_plane;
 	return (ray);
@@ -47,7 +48,7 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
  * in a radius around the center pixel, raycenter in this case.
  * Returns the average color of all the samples.
  */
-// t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2], \
+// t_vec4f	sample_area(t_scene_data *scene, const float raycenter[2],
 // 					const float aspect_ratio, const float samples)
 // {
 // 	t_ray		ray;
@@ -65,7 +66,7 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
 // 	return color;
 // 	while (i < samples)
 // 	{
-// 		ray = construct_camera_ray(raycenter[0] + RADIUS * cos(angle), \
+// 		ray = construct_camera_ray(raycenter[0] + RADIUS * cos(angle),
 // 				raycenter[1] + RADIUS * sin(angle), scene, aspect_ratio);
 // 		// color += int_to_vec4rgb(object_hit_color(scene, ray));
 // 		angle += inc;

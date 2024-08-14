@@ -1,0 +1,21 @@
+
+
+beckhoff support NL
+
+sp 52,0,-300 100 255,255,255 1
+
+
+[OBJ_TYPE]
+
+[AMBIENT] [INSENSITY] [R,G,B]
+[LIGHT] [X,Y,Z] [DIAMETER] [INSENSITY] [R,G,B]{0-255}
+[CAMERA] [X,Y,Z] [X,Y,Z]{DIRECTION UNIT VECTOR} [FOV]{0-360 degrees}
+[SPHERE] [X,Y,Z] [DIAMETER] [R,G,B]{0-255} [SMOOTHNESS]{0-1}
+[CYLINDER] [X,Y,Z] [X,Y,Z]{ROTATION UNIT VECTOR} [DIAMETER] [HEIGHT] [R,G,B]{0-255} [SMOOTHNESS]{0-1}
+[PLANE] [X,Y,Z] [R,G,B]{0-255} [SMOOTHNESS]{0-1}
+
+
+
+alleen ambient invloed op cylindercap?
+
+rotate cylinder
