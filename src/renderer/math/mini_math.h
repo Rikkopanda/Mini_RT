@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/09 14:56:52 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/08/12 19:02:55 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/14 16:49:17 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ t_vec4f	cross3(t_vec4f vec_A, t_vec4f vec_B);
 t_vec4f	lerp(t_vec4f a, t_vec4f b, float f);
 
 // quaternion functions
+t_vec4f	normalize_quaternion(t_vec4f *q);
 t_vec4f	apply_rotation(t_vec4f point, t_vec4f rotation);
 t_vec4f	invert_quaternion(t_vec4f quaternion);
 t_vec4f	invert_unit_quaternion(t_vec4f uq);

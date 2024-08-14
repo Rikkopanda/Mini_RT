@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   render_scene.c                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/08 13:53:18 by rikverhoeve       #+#    #+#             */
-/*   Updated: 2024/08/09 17:44:53 by rverhoev         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   render_scene.c                                     :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/08/08 13:53:18 by rikverhoeve   #+#    #+#                 */
+/*   Updated: 2024/08/14 16:47:45 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ int	render_scene(t_scene_data *data)
 	send_rays(data);
 	mlx_put_image_to_window(data->mlx.mlx_ptr,
 		data->mlx.win_ptr, data->image.img_ptr, 0, 0);
+	print_matrix_1_3(data->camera.orientation);
+	print_matrix_1_3(data->camera.location);
 	mlx_loop(data->mlx.mlx_ptr);
 	mlx_destroy_window(data->mlx.mlx_ptr, data->mlx.win_ptr);
 	destroy_image(data->image);

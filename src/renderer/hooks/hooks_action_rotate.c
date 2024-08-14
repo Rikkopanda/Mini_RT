@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   hooks_action_rotate.c                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 17:58:06 by rverhoev         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   hooks_action_rotate.c                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/05/27 09:26:30 by rverhoev      #+#    #+#                 */
+/*   Updated: 2024/08/14 16:50:42 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,37 +14,30 @@
 #include "libft.h"
 #include "minirt.h"
 
-void	rotate(t_scene_data *data, int incr_sign, \
-	int index, char *print_literal)
+void	rotate(t_scene_data *data, const t_vec4f axis, \
+				float radians, char *print_literal)
 {
-	if (incr_sign == 1)
-	{
-		if (data->camera.orientation[index] > ROTATION_MAX)
-			data->camera.orientation[index] \
-				= -ROTATION_MAX + (DEGREES * incr_sign);
-		else
-			data->camera.orientation[index] += (DEGREES * incr_sign);
-	}
-	else
-	{
-		if (data->camera.orientation[index] < -ROTATION_MAX)
-			data->camera.orientation[index] \
-				= -ROTATION_MAX + (DEGREES * incr_sign);
-		else
-			data->camera.orientation[index] += (DEGREES * incr_sign);
-	}
+	t_vec4f	q_rotate;
+
+	q_rotate = axis_angle_to_quaternion(axis, radians);
+	data->camera.orientation = \
+		apply_rotation(data->camera.orientation, q_rotate);
 	printf("%s", print_literal);
 }
 
 int	rotate_view(int keysym, t_scene_data *data)
 {
 	if (keysym == UP)
-		return (rotate(data, 1, 0, ("rotating up...\n")), TRUE);
+		return (rotate(data, (t_vec4f){1, 0, 0, 1}, \
+				-DEGR_10_IN_RAD, ("rotating up...\n")), TRUE);
 	else if (keysym == DOWN)
-		return (rotate(data, -1, 0, ("rotating down...\n")), TRUE);
+		return (rotate(data, (t_vec4f){1, 0, 0, 1}, \
+				DEGR_10_IN_RAD, ("rotating down...\n")), TRUE);
 	else if (keysym == RIGHT)
-		return (rotate(data, 1, 1, ("rotating right...\n")), TRUE);
+		return (rotate(data, (t_vec4f){0, 1, 0, 1}, \
+				-DEGR_10_IN_RAD, ("rotating right...\n")), TRUE);
 	else if (keysym == LEFT)
-		return (rotate(data, -1, 1, ("rotating left...\n")), TRUE);
+		return (rotate(data, (t_vec4f){0, 1, 0, 1}, \
+				DEGR_10_IN_RAD, ("rotating left...\n")), TRUE);
 	return (FALSE);
 }

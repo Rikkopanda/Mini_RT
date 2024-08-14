@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/08 14:01:59 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/08/14 16:08:17 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/14 16:48:40 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,6 @@
 static int is_zero_vector3(t_vec4f a)
 {
 	return (a[0] == 0 && a[1] == 0 && a[2] == 0);
-}
-
-static t_vec4f	normalize_quaternion(t_vec4f *q)
-{
-	float	magnitude;
-	float	squared;
-
-	squared = powf((*q)[0], 2) + powf((*q)[1], 2) \
-			+ powf((*q)[2], 2) + powf((*q)[3], 2);
-	magnitude = sqrtf(squared);
-	*q = *q / magnitude;
-	return (*q);
 }
 
 static t_vec4f	orthogonal_vector(t_vec4f v)

@@ -6,11 +6,23 @@
 /*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/08 14:02:58 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/08/12 19:17:48 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/14 16:48:47 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
+
+t_vec4f	normalize_quaternion(t_vec4f *q)
+{
+	float	magnitude;
+	float	squared;
+
+	squared = powf((*q)[0], 2) + powf((*q)[1], 2) \
+			+ powf((*q)[2], 2) + powf((*q)[3], 2);
+	magnitude = sqrtf(squared);
+	*q = *q / magnitude;
+	return (*q);
+}
 
 t_vec4f	invert_quaternion(t_vec4f quaternion)
 {

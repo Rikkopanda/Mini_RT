@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   hooks.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/27 09:26:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 18:00:10 by rverhoev         ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   hooks.c                                            :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/05/27 09:26:30 by rverhoev      #+#    #+#                 */
+/*   Updated: 2024/08/14 16:47:50 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,7 @@ int	handle_input(int keysym, t_scene_data *data)
 	send_rays(data);
 	mlx_put_image_to_window(data->mlx.mlx_ptr, \
 		data->mlx.win_ptr, data->image.img_ptr, 0, 0);
+	print_matrix_1_3(data->camera.orientation);
+	print_matrix_1_3(data->camera.location);
 	return (0);
 }

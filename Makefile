@@ -64,7 +64,7 @@ vpath %.c ${DIR_SRC}/${DIR_RENDERER}
 vpath %.c ${DIR_SRC}/${DIR_RENDERER}/${DIR_HOOKS}
 vpath %.c ${DIR_SRC}/${DIR_RENDERER}/$(DIR_MATH)
 
-OBJ = ${notdir ${SRC:.c=.o}}
+OBJ = ${addprefix ${DIR_OBJ}/, ${SRC:.c=.o}}
 
 ${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT} ${LIBGNL}
 	$(CC) ${CFLAGS} $^ ${LINKS} ${LINKS_MLX} -o $@
@@ -81,7 +81,7 @@ ${LIBFT}:
 ${LIBGNL}:
 	make -C ${DIR_LIB}/get_next_line
 
-${OBJ}: %.o: %.c
+${OBJ}: ${DIR_OBJ}/%.o: %.c
 	@mkdir -p ${@D}
 	$(CC) ${CFLAGS} ${INCLUDE} -c $< -o $@
 
