@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minirt.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 18:08:22 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 18:08:24 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/15 11:17:33 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
 # include "libft.h"
 # define PRINT_DEBUG 1
 # include "color.h"
-// # include "parser.h"
 # include "objects.h"
 # include <limits.h>
 # include "mini_math.h"
@@ -39,29 +38,29 @@ typedef struct s_ray	t_ray;
 # define RADIUS 0.6f
 # define DISTANCE_MAX 1000
 
-#ifndef MAX_BOUNCE_DEPTH
- #define MAX_BOUNCE_DEPTH 3
-#endif
-#ifndef REFL_RAYS_N
- #define REFL_RAYS_N 15
-#endif
-#ifndef PRINT_STATUS
- #define PRINT_STATUS FALSE
-#endif
-#ifndef MOVE_DIST
- #define MOVE_DIST 10
-#endif
-#ifndef DEGREES
- #define DEGREES 10
-#endif
-#ifndef ROTATION_MAX
- #define ROTATION_MAX 180
-#endif
-
-typedef struct s_scene_data t_scene_data;
+# ifndef MAX_BOUNCE_DEPTH
+#  define MAX_BOUNCE_DEPTH 3
+# endif
+# ifndef REFL_RAYS_N
+#  define REFL_RAYS_N 15
+# endif
+# ifndef PRINT_STATUS
+#  define PRINT_STATUS FALSE
+# endif
+# ifndef MOVE_DIST
+#  define MOVE_DIST 10
+# endif
+# ifndef DEGREES
+#  define DEGREES 10
+# endif
+# ifndef ROTATION_MAX
+#  define ROTATION_MAX 180
+# endif
 
 # define DEGR_10_IN_RAD 0.1745329252
 # define M_PI           3.14159265358979323846
+
+typedef struct s_scene_data	t_scene_data;
 
 enum e_error_codes
 {
@@ -69,13 +68,13 @@ enum e_error_codes
 	OUT_OF_BOUNDS
 };
 
-enum bool
+enum e_bool
 {
 	FALSE,
 	TRUE
 };
 
-enum keys
+enum e_keys
 {
 	ON_ESC = 65307
 };
@@ -120,18 +119,23 @@ typedef struct s_img
 	int		line_len;
 }		t_img;
 
-typedef struct s_ambient_lightning //what does this mean, just reflected light?
+/**
+ * https://www.reddit.com/r/
+ * spaceengineers/comments/3e0k38/
+ * rgb_values_for_various_types_of_realworld_lights/
+ */
+typedef struct s_ambient_lightning
 {
-	int		rgb[3]; // https://www.reddit.com/r/spaceengineers/comments/3e0k38/rgb_values_for_various_types_of_realworld_lights/
-	float	lightning_ratio; // range 0.0-1.0
-} t_ambient_lightning;
+	int		rgb[3];
+	float	lightning_ratio;
+}	t_ambient_lightning;
 
 typedef struct s_light_source
 {
 	t_vec4f	position;
 	int		rgb[3];
 	float	brightness; // range 0.0-1.0
-} t_light_source;
+}	t_light_source;
 
 typedef struct s_transform_index
 {
@@ -143,17 +147,17 @@ typedef struct s_transform_index
 
 typedef struct s_ray_sending_tools
 {
-	int 	pixel_x;
-	int 	pixel_y;
-	float 	start_angle_horiz;
-	float 	start_angle_vert;
-	float 	angle_horiz;
-	float 	angle_vert;
+	int		pixel_x;
+	int		pixel_y;
+	float	start_angle_horiz;
+	float	start_angle_vert;
+	float	angle_horiz;
+	float	angle_vert;
 	int		half_screen_width;
 	int		half_screen_height;
 	float	perpendicular_distance_horiz_triangle;
 	float	perpendicular_distance_vert_triangle;
-} t_ray_sending_tools;
+}	t_ray_sending_tools;
 
 typedef struct s_scene_data
 {
@@ -173,8 +177,7 @@ typedef struct s_material
 {
 	float		smoothness;
 	t_vec4f		color;
-} t_material;
-
+}	t_material;
 
 typedef struct s_hit_info
 {
@@ -188,7 +191,8 @@ typedef struct s_hit_info
 	t_vec4f		incident_origin;
 }	t_hit_info;
 
-void	matrix_multiplication(t_vec4f comp[3], t_ray *ray, t_vec4f camera_vector);
+void	matrix_multiplication(t_vec4f comp[3], t_ray *ray, \
+			t_vec4f camera_vector);
 void	matrix_multiply_1x3_3x3(t_vec4f *m1, t_vec4f m2[3], t_vec4f *result_m);
 void	compilation_matrix(t_vec4f comp[3], t_vec4f R[3], t_vec4f R3[3]);
 void	copy_matrix(t_vec4f *dst, t_vec4f src);
@@ -210,11 +214,12 @@ void	send_rays(t_scene_data *scene);
 int		hit_ray(t_scene_data *scene, float angle_horiz, float angle_vert);
 
 t_vec4f	trace_ray(t_scene_data *scene, t_ray ray, int bounce_depth);
-void	check_intersection(t_scene_data *scene, t_ray ray, t_hit_info	*closest_hit);
+void	check_intersection(t_scene_data *scene, t_ray ray, \
+			t_hit_info	*closest_hit);
 
 void	put_pixel_img(t_img img, int x, int y, int color);
 void	init_rgb(t_color *rgb, int color);
-void 	init_rgb_f(t_vec4f *rgb_f, int rgb[3]);
+void	init_rgb_f(t_vec4f *rgb_f, int rgb[3]);
 void	make_rgb_with_normalized_rgb_f(int rgb[3], t_vec4f rgb_f);
 int		create_color(int r, int g, int b);
 t_vec4f	int_to_vec4rgb(int color);
@@ -224,9 +229,9 @@ float	interpolatef(float A, float B, float t);
 void	print_matrix_3_3(t_vec4f m[3]);
 void	print_matrix_1_3(t_vec4f m);
 
-t_vec4f reflect(t_vec4f normal, t_vec4f incoming);
+t_vec4f	reflect(t_vec4f normal, t_vec4f incoming);
 t_vec4f	sky_box(float y);
-t_vec4f generate_random_vec4f_hemisphere(t_vec4f normal);
+t_vec4f	generate_random_vec4f_hemisphere(t_vec4f normal);
 float	vector_length(t_vec4f v);
 float	dot3(t_vec4f vec_A, t_vec4f vec_B);
 float	cross_product_3d(t_vec4f vec_A, t_vec4f vec_B);
