@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/09 14:56:52 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/08/14 16:49:17 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/15 14:41:02 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	copy_matrix(t_vec4f *dst, t_vec4f src);
 void	init_comp_m(t_vec4f comp[3]);
 
 // vector functions
+int		is_zero_vector3(t_vec4f a);
 float	vector_length(t_vec4f v);
 t_vec4f	clamp_vec4f(t_vec4f v, float low, float high);
 float	dot3(t_vec4f vec_A, t_vec4f vec_B);

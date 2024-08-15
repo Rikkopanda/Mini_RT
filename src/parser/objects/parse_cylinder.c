@@ -6,7 +6,7 @@
 /*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/09 16:52:36 by kwchu         #+#    #+#                 */
-/*   Updated: 2024/08/09 17:12:47 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/15 14:19:25 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@ static int	has_valid_ranges(t_cylinder *cylinder)
 	if (!ft_vec_in_range(cylinder->vector, -1, 1))
 	{
 		fprintf(stderr, "Error: cylinder normal vector out of range [-1, 1]\n");
+		return (0);
+	}
+	if (is_zero_vector3(cylinder->vector))
+	{
+		fprintf(stderr, "Error: cylinder normal cannot be a zero vector\n");
 		return (0);
 	}
 	if (cylinder->diameter <= 0)

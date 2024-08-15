@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/09 18:08:22 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/08/12 19:03:12 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/15 14:39:48 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,6 @@ typedef struct s_ray	t_ray;
  #define ROTATION_MAX 180
 #endif
 
-typedef struct s_scene_data t_scene_data;
-
 # define DEGR_10_IN_RAD 0.1745329252
 # define M_PI           3.14159265358979323846
 
@@ -110,7 +108,6 @@ typedef struct s_win
 
 typedef struct s_img
 {
-	t_win	win;
 	void	*img_ptr;
 	char	*addr;
 	int		h;
@@ -235,6 +232,5 @@ int		handle_input(int keysym, t_scene_data *data);
 
 t_win	new_window(int w, int h, char *str);
 t_img	new_img(int w, int h, t_win window);
-void	destroy_image(t_img img);
 
 #endif

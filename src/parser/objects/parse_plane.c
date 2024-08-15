@@ -6,7 +6,7 @@
 /*   By: kwchu <kwchu@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/09 16:49:01 by kwchu         #+#    #+#                 */
-/*   Updated: 2024/08/09 17:05:50 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/15 14:18:46 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,11 @@ static int	assign_geometric_properties(t_plane *plane, char **format)
 	if (!ft_vec_in_range(plane->vector, -1, 1))
 	{
 		fprintf(stderr, "Error: plane normal vector out of range [-1, 1]\n");
+		return (0);
+	}
+	if (is_zero_vector3(plane->vector))
+	{
+		fprintf(stderr, "Error: plane normal cannot be a zero vector\n");
 		return (0);
 	}
 	normalize_vector(&plane->vector);

@@ -6,16 +6,11 @@
 /*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/08 14:01:59 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/08/14 16:48:40 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/15 14:17:03 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-
-static int is_zero_vector3(t_vec4f a)
-{
-	return (a[0] == 0 && a[1] == 0 && a[2] == 0);
-}
 
 static t_vec4f	orthogonal_vector(t_vec4f v)
 {
@@ -36,7 +31,7 @@ t_vec4f	orientation_to_quaternion_rotation(t_vec4f orientation)
 	float			dot_product;
 
 	if (is_zero_vector3(orientation))
-		return ((t_vec4f){0, 1, 0, 0});
+		return ((t_vec4f){1, 0, 0, 0});
 	normalize_vector(&orientation);
 	cross_product = cross3(default_orientation, orientation);
 	dot_product = dot3(default_orientation, orientation);
