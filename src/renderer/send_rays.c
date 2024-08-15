@@ -6,7 +6,7 @@
 /*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/08/15 14:50:21 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/15 15:01:11 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ t_ray	construct_camera_ray(float x, float y, t_scene_data *scene, \
 				tanf(ft_degr_to_rad(scene->camera.fov) * 0.5f);
 	ray.direction = (t_vec4f){pixel_camera_x, pixel_camera_y, -1, 1};
 	normalize_vector(&ray.direction);
-	// print_matrix_1_3(scene->camera.orientation);
 	ray.direction = apply_rotation(ray.direction, scene->camera.orientation);
 	ray.origin = scene->camera.location + ray.direction * near_plane;
 	return (ray);

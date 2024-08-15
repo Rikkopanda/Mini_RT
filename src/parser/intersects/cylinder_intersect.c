@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   cylinder_intersect.c                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/09 16:25:22 by kwchu             #+#    #+#             */
-/*   Updated: 2024/08/14 11:52:12 by rikverhoeve      ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   cylinder_intersect.c                               :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2024/08/09 16:25:22 by kwchu         #+#    #+#                 */
+/*   Updated: 2024/08/15 15:01:05 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,6 @@ static float	closest_intersect_distance(float t1, float t2, \
 		t_min = fminf(t_min, t_top);
 	if (t_bottom > 0)
 		t_min = fminf(t_min, t_bottom);
-	// if (t_top == t_min || t_bottom == t_min)
-	// {
-	// 	printf("yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeees\n");
-	// 	return (t_min);
-	// }
-	// else
-	// 	return (-1);
 	if (t_min < INFINITY)
 		return (t_min);
 	return (-1);
