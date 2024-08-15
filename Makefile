@@ -66,11 +66,10 @@ vpath %.c ${DIR_SRC}/${DIR_RENDERER}/$(DIR_MATH)
 
 OBJ = ${addprefix ${DIR_OBJ}/, ${SRC:.c=.o}}
 
+all: KAAS ${NAME}
+
 ${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT} ${LIBGNL}
 	$(CC) ${CFLAGS} $^ ${LINKS} ${LINKS_MLX} -o $@
-
-KAAS:
-	$(foreach LIBDIR, $(shell find lib -maxdepth 1 -mindepth 1 -d -print), $(MAKE) -C $(LIBDIR);)
 
 ${MLX_LIB}:
 	make -C ${DIR_LIB}/minilibx-linux
@@ -85,13 +84,15 @@ ${OBJ}: ${DIR_OBJ}/%.o: %.c
 	@mkdir -p ${@D}
 	$(CC) ${CFLAGS} ${INCLUDE} -c $< -o $@
 
-all: ${NAME}
 
 debug: CFLAGS += -g
 debug: re
 
 print: CFLAGS += -DPRINT_STATUS
 print: re
+
+KAAS:
+	$(foreach LIBDIR, $(shell find lib -maxdepth 1 -mindepth 1 -d -print), $(MAKE) -C $(LIBDIR);)
 
 clean:
 	rm -f ${OBJ}

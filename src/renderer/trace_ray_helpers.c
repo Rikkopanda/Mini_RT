@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/08/09 15:19:11 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/08/15 14:16:22 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/15 14:56:14 by kwchu         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ t_vec4f	generate_random_vec4f_hemisphere(t_vec4f normal)
 {
 	t_vec4f	random_vec;
 
-	srand(time(0));
 	random_vec[0] = (float)rand();
 	random_vec[1] = (float)rand();
 	random_vec[2] = (float)rand();
