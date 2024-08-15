@@ -30,11 +30,11 @@ DIR_RENDERER = renderer
 DIR_MATH = math
 DIR_HOOKS = hooks
 
-REFL_RAYS_N = 45
-MAX_BOUNCE_DEPTH = 3
+RAYS = 45
+BOUNCE = 3
 
-CFLAGS += -DREFL_RAYS_N=$(REFL_RAYS_N)
-CFLAGS += -DMAX_BOUNCE_DEPTH=$(MAX_BOUNCE_DEPTH)
+CFLAGS += -DREFL_RAYS_N=$(RAYS)
+CFLAGS += -DMAX_BOUNCE_DEPTH=$(BOUNCE)
 
 SRC = main.c parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
 		ft_split_charset.c ft_str_endswith.c object_list.c \

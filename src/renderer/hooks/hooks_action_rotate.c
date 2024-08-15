@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/27 09:26:30 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/08/15 14:40:43 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/15 17:16:52 by rverhoev      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void	rotate(t_scene_data *data, const t_vec4f axis, \
 	t_vec4f	q_rotate;
 
 	q_rotate = axis_angle_to_quaternion(axis, radians);
-	print_matrix_1_3(q_rotate);
 	data->camera.orientation = \
 					hamilton_product(data->camera.orientation, q_rotate);
 	printf("%s", print_literal);

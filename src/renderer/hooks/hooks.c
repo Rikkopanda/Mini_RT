@@ -6,7 +6,7 @@
 /*   By: rverhoev <rverhoev@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2024/05/27 09:26:30 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/08/14 16:47:50 by kwchu         ########   odam.nl         */
+/*   Updated: 2024/08/15 17:17:45 by rverhoev      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 
 int	handle_input(int keysym, t_scene_data *data)
 {
-	printf("keysym %d\n", keysym);
 	if (left_up_right_down_forward_backward(keysym, data) == FALSE
 		&& rotate_view(keysym, data) == FALSE
 		&& extra_keys(keysym, data) == FALSE
