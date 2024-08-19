@@ -18,6 +18,7 @@ make re (optional)RAYS=n (optional)BOUNCE=n
 
 ./minirt path/to/maps/map.rt (optional)width (optional)height
 
-![image](https://github.com/user-attachments/assets/c3488162-0101-4b86-be9d-56779ed371eb)
+
+![Screenshot from 2024-08-19 10-18-03](https://github.com/user-attachments/assets/c6718ff0-4dc4-4c40-a965-7babd61eff74)
 
 
