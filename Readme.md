@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/7d6b3e74-9d65-44de-a398-79e96b20d936)# Ray tracer
+# Ray tracer
 
 ## Description
 
