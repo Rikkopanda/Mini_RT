@@ -1,3 +1,6 @@
 [submodule "lib/libft"]
 	path = lib/libft
 	url = https://github.com/Rikkopanda/Libft.git
+[submodule "lib/mini_math"]
+	path = lib/mini_math
+	url = git@github.com:Rikkopanda/mini_math.git

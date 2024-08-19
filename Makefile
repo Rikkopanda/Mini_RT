@@ -9,16 +9,16 @@ CFLAGS += -Ofast
 CC = cc
 
 DIR_LIB = lib
-LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/get_next_line -lgnl 
+LINKS = -L${DIR_LIB}/libft -lft -L${DIR_LIB}/get_next_line -lgnl -L${DIR_LIB}/mini_math -lmini_math 
 
 LINKS_MLX = -L${DIR_LIB}/minilibx-linux -lmlx -lX11 -lXext -lm -lz
 
-INCLUDE = -I./include -I./src/renderer/math -I./${DIR_LIB}/minilibx-linux -I./${DIR_LIB}/libft -I./${DIR_LIB}/get_next_line
+INCLUDE = -I./include -I./src/renderer/math -I./${DIR_LIB}/minilibx-linux -I./${DIR_LIB}/libft -I./${DIR_LIB}/get_next_line -I./${DIR_LIB}/mini_math/include
 
 MLX_LIB = ${DIR_LIB}/minilibx-linux/libmlx.a
-
 LIBFT = ${DIR_LIB}/libft/libft.a
 LIBGNL = ${DIR_LIB}/get_next_line/libgnl.a
+LIBMINI_MATH = ${DIR_LIB}/mini_math/libmini_math.a
 
 DIR_SRC = src
 DIR_PARSER = parser
@@ -42,13 +42,13 @@ SRC = main.c parser.c ft_2darray_size.c ft_atovec3f.c ft_atof.c \
 		ft_vec_in_range.c parse_object.c \
 		parse_ambient.c parse_camera.c parse_cylinder.c \
 		parse_light.c parse_plane.c parse_sphere.c \
-		render_scene.c matrixes.c matrix_tools_1.c matrix_tools_2.c \
-		send_rays.c vector_functions_1.c vector_functions_2.c \
-		hooks.c ft_mlx_functions.c math_tools.c \
+		render_scene.c \
+		send_rays.c \
+		hooks.c ft_mlx_functions.c \
 		trace_ray.c check_intersection.c std_color_functions_1.c \
-		std_color_functions_2.c quaternion_functions.c orient_ray_coordinates.c \
+		std_color_functions_2.c orient_ray_coordinates.c \
 		random_vec_gen.c hooks_action_rotate.c hooks_action_move.c \
-		trace_ray_helpers.c vector_functions_3.c \
+		trace_ray_helpers.c \
 		sphere_get_set.c plane_get_set.c cylinder_get_set.c light_get_set.c \
 		assign_geometric_get_set.c assign_material_get_set.c print_data.c \
 		cylinder_intersect.c plane_intersect.c sphere_intersect.c light_intersect.c \
@@ -68,7 +68,7 @@ OBJ = ${addprefix ${DIR_OBJ}/, ${SRC:.c=.o}}
 
 all: KAAS ${NAME}
 
-${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT} ${LIBGNL}
+${NAME}: ${OBJ} | ${MLX_LIB} ${LIBFT} ${LIBGNL} ${LIBMINI_MATH}
 	$(CC) ${CFLAGS} $^ ${LINKS} ${LINKS_MLX} -o $@
 
 ${MLX_LIB}:
@@ -79,6 +79,9 @@ ${LIBFT}:
 
 ${LIBGNL}:
 	make -C ${DIR_LIB}/get_next_line
+
+${LIBMINI_MATH}:
+	make -C ${DIR_LIB}/mini_math
 
 ${OBJ}: ${DIR_OBJ}/%.o: %.c
 	@mkdir -p ${@D}

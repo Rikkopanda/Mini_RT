@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   trace_ray.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rverhoev <rverhoev@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 15:19:30 by rverhoev          #+#    #+#             */
-/*   Updated: 2024/08/09 17:57:49 by rverhoev         ###   ########.fr       */
+/*   Updated: 2024/08/19 10:13:02 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-#include "mini_math.h"
+#include "libmini_math.h"
 
 /**
  * reflection() uses old the old ray.origin, this is the incident ray

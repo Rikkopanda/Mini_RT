@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   minirt.h                                           :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/08/09 18:08:22 by rverhoev      #+#    #+#                 */
-/*   Updated: 2024/08/15 14:54:07 by kwchu         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   minirt.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/09 18:08:22 by rverhoev          #+#    #+#             */
+/*   Updated: 2024/08/19 10:12:07 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 # include "color.h"
 # include "objects.h"
 # include <limits.h>
-# include "mini_math.h"
+# include "libmini_math.h"
 
 typedef struct s_ray	t_ray;
 
@@ -58,7 +58,6 @@ typedef struct s_ray	t_ray;
 # endif
 
 # define DEGR_10_IN_RAD 0.1745329252
-# define M_PI           3.14159265358979323846
 
 enum e_error_codes
 {

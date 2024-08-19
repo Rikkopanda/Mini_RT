@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        ::::::::            */
-/*   send_rays.c                                        :+:    :+:            */
-/*                                                     +:+                    */
-/*   By: rikverhoeven <rikverhoeven@student.42.f      +#+                     */
-/*                                                   +#+                      */
-/*   Created: 2024/05/26 13:18:38 by rikverhoeve   #+#    #+#                 */
-/*   Updated: 2024/08/15 15:01:11 by kwchu         ########   odam.nl         */
+/*                                                        :::      ::::::::   */
+/*   send_rays.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rikverhoeven <rikverhoeven@student.42.f    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/26 13:18:38 by rikverhoeve       #+#    #+#             */
+/*   Updated: 2024/08/19 10:13:02 by rikverhoeve      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <time.h> 
 #include <math.h>
 #include <stdlib.h>
-#include "mini_math.h"
+#include "libmini_math.h"
 
 /**
  * @note Constructing a normalised camera ray from 
